@@ -5,6 +5,7 @@ namespace Config;
 use App\Filters\Auth;
 use App\Filters\Session_exist;
 use App\Filters\Permiso_usuarios;
+use App\Filters\Permiso_expedientes;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -28,7 +29,8 @@ class Filters extends BaseConfig
         'secureheaders'                 => SecureHeaders::class,
         'auth'                          => Auth::class,
         'Session_exist'                 => Session_exist::class,
-        'Permiso_usuarios'              => Permiso_usuarios::class
+        'Permiso_usuarios'              => Permiso_usuarios::class,
+        'Permiso_expedientes'           => Permiso_expedientes::class
     ];
 
     /**

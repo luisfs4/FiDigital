@@ -65,58 +65,14 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 
 	//Seccion Usuarios
 	$routes->get('Usuarios', 'Usuario::usuarios', ['filter' => 'Permiso_usuarios']);
-});
+	
+	//Sección de expedientes
+	$routes->group('Expedientes', ['filter' => 'Permiso_expedientes'], static function ($routes) {
+		//Listado de expedientes
+		$routes->get('/', 'Expedientes::listado');
+		$routes->post('get_by_ajax', 'Expedientes::get_by_ajax');
+	});
 
-//Trámites ciudadano
-$routes->group('tramites', static function ($routes) {
-
-	//Vista ciudadana
-	$routes->get('(:num)/detalle', 'Tramite::detalle/$1');
-
-	//Filtros
-	$routes->post('direcciones/get_by_ajax', 'Tramite::get_direcciones_by_ajax');
-	$routes->post('sectores/get_by_ajax', 'Tramite::get_sectores_by_ajax');
-	$routes->post('grupos/get_by_ajax', 'Tramite::get_grupos_by_ajax');
-
-	//Consultar tramites
-	$routes->post('get_by_ajax', 'Tramite::get_by_ajax');
-
-	//Consultar formato
-	$routes->get('(:num)/formato', 'Tramite::render_formato/$1');
-	$routes->get('(:num)/pdf', 'Tramite::render_formato/$1');
-	$routes->get('corregir_pasos', 'Tramite::corregir_pasos');
-});
-
-//Visitas
-$routes->group('visitas', static function ($routes) {
-
-	//Vista ciudadana
-	$routes->get('(:num)/detalle', 'Visita::detalle/$1');
-
-	//Consultar visitas
-	$routes->post('get_by_ajax', 'Visita::get_by_ajax');
-});
-
-//Visitadores
-$routes->group('Visitadores', static function ($routes) {
-
-	//Vista ciudadana
-	$routes->get('(:num)/detalle', 'Visitador::detalle/$1');
-
-	//Consultar Visitadores
-	$routes->post('get_by_ajax', 'Visitador::get_by_ajax');
-});
-
-//Regulaciones
-$routes->group('regulaciones', static function ($routes) {
-	//Ciudadano
-	$routes->get('(:num)/detalle', 'Regulacion::detalle/$1'); //Vista ciudadano
-	$routes->post('get_by_ajax', 'Regulacion::get_by_ajax'); //Vista ciudadano
-});
-
-//Inclusiones
-$routes->group('include', static function ($routes) {
-	$routes->get('panel_busqueda', 'Inicio::return_panel_busqueda');
 });
 
 //Usuarios
