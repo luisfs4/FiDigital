@@ -41,6 +41,33 @@ class Expedientes extends BaseController
 		echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/expedientes/listado') . view('panel/base/footer', $scripts_view);
 	}
 
+	public function formulario()
+	{
+		//Tittle de la pagina
+		$data_view = [
+			"ruta" => 'Listado de expedientes'
+		];
+
+		//Incluir scripts custom para esa unica vista sin afectar el include general
+		$scripts_view = [
+			'scripts' => [
+				0 => [
+					'src' => base_url('js/panel/expedientes/listado.js')
+				]
+			]
+
+		];
+
+		//Data para formulario
+        $data_formulario = [
+            'titulo' => 'Crear punto',
+            'Subtitulo' => ''
+        ];
+
+		//Imprimir vista
+		echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/expedientes/formulario', $data_formulario) . view('panel/base/footer', $scripts_view);
+	}
+
   	/**
      * Obtiene todos los resultados basado en los filtros
      *

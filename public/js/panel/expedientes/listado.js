@@ -80,14 +80,14 @@ $(document).ready(async () => {
                                     </button>
                                 </div>
                                 <div class="my-auto">
-                                    <h6 class="mb-0 text-xs">${data}</h6>
+                                    <h6 class="mb-0 text-xs">${row.jerarquia} ${row.nombre_punto}</h6>
                                 </div>
                             </div>
                             `;
                 }
             },
             {
-                "mData": "sesion",
+                "mData": "nombre_sesion",
                 "mRender": function (data, type, row) {
                     return `<td class="align-middle text-start">
                                 <span class="text-xs w-100 text-start font-weight-bold">${data}</span>

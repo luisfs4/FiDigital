@@ -70,6 +70,7 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	$routes->group('Expedientes', ['filter' => 'Permiso_expedientes'], static function ($routes) {
 		//Listado de expedientes
 		$routes->get('/', 'Expedientes::listado');
+		$routes->get('formulario', 'Expedientes::formulario');
 		$routes->post('get_by_ajax', 'Expedientes::get_by_ajax');
 	});
 
