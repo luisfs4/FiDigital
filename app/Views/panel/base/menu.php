@@ -17,6 +17,21 @@
 				</li>
 
 				<?php 
+				if ($permisos->permiso_expedientes == 1) {
+				?>
+					<li class="nav-item">
+						<a class="nav-link <?= $ruta == 'Expedientes' ? 'active' : '' ?>" href="<?= base_url('/panel/expedientes'); ?>">
+							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+								<i class="fas fa-folder mb-1" style="font-size: 0.85rem;"></i>
+							</div>
+							<span class="nav-link-text ms-1">Expedientes</span>
+						</a>
+					</li>
+				<?php
+				}
+				?>
+
+				<?php 
 				if ($permisos->permiso_usuarios == 1) {
 				?>
 					<li class="nav-item">
