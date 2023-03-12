@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('https://servicios.zapopan.gob.mx:8000/wwwportal/publicfiles/2021-10/foto_cisz_marcosguillen.jpg'); background-position-y: 50%;">
-        <span class="mask bg-gradient-warning opacity-6"></span>
+        <span class="mask bg-gradient-danger opacity-6"></span>
     </div>
     <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
         <div class="row gx-4">
@@ -32,7 +32,7 @@
                 <div class="card-body p-3">
                     <ul class="list-group">
                         <li class="list-group-item border-0 ps-0 pt-0 text-sm"><strong class="text-dark">Nombre completo:</strong> &nbsp; <?= $_SESSION['nombres'] . " " . $_SESSION['ape_paterno'] . " " . $_SESSION['ape_materno'] ?></li>
-                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Teléfono:</strong> &nbsp; <?= $_SESSION['telefono'] ?></li>
+                        <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Teléfono:</strong> &nbsp; <?= $_SESSION['telefono'] ?? '' ?></li>
                         <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; <?= $_SESSION['correo'] ?></li>
                     </ul>
                 </div>

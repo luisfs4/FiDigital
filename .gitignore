@@ -87,6 +87,7 @@ phpunit
 # Composer
 #-------------------------
 vendor/
+!vendor/_rfs.scss
 
 #-------------------------
 # IDE / Development Files

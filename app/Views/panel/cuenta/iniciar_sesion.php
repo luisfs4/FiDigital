@@ -6,7 +6,7 @@
                     <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
                         <div class="card card-plain mt-10">
                             <div class="card-header pb-0 text-left bg-transparent">
-                                <h3 class="font-weight-bolder text-warning text-gradient">Bienvenido</h3>
+                                <h3 class="font-weight-bolder text-danger text-gradient">Bienvenido</h3>
                                 <p class="mb-0">Ingresa tu correo y contraseña para iniciar sesión</p>
                             </div>
                             <div class="card-body">
@@ -20,21 +20,21 @@
                                         <input type="password" required class="form-control contrasena" placeholder="**********" aria-label="Password" aria-describedby="password-addon">
                                     </div>
                                     <div class="text-center">
-                                        <button type="button" class="btn bg-gradient-warning w-100 mt-4 mb-0 btn_acceder">Iniciar sesión</button>
+                                        <button type="button" class="btn bg-gradient-danger w-100 mt-4 mb-0 btn_acceder">Iniciar sesión</button>
                                     </div>
                                 </form>
                             </div>
                             <div class="card-footer text-center pt-0 px-lg-2 px-1">
                                 <p class="mb-4 text-sm mx-auto">
                                     ¿Olvistaste tu contraseña?
-                                    <a href="javascript:;" class="text-warning text-gradient font-weight-bold">&nbsp;Recupérala aquí</a>
+                                    <a href="javascript:;" class="text-danger text-gradient font-weight-bold">&nbsp;Recupérala aquí</a>
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="oblique position-absolute top-0 h-100 me-n8">
-                            <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 d-lg-block d-none z-index-0 ms-n6" style="background-image:url('<?= base_url('imagenes/mariposa_cisz.webp') ?>')"></div>
+                            <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 d-lg-block d-none z-index-0 ms-n6" style="background-image:url('https://servicios.zapopan.gob.mx:8000/wwwportal/publicfiles/2021-10/foto_cisz_marcosguillen.jpg'); filter: brightness(75%) contrast(150%) hue-rotate(480deg);"></div>
                         </div>
                     </div>
                 </div>

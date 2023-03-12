@@ -6,7 +6,7 @@
 					<h6 class="mb-0">Nuevo usuario</h6>
 				</div>
 				<div class="col-4 text-end">
-					<a href="javascript:;" class="btn guia_regulacion btn-sm bg-gradient-warning mb-0">
+					<a href="javascript:;" class="btn guia_regulacion btn-sm bg-gradient-danger mb-0">
 						Guía&nbsp;&nbsp;<div class="fas fa-question-circle"></div>
 					</a>
 					<button class="btn btn-sm bg-gradient-danger mb-0 switch_boton_formulario" data-bs-toggle="collapse" data-bs-target="#formulario_regulaciones" aria-expanded="true" aria-controls="formulario_regulaciones">
@@ -43,19 +43,6 @@
 			<!-- Fechas -->
 			<div>
 				<div class="row">
-					<div class="col-lg-3">
-						<div class="form-group">
-							<label class="form-control-label">Coordinación</label>
-							<select required class="form-control input_usuario" name="id_coordinacion">
-								<option value="">Selecciona una opción</option>
-								<?php
-								foreach ($coordinaciones as $key => $fila) {
-									echo '<option value="'.$fila['id_coordinacion'].'">'.$fila['coordinacion'].'</option>';
-								}
-								?>
-							</select>
-						</div>
-					</div>
 					<div class="col-lg-3">
 						<label class="form-control-label">Dirección</label>
 						<select class="form-control input_usuario" name="id_direccion">
@@ -96,7 +83,7 @@
 <div class="container-fluid pt-2 pb-4">
 	<div class="row">
 <!-- 
-	<button class="btn btn-warning ms-auto me-4 w-auto bg-gradient-warning switch_boton_formulario btn_nueva_regulacion" type="button" data-bs-toggle="collapse" data-bs-target="#formulario_usuarios" aria-expanded="false" aria-controls="formulario_usuarios">
+	<button class="btn btn-danger ms-auto me-4 w-auto bg-gradient-danger switch_boton_formulario btn_nueva_regulacion" type="button" data-bs-toggle="collapse" data-bs-target="#formulario_usuarios" aria-expanded="false" aria-controls="formulario_usuarios">
 		Nuevo&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
 	</button>
 -->

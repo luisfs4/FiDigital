@@ -34,10 +34,10 @@ class UsuarioModel extends Model
     {
         $usuarios = $this->db->table("usuarios as u");
         $usuarios->select("u.*");
-        $usuarios->select("FORMAT(u.created_at, 'dd/MM/yyyy hh:mm tt', 'es-MX') as created_at");
-        $usuarios->select("FORMAT(u.updated_at, 'dd/MM/yyyy hh:mm tt', 'es-MX') as updated_at");
-        $usuarios->select("FORMAT(u.logged_at, 'dd/MM/yyyy hh:mm tt', 'es-MX') as logged_at");
-        $usuarios->select('u.nombres + SPACE(1) + u.ape_paterno as nombre_usuario');
+        $usuarios->select("DATE_FORMAT(u.created_at, '%d/%m/%Y %H:%i:%s') as created_at");
+        $usuarios->select("DATE_FORMAT(u.updated_at, '%d/%m/%Y %H:%i:%s') as updated_at");
+        $usuarios->select("DATE_FORMAT(u.logged_at, '%d/%m/%Y %H:%i:%s') as logged_at");
+        $usuarios->select('CONCAT_WS(" ", u.nombres, u.ape_paterno,  u.ape_materno) as usuario');
         $usuarios->select('cd.direccion');
         $usuarios->join('cat_direcciones as cd', 'ON cd.id_direccion = u.id_direccion', 'left');
 
@@ -53,27 +53,9 @@ class UsuarioModel extends Model
         return $datos;
     }
 
-
-    public function get_coordinaciones($data_filtros)
-    {
-        $consulta = $this->db->table("cat_coordinaciones as cc");
-
-        if (!empty($data_filtros['id_coordinacion'])) {
-            $consulta->where('cc.id_coordinacion', $data_filtros['id_coordinacion']);
-        }
-
-        return $consulta->get()->getResultObject();
-    }
-
-
     public function get_direcciones($data_filtros, $orden = array())
     {
         $consulta = $this->db->table("cat_direcciones as cd");
-
-        if (!empty($data_filtros['id_coordinacion'])) {
-            $consulta->where('cd.id_coordinacion', $data_filtros['id_coordinacion']);
-        }
-
 
         if (!empty($orden)) {
             foreach ($orden as $key => $value) {
@@ -93,8 +75,6 @@ class UsuarioModel extends Model
 
         if (!empty($data_filtros['id_direccion'])) {
             $consulta->where('cu.id_direccion', $data_filtros['id_direccion']);
-        } else if (!empty($data_filtros['id_coordinacion'])) {
-            $consulta->where('cu.id_coordinacion', $data_filtros['id_coordinacion']);
         }
 
         //echo $consulta->getCompiledSelect(false);

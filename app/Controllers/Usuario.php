@@ -48,12 +48,6 @@ class Usuario extends BaseController
             "ruta" => 'Usuarios'
         ];
 
-        $data_selects = [
-            "coordinaciones" => json_decode(get_coordinaciones(), true)
-            #"direcciones" => json_decode($this->get_direcciones(), true),
-            #"unidades" => json_decode($this->get_unidades(), true)
-        ];
-
         //Incluir scripts custom para esa unica vista sin afectar el include general
         $scripts_view = [
             'scripts' => [
@@ -63,7 +57,7 @@ class Usuario extends BaseController
             ]
         ];
 
-        echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/usuarios/usuarios', $data_selects) . view('panel/base/footer', $scripts_view);
+        echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/usuarios/usuarios') . view('panel/base/footer', $scripts_view);
     }
 
     /**

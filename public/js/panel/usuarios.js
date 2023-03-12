@@ -67,7 +67,7 @@ $(document).ready(async () => {
             dataSrc: ""
         },
         columns: [{
-                "mData": "nombre_usuario",
+                "mData": "usuario",
                 "mRender": function (data, type, row) {
                     return `
                     <div class="d-flex px-4">
@@ -86,7 +86,7 @@ $(document).ready(async () => {
             {
                 "mData": "logged_at",
                 "mRender": function (data, type, row) {
-                    return `<span class="text-xs font-weight-bold">${data ?? 'Nunca'}</span>`;
+                    return `<span class="text-xs font-weight-bold">${formatDate(data) ?? 'Nunca'}</span>`;
                 }
             },
             {
@@ -98,7 +98,6 @@ $(document).ready(async () => {
             {
                 "mData": "id_usuario",
                 "mRender": function (data, type, row) {
-                    return '<i class="text-center mx-auto text-xs">Sin permisos suficientes</i>';
                     return `
                     <div class="ms-auto text-center">
                         <button class="btn btn-link text-info text-gradient px-3 mb-0 btn_editar_usuario" id_usuario="${data}">
@@ -122,7 +121,7 @@ $(document).ready(async () => {
             $('.tabla_usuarios').removeClass('is-loading');
 
             //Cambiar color paginacion
-            $('#DataTables_Table_0_paginate .pagination').addClass('pagination-warning');
+            $('#DataTables_Table_0_paginate .pagination').addClass('pagination-danger');
 
             //Crear listener de los botones
             $('.btn_editar_usuario').off('click')
@@ -293,42 +292,6 @@ $(document).ready(async () => {
             }) // Fin Then SweetAlert
 
         }
-    })
-
-    $('[name="id_coordinacion"]').change(async function (e) {
-        let id_coordinacion = $(this).attr('id_coordinacion');
-
-        await $.ajax({
-            url: '/usuarios/get_dependencia_by_ajax',
-            data: {
-                id_coordinacion
-            },
-            dataType: 'JSON',
-            type: 'POST',
-            success: function (respuesta, text, xhr) {
-
-                if (xhr.status == 204) {
-                    Swal.fire({
-                        title: '¡Hay un problema!',
-                        text: 'Esta coordinación no tiene direcciones asignadas',
-                        icon: 'error',
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: "btn bg-gradient-info me-3",
-                            cancelButton: "btn bg-gradient-secondary"
-                        }
-                    });
-                } else if (xhr.status == 200) {
-                    $('[name="id_direccion"]').empty();
-                    $('[name="id_direccion"]').append(`<option disabled value="">Selecciona una opción</option>`);
-                    respuesta.forEach(direccion => {
-                        $('[name="id_direccion"]').append(`<option value="${direccion.id_direccion}">${direccion.direccion}</option>`);
-                    });
-
-                }
-            }
-        }); // Fin ajax
-
     })
 
     $('[name="id_direccion"]').change(async function (e) {

@@ -1,5 +1,5 @@
 <body class="g-sidenav-show  bg-gray-100">
-	<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " data-color="warning" id="sidenav-main">
+	<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " data-color="danger" id="sidenav-main">
 		<div class="sidenav-header d-flex">
 			<img src="<?= base_url('imagenes/logo.png'); ?>" class="navbar-brand-img" alt="main_logo" style="width: 100%;max-height: unset;object-fit: contain;object-position: left center;padding-left: 1rem;">
 		</div>
@@ -16,34 +16,7 @@
 					</a>
 				</li>
 
-				<?php if ($permisos->permiso_regulaciones == 1) { ?>
-					<li class="nav-item">
-						<a data-bs-toggle="collapse" href="#regulaciones_collapse" class="nav-link collapsed <?= $ruta == 'Regulaciones' || $ruta == 'Modificaciones' ? 'show active' : '' ?>" aria-controls="regulaciones_collapse" role="button" aria-expanded="false">
-							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center d-flex align-items-center justify-content-center  me-2">
-								<i class="fas fa-file-contract mb-1" style="font-size: 0.85rem;"></i>
-							</div>
-							<span class="nav-link-text ms-1">Regulaciones</span>
-						</a>
-						<div class="collapse <?= $ruta == 'Regulaciones' || $ruta == 'Modificaciones' ? 'show pt-2' : '' ?>" id="regulaciones_collapse">
-							<ul class="nav ms-4 ps-3">
-								<li class="nav-item <?= $ruta == 'Regulaciones' ? 'active' : '' ?>">
-									<a class="nav-link" href="<?= base_url('/panel/regulaciones'); ?>">
-										<span class="sidenav-mini-icon"> L </span>
-										<span class="sidenav-normal"> Listado </span>
-									</a>
-								</li>
-								<li class="nav-item <?= $ruta == 'Modificaciones' ? 'active' : '' ?>">
-									<a class="nav-link" href="<?= base_url('/panel/regulaciones/modificaciones'); ?>">
-										<span class="sidenav-mini-icon"> M </span>
-										<span class="sidenav-normal"> Modificaciones </span>
-									</a>
-								</li>
-							</ul>
-						</div>
-					</li>
-				<?php
-				}
-
+				<?php 
 				if ($permisos->permiso_usuarios == 1) {
 				?>
 					<li class="nav-item">
@@ -75,7 +48,7 @@
 		</div>
 
 		<div class="sidenav-footer mx-3 ">
-			<a class="btn bg-gradient-warning mt-3 w-100 btn_cerrar_session">Cerrar sesión</a>
+			<a class="btn bg-gradient-danger mt-3 w-100 btn_cerrar_session">Cerrar sesión</a>
 		</div>
 
 	</aside>

@@ -58,7 +58,7 @@ $secondary:     #8392AB !default;
 $info:          #17c1e8 !default;
 $success:       #82d616 !default;
 $warning:       #fbcf33 !default;
-$danger:        #ea0606 !default;
+$danger:        #E50695 !default;
 $light:         $gray-200 !default;
 $dark:          $h-color !default;
 
@@ -90,8 +90,8 @@ $info-gradient-state:         #21d4fd !default;
 $success-gradient:            #17ad37 !default;
 $success-gradient-state:      #98ec2d !default;
 
-$danger-gradient:             #ea0606 !default;
-$danger-gradient-state:       #ff667c !default;
+$danger-gradient:             #E50695  !default;
+$danger-gradient-state:       #fd97d3  !default;
 
 $warning-gradient:            #f53939 !default;
 $warning-gradient-state:      #fbcf33 !default;
@@ -564,7 +564,7 @@ $text-gradient-bg-primary:    linear-gradient(310deg, #7928CA, #FF0080) !default
 $text-gradient-bg-info:       linear-gradient(310deg, #2152FF, #21D4FD) !default;
 $text-gradient-bg-success:    linear-gradient(310deg, #17AD37, #C1E823) !default;
 $text-gradient-bg-warning:    linear-gradient(310deg, #F53939, #FBCF33) !default;
-$text-gradient-bg-danger:     linear-gradient(310deg, #D60808, #FF6690) !default;
+$text-gradient-bg-danger:     linear-gradient(310deg, #E50695, #fd7ac7) !default;
 $text-gradient-bg-dark:     linear-gradient(310deg, #141727, #3A416F) !default;
 
 $initialism-font-size:        $small-font-size !default;

@@ -24,12 +24,8 @@ class CuentaModel extends Model
 
             $usuarios = $this->db->table("usuarios");
             $usuarios->select("usuarios.*");
-            $usuarios->select("cat_coordinaciones.coordinacion");
             $usuarios->select("cat_direcciones.direccion");
-            $usuarios->select("cat_unidades.unidad");
             $usuarios->join("cat_direcciones", "cat_direcciones.id_direccion = usuarios.id_direccion", "left");
-            $usuarios->join("cat_coordinaciones", "cat_coordinaciones.id_coordinacion = usuarios.id_coordinacion", "left");
-            $usuarios->join("cat_unidades", "cat_unidades.id_unidad = usuarios.id_unidad", "left");
             $usuarios->where("correo", $data["correo"]);
 
             $result = $usuarios->get()->getRowObject(); // Datos del usuario
@@ -42,18 +38,13 @@ class CuentaModel extends Model
 
                         $session_Data = [
                             "id_usuario"           => $result->id_usuario,
-                            "id_coordinacion"      => $result->id_coordinacion,
-                            "coordinacion"         => $result->coordinacion,
                             "id_direccion"         => $result->id_direccion ?? '0',
                             "direccion"            => $result->direccion ?? '',
-                            "id_unidad"            => $result->id_unidad ?? '0',
-                            "unidad"               => $result->unidad ?? '',
                             "nombres"              => $result->nombres,
                             "ape_paterno"          => $result->ape_paterno,
                             "ape_materno"          => $result->ape_materno,
                             "correo"               => $result->correo,
                             "perfil"               => $result->perfil,
-                            "telefono"             => $result->telefono,
                             "permisos"             => $this->get_permisos($result->id_usuario),
                             "is_logged"            => true
                         ];
@@ -146,24 +137,4 @@ class CuentaModel extends Model
         //Hacer algo cuando se deslogueee
     }
 
-    public function prueba()
-    {
-        $datos_insert = [
-            'nombres' => 'Luis Felipe',
-            'ape_paterno' => 'Sánchez',
-            'ape_materno' => 'Buenrostro',
-            'telefono' => '3317458602',
-            'ext' => '4575',
-            'created_at' => date('d-m-Y H:i:s'),
-            'correo' => 'luisfelipe.sanchez@zapopan.gob.mx'
-        ];
-        $usuario = $this->db->table("usuarios");
-        echo $usuario->set($datos_insert)->getCompiledInsert();
-
-        $usuario = $this->db->table("usuarios");
-        echo $usuario->set($datos_insert)->insert();
-        echo '<br><br><br>';
-        $usuario = $this->db->table("usuarios");
-        echo json_encode($usuario->get()->getResultObject());
-    }
 }
