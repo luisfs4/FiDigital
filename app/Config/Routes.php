@@ -65,15 +65,19 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 
 	//Seccion Usuarios
 	$routes->get('Usuarios', 'Usuario::usuarios', ['filter' => 'Permiso_usuarios']);
-	
+
 	//Sección de expedientes
 	$routes->group('Expedientes', ['filter' => 'Permiso_expedientes'], static function ($routes) {
 		//Listado de expedientes
 		$routes->get('/', 'Expedientes::listado');
 		$routes->get('formulario', 'Expedientes::formulario');
 		$routes->post('get_by_ajax', 'Expedientes::get_by_ajax');
+		
+		$routes->group('sesiones', static function ($routes) {
+			$routes->post('post_sesion', 'Expedientes::post_sesion');
+			$routes->post('get_by_ajax', 'Expedientes::get_sesion_by_ajax');
+		});
 	});
-
 });
 
 //Usuarios

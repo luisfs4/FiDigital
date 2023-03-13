@@ -8,17 +8,17 @@ use App\Models\ExpedienteModel;
 class Expedientes extends BaseController
 {
 	protected $session;
-    protected $db;
-    protected $UsuarioModel;
+	protected $db;
+	protected $UsuarioModel;
 
-    public function __construct()
-    {
-        $this->session =  \Config\Services::session();
-        $this->db      = \Config\Database::connect();
+	public function __construct()
+	{
+		$this->session =  \Config\Services::session();
+		$this->db      = \Config\Database::connect();
 
-        //Cargar modelos
-        $this->ExpedienteModel    = new ExpedienteModel();
-    }
+		//Cargar modelos
+		$this->ExpedienteModel    = new ExpedienteModel();
+	}
 
 	public function listado()
 	{
@@ -32,6 +32,9 @@ class Expedientes extends BaseController
 			'scripts' => [
 				0 => [
 					'src' => base_url('js/panel/expedientes/listado.js')
+				],
+				1 => [
+					'src' => base_url('js/panel/expedientes/sesiones.js')
 				]
 			]
 
@@ -59,33 +62,63 @@ class Expedientes extends BaseController
 		];
 
 		//Data para formulario
-        $data_formulario = [
-            'titulo' => 'Crear punto',
-            'Subtitulo' => ''
-        ];
+		$data_formulario = [
+			'titulo' => 'Crear punto',
+			'Subtitulo' => ''
+		];
 
 		//Imprimir vista
 		echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/expedientes/formulario', $data_formulario) . view('panel/base/footer', $scripts_view);
 	}
 
-  	/**
-     * Obtiene todos los resultados basado en los filtros
-     *
-     * @param data_filtros[]: array de valores para filtrar
-     */
+	/**
+	 * Obtiene todos los resultados basado en los filtros
+	 *
+	 * @param data_filtros[]: array de valores para filtrar
+	 */
 
-	 public function get_by_ajax()
-	 {
-		 if ($this->request->isAJAX()) {
-			 $data_filtros = $this->request->getPost();
-			 if ($response = $this->ExpedienteModel->get_expedientes($data_filtros)) {
-				 $this->response->setStatusCode(200);
-				 return $this->response->setJSON($response);
-			 } else {
-				 $this->response->setStatusCode(204);
-			 }
-		 } else {
-			 throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-		 }
-	 }
+	public function get_by_ajax()
+	{
+		if ($this->request->isAJAX()) {
+			$data_filtros = $this->request->getPost();
+			if ($response = $this->ExpedienteModel->get_expedientes($data_filtros)) {
+				$this->response->setStatusCode(200);
+				return $this->response->setJSON($response);
+			} else {
+				$this->response->setStatusCode(204);
+			}
+		} else {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+	}
+
+	public function get_sesion_by_ajax()
+	{
+		if ($this->request->isAJAX()) {
+			$data_filtros = $this->request->getPost();
+			if ($response = $this->ExpedienteModel->get_sesion_by_ajax($data_filtros)) {
+				$this->response->setStatusCode(200);
+				return $this->response->setJSON($response);
+			} else {
+				$this->response->setStatusCode(204);
+			}
+		} else {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+	}
+
+	public function post_sesion()
+	{
+		if ($this->request->isAJAX()) {
+			$data_filtros = $this->request->getPost();
+			if ($response = $this->ExpedienteModel->post_sesion($data_filtros)) {
+				$this->response->setStatusCode(200);
+				return $this->response->setJSON($response);
+			} else {
+				$this->response->setStatusCode(403);
+			}
+		} else {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+	}
 }

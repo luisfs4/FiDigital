@@ -86,7 +86,7 @@ $(document).ready(async () => {
             {
                 "mData": "logged_at",
                 "mRender": function (data, type, row) {
-                    return `<span class="text-xs font-weight-bold">${formatDate(data) ?? 'Nunca'}</span>`;
+                    return `<span class="text-xs font-weight-bold">${data ?? 'Nunca'}</span>`;
                 }
             },
             {
