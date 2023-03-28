@@ -32,7 +32,7 @@ class Database extends Config
      */
 	public $default = [
 		'DSN'      => '',
-		'hostname' => '34.73.92.213',
+		'hostname' => 'localhost',
 		'username' => 'userBD',
 		'password' => 'R3t0.$reto',
 		'database' => 'fidigital',

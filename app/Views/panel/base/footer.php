@@ -34,14 +34,14 @@ echo script_tag('https://code.jquery.com/jquery-3.5.1.min.js');
 echo script_tag('https://code.jquery.com/ui/1.13.1/jquery-ui.min.js');
 
 //Dashboard
-echo script_tag(base_url('vendors/boostrap_lib/js/core/popper.min.js'));
-echo script_tag(base_url('vendors/boostrap_lib/js/core/bootstrap.min.js'));
-echo script_tag(base_url('vendors/boostrap_lib/js/plugins/perfect-scrollbar.min.js'));
-echo script_tag(base_url('vendors/boostrap_lib/js/plugins/smooth-scrollbar.min.js'));
-echo script_tag(base_url('vendors/boostrap_lib/js/plugins/chartjs.min.js'));
+echo script_tag(base_url('public/vendors/boostrap_lib/js/core/popper.min.js'));
+echo script_tag(base_url('public/vendors/boostrap_lib/js/core/bootstrap.min.js'));
+echo script_tag(base_url('public/vendors/boostrap_lib/js/plugins/perfect-scrollbar.min.js'));
+echo script_tag(base_url('public/vendors/boostrap_lib/js/plugins/smooth-scrollbar.min.js'));
+echo script_tag(base_url('public/vendors/boostrap_lib/js/plugins/chartjs.min.js'));
 
 // Libreria SWEET ALERT
-echo script_tag('js/librerias/sweetalert2.all.min.js');
+echo script_tag('public/js/librerias/sweetalert2.all.min.js');
 
 // Libreria Intro JS
 echo script_tag('https://unpkg.com/intro.js/minified/intro.min.js');
@@ -50,11 +50,11 @@ echo script_tag('https://unpkg.com/intro.js/minified/intro.min.js');
 echo script_tag('https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js');
 
 //Libreria boostrap_lib
-echo script_tag(base_url('vendors/boostrap_lib/js/dashboard.min.js?v=1.0.6'));
+echo script_tag(base_url('public/vendors/boostrap_lib/js/dashboard.min.js?v=1.0.6'));
 
 //Libreria Parsley
-echo script_tag(base_url('vendors/parsley/parsley.min.js'));
-echo script_tag(base_url('vendors/parsley/es.js'));
+echo script_tag(base_url('public/vendors/parsley/parsley.min.js'));
+echo script_tag(base_url('public/vendors/parsley/es.js'));
 
 //Libreria Datatable
 echo script_tag('https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js');
@@ -70,7 +70,7 @@ echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpic
 echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js');
 
 // JS general
-echo script_tag('js/app.js');
+echo script_tag('public/js/app.js');
 
 if (!empty($scripts)) {
 	foreach ($scripts as $key => $script) {

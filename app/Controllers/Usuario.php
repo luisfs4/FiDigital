@@ -34,7 +34,7 @@ class Usuario extends BaseController
         $scripts_view = [
             'scripts' => [
                 0 => [
-                    'src' => base_url('js/panel/usuarios.js')
+                    'src' => base_url('public/js/panel/usuarios.js')
                 ]
             ]
         ];
@@ -52,7 +52,7 @@ class Usuario extends BaseController
         $scripts_view = [
             'scripts' => [
                 0 => [
-                    'src' => base_url('js/panel/usuarios.js')
+                    'src' => base_url('public/js/panel/usuarios.js')
                 ]
             ]
         ];

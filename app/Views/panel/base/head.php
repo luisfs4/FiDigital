@@ -27,15 +27,15 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 
     <!-- Nucleo Icons -->
-    <link href="<?= base_url('vendors/boostrap_lib/css/nucleo-icons.css'); ?>" rel="stylesheet" />
-    <link href="<?= base_url('vendors/boostrap_lib/css/nucleo-svg.css'); ?>" rel="stylesheet" />
+    <link href="<?= base_url('public/vendors/boostrap_lib/css/nucleo-icons.css'); ?>" rel="stylesheet" />
+    <link href="<?= base_url('public/vendors/boostrap_lib/css/nucleo-svg.css'); ?>" rel="stylesheet" />
 
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link href="<?= base_url('vendors/boostrap_lib/css/nucleo-svg.css'); ?>" rel="stylesheet" />
+    <link href="<?= base_url('public/vendors/boostrap_lib/css/nucleo-svg.css'); ?>" rel="stylesheet" />
 
     <!-- CSS Dashboard -->
-    <link id="pagestyle" href="<?= base_url('vendors/boostrap_lib/css/dashboard.css'); ?>" rel="stylesheet" />
+    <link id="pagestyle" href="<?= base_url('public/vendors/boostrap_lib/css/dashboard.css'); ?>" rel="stylesheet" />
 
     <!-- Intro Js -->
     <link href="https://unpkg.com/intro.js/minified/introjs.min.css" rel="stylesheet" type="text/css" />
@@ -44,10 +44,10 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- CSS Principal -->
-    <link href="<?= base_url('css/estilos.css?v=').date('YmdHis'); ?>" rel="stylesheet" />
+    <link href="<?= base_url('public/css/estilos.css?v=').date('YmdHis'); ?>" rel="stylesheet" />
     
     <!-- CSS Versión Moviles -->
-    <link href="<?= base_url('css/moviles.css?v=').date('YmdHis'); ?>" rel="stylesheet" />
+    <link href="<?= base_url('public/css/moviles.css?v=').date('YmdHis'); ?>" rel="stylesheet" />
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="<?=base_url('imagenes/favicon/apple-touch-icon.png')?>">

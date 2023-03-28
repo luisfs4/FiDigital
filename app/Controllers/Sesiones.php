@@ -59,13 +59,13 @@ class Sesiones extends BaseController
 			"ruta" => 'Listado de sesiones',
 			'scripts' => [
 				0 => [
-					'src' => base_url('js/panel/sesiones/listado.js')
+					'src' => base_url('public/js/panel/sesiones/listado.js')
 				],
 				1 => [
-					'src' => base_url('js/panel/sesiones/sesiones.js')
+					'src' => base_url('public/js/panel/sesiones/sesiones.js')
 				],
 				2 => [
-					'src' => base_url('js/panel/sesiones/puntos.js')
+					'src' => base_url('public/js/panel/sesiones/puntos.js')
 				]
 			]
 		];
@@ -85,10 +85,10 @@ class Sesiones extends BaseController
 			"puntos" => $this->get_puntos([]),
 			'scripts' => [
 				0 => [
-					'src' => base_url('js/panel/sesiones/formulario.js')
+					'src' => base_url('public/js/panel/sesiones/formulario.js')
 				],
 				1 => [
-					'src' => base_url('js/librerias/multi_step.js')
+					'src' => base_url('public/js/librerias/multi_step.js')
 				]
 			]
 		];
@@ -108,7 +108,7 @@ class Sesiones extends BaseController
 		$data_view = [
 			"ruta" => 'Listado de sesiones',
 			'scripts' => [
-				['src' => base_url('js/panel/sesiones/detalle.js')]
+				['src' => base_url('public/js/panel/sesiones/detalle.js')]
 			]
 		];
 

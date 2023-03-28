@@ -19,7 +19,7 @@ class Inicio extends BaseController
 		$scripts_view = [
 			'scripts' => [
 				0 => [
-					'src' => base_url('js/vistas/busqueda.js')
+					'src' => base_url('public/js/vistas/busqueda.js')
 				]
 			]
 
