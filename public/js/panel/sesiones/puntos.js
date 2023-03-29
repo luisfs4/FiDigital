@@ -23,16 +23,7 @@ const crear_punto = async (json_editar = []) => {
         success: function (respuesta, text, xhr) {
 
             if (xhr.status == 204) {
-                Swal.fire({
-                    title: '¡Hay un problema!',
-                    text: 'No se encontraron puntos',
-                    icon: 'error',
-                    buttonsStyling: false,
-                    customClass: {
-                        confirmButton: "btn bg-gradient-danger me-3",
-                        cancelButton: "btn bg-gradient-secondary"
-                    }
-                });
+                
             } else if (xhr.status == 200) {
                 respuesta.forEach(sesion => {
                     options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
@@ -158,16 +149,6 @@ const crear_punto = async (json_editar = []) => {
                     success: function (respuesta, text, xhr) {
 
                         if (xhr.status == 204) {
-                            Swal.fire({
-                                title: '¡Hay un problema!',
-                                text: 'No se encontraron puntos',
-                                icon: 'error',
-                                buttonsStyling: false,
-                                customClass: {
-                                    confirmButton: "btn bg-gradient-danger me-3",
-                                    cancelButton: "btn bg-gradient-secondary"
-                                }
-                            });
                         } else if (xhr.status == 200) {
                             $('.input_punto[name="padre_id"]').empty();
                             $('.input_punto[name="padre_id"]').append(`<option value="">Ninguno</option>`);
