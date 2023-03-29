@@ -22,9 +22,7 @@ const crear_punto = async (json_editar = []) => {
         type: 'POST',
         success: function (respuesta, text, xhr) {
 
-            if (xhr.status == 204) {
-                
-            } else if (xhr.status == 200) {
+            if (xhr.status == 200) {                
                 respuesta.forEach(sesion => {
                     options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
                 });
@@ -148,9 +146,9 @@ const crear_punto = async (json_editar = []) => {
                     type: 'POST',
                     success: function (respuesta, text, xhr) {
 
-                        if (xhr.status == 204) {
-                        } else if (xhr.status == 200) {
-                            $('.input_punto[name="padre_id"]').empty();
+                        $('.input_punto[name="padre_id"]').empty();
+
+                        if (xhr.status == 200) {
                             $('.input_punto[name="padre_id"]').append(`<option value="">Ninguno</option>`);
 
                             respuesta.forEach(punto => {
