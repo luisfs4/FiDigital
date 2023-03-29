@@ -33,7 +33,7 @@ class Database extends Config
 	public $default = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
-		'username' => 'userBD',
+		'username' => 'root',
 		'password' => 'R3t0.$reto',
 		'database' => 'fidigital',
 		'DBDriver' => 'MySQLi',
