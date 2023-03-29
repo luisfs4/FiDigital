@@ -64,7 +64,7 @@ $('.btn_acceder').click((e) => {
             ) {
                 $.ajax({
                     type: 'post',
-                    url: '/Cuenta/post_login',
+                    url: '/FiDigital/Cuenta/post_login',
                     data: {
                         correo: $('.correo').val(),
                         contrasena: $('.contrasena').val()

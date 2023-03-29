@@ -164,7 +164,7 @@ const crear_expediente = () => {
             if (respuesta.value) {
 
                 $.ajax({
-                    url: '/panel/sesiones/expedientes/post_expediente',
+                    url: '/FiDigital/panel/sesiones/expedientes/post_expediente',
                     data: expediente_form,
                     processData: false,
                     contentType: false,
@@ -206,7 +206,7 @@ $(document).ready(() => {
         guardar_pdf.append('documento', $(e.currentTarget)[0].files[0]);
 
         await $.ajax({
-            url: '/panel/sesionesardar_documento',
+            url: '/FiDigital/panel/sesionesardar_documento',
             data: guardar_pdf,
             processData: false,
             contentType: false,

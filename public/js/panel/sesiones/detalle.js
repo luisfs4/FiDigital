@@ -155,7 +155,7 @@ const get_seguimiento = (id_sesion) => {
 
     $.ajax({
         type: 'post',
-        url: '/panel/sesiones/get_seguimiento_by_ajax',
+        url: '/FiDigital/panel/sesiones/get_seguimiento_by_ajax',
         data: {
             id_sesion
         },
@@ -253,7 +253,7 @@ const get_anexos = () => {
 
     $.ajax({
         type: 'post',
-        url: '/panel/quejas/get_anexos_by_ajax',
+        url: '/FiDigital/panel/quejas/get_anexos_by_ajax',
         data: {
             id_expediente
         },
@@ -372,7 +372,7 @@ const post_seguimiento = (texto) => {
 
     $.ajax({
         type: 'post',
-        url: '/panel/quejas/seguimiento/post_seguimiento',
+        url: '/FiDigital/panel/quejas/seguimiento/post_seguimiento',
         data: formdata,
         cache: false,
         contentType: false,

@@ -17,7 +17,7 @@ const crear_punto = async (json_editar = []) => {
     let options_padre = '';
 
     await $.ajax({
-        url: '/panel/sesiones/get_by_ajax',
+        url: '/FiDigital/panel/sesiones/get_by_ajax',
         dataType: 'JSON',
         type: 'POST',
         success: function (respuesta, text, xhr) {
@@ -149,7 +149,7 @@ const crear_punto = async (json_editar = []) => {
                 options_padre = '';
 
                 await $.ajax({
-                    url: '/panel/sesiones/puntos/get_by_ajax',
+                    url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
                     dataType: 'JSON',
                     data: {
                         id_sesion: valor
@@ -197,7 +197,7 @@ const crear_punto = async (json_editar = []) => {
 
         if (result.isConfirmed) { //Validar clic en boton de aceptar
             await $.ajax({
-                url: '/panel/sesiones/puntos/post_punto',
+                url: '/FiDigital/panel/sesiones/puntos/post_punto',
                 data: {
                     id_punto: result.value.id_punto,
                     jerarquia: result.value.jerarquia,
@@ -239,7 +239,7 @@ const crear_punto = async (json_editar = []) => {
 const editar_punto = async (id_sesion) => {
 
     await $.ajax({
-        url: '/panel/sesionessiones/get_by_ajax',
+        url: '/FiDigital/panel/sesionessiones/get_by_ajax',
         data: {
             id_sesion
         },
@@ -306,7 +306,7 @@ function render_puntos(hierarchy, level = 0) {
 
 const get_puntos = (id_sesion) => {
     $.ajax({
-        url: '/panel/puntos',
+        url: '/FiDigital/panel/puntos',
         data: {
             id_sesion
         },

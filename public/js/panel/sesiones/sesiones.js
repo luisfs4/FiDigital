@@ -118,7 +118,7 @@ const crear_sesion = async (json_editar = []) => {
 
         if (result.isConfirmed) { //Validar clic en boton de aceptar
             await $.ajax({
-                url: '/panel/sesiones/post_sesion',
+                url: '/FiDigital/panel/sesiones/post_sesion',
                 data: {
                     id_sesion: result.value.id_sesion,
                     numero_sesion: result.value.numero_sesion,
@@ -160,7 +160,7 @@ const crear_sesion = async (json_editar = []) => {
 const editar_sesion = async (id_sesion) => {
 
     await $.ajax({
-        url: '/panel/sesiones/sesiones/get_by_ajax',
+        url: '/FiDigital/panel/sesiones/sesiones/get_by_ajax',
         data: {
             id_sesion
         },
