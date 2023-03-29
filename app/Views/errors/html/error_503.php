@@ -20,7 +20,7 @@ require_once('../app/Views/panel/cuenta/menu.php');
                 </button>
             </div>
             <div class="col-lg-4 ms-auto my-auto position-relative">
-                <img class="w-100 position-relative" src="<?= base_url('imagenes/gerundio_cables.webp') ?>" alt="404-error">
+                <img class="w-100 position-relative" src="<?= base_url('public/imagenes/gerundio_cables.webp') ?>" alt="404-error">
             </div>
         </div>
     </div>
