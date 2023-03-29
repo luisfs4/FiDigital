@@ -43,7 +43,7 @@ class Sesiones extends BaseController
 
 		$response = $this->SesionModel->$method($data_filtros);
 
-		return $this->response->setStatusCode($response ? 200 : 403)->setJSON($response);
+		return $this->response->setStatusCode($response ? 200 : 204)->setJSON($response);
 	}
 
 	public function sendResponse($data_filtros, $method)
