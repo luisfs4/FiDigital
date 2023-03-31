@@ -6,8 +6,7 @@
                     Copyright © 
                     <script>
                         document.write(new Date().getFullYear())
-                    </script> 
-                    -&nbsp;Gobierno de Zapopan | Dirección de Innovación Gubernamental
+                    </script>
                 </p>
             </div>
         </div>

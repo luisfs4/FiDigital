@@ -12,7 +12,7 @@
 			<div class="copyright text-center text-sm text-muted mb-5">
 				© Zapopan <script>
 					document.write(new Date().getFullYear())
-				</script>&nbsp;|&nbsp;Dirección de Innovación Gubernamental
+				</script>
 			</div>
 		</div>
 	</div>
