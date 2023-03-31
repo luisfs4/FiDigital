@@ -16,7 +16,7 @@ $(document).ready(async () => {
             }
         ],
         ajax: {
-            url: '/panel/sesiones/get_by_ajax',
+            url: '/FiDigital/panel/sesiones/get_by_ajax',
             type: 'POST',
             data: function (data) {
                 // Append formdata

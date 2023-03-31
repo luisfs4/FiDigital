@@ -17,23 +17,12 @@ const crear_punto = async (json_editar = []) => {
     let options_padre = '';
 
     await $.ajax({
-        url: '/panel/sesiones/get_by_ajax',
+        url: '/FiDigital/panel/sesiones/get_by_ajax',
         dataType: 'JSON',
         type: 'POST',
         success: function (respuesta, text, xhr) {
 
-            if (xhr.status == 204) {
-                Swal.fire({
-                    title: '¡Hay un problema!',
-                    text: 'No se encontraron puntos',
-                    icon: 'error',
-                    buttonsStyling: false,
-                    customClass: {
-                        confirmButton: "btn bg-gradient-danger me-3",
-                        cancelButton: "btn bg-gradient-secondary"
-                    }
-                });
-            } else if (xhr.status == 200) {
+            if (xhr.status == 200) {                
                 respuesta.forEach(sesion => {
                     options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
                 });
@@ -149,7 +138,7 @@ const crear_punto = async (json_editar = []) => {
                 options_padre = '';
 
                 await $.ajax({
-                    url: '/panel/sesiones/puntos/get_by_ajax',
+                    url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
                     dataType: 'JSON',
                     data: {
                         id_sesion: valor
@@ -157,19 +146,9 @@ const crear_punto = async (json_editar = []) => {
                     type: 'POST',
                     success: function (respuesta, text, xhr) {
 
-                        if (xhr.status == 204) {
-                            Swal.fire({
-                                title: '¡Hay un problema!',
-                                text: 'No se encontraron puntos',
-                                icon: 'error',
-                                buttonsStyling: false,
-                                customClass: {
-                                    confirmButton: "btn bg-gradient-danger me-3",
-                                    cancelButton: "btn bg-gradient-secondary"
-                                }
-                            });
-                        } else if (xhr.status == 200) {
-                            $('.input_punto[name="padre_id"]').empty();
+                        $('.input_punto[name="padre_id"]').empty();
+
+                        if (xhr.status == 200) {
                             $('.input_punto[name="padre_id"]').append(`<option value="">Ninguno</option>`);
 
                             respuesta.forEach(punto => {
@@ -197,7 +176,7 @@ const crear_punto = async (json_editar = []) => {
 
         if (result.isConfirmed) { //Validar clic en boton de aceptar
             await $.ajax({
-                url: '/panel/sesiones/puntos/post_punto',
+                url: '/FiDigital/panel/sesiones/puntos/post_punto',
                 data: {
                     id_punto: result.value.id_punto,
                     jerarquia: result.value.jerarquia,
@@ -239,7 +218,7 @@ const crear_punto = async (json_editar = []) => {
 const editar_punto = async (id_sesion) => {
 
     await $.ajax({
-        url: '/panel/sesionessiones/get_by_ajax',
+        url: '/FiDigital/panel/sesionessiones/get_by_ajax',
         data: {
             id_sesion
         },
@@ -306,7 +285,7 @@ function render_puntos(hierarchy, level = 0) {
 
 const get_puntos = (id_sesion) => {
     $.ajax({
-        url: '/panel/puntos',
+        url: '/FiDigital/panel/puntos',
         data: {
             id_sesion
         },

@@ -12,8 +12,6 @@ if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
     exit($message);
 }
 
-ini_set('sqlsrv.ClientBufferMaxKBSize','524288'); // Setting to 512M
-
 // Path to the front controller (this file)
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
@@ -31,7 +29,7 @@ chdir(FCPATH);
 
 // Load our paths config file
 // This is the line that might need to be changed, depending on your folder structure.
-require FCPATH . '../app/Config/Paths.php';
+require FCPATH . 'app/Config/Paths.php';
 // ^^^ Change this line if you move your application folder
 
 $paths = new Config\Paths();

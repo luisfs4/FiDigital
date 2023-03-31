@@ -56,7 +56,7 @@ $(document).ready(async () => {
 
         },
         ajax: {
-            url: '/usuarios/get_by_ajax',
+            url: '/FiDigital/usuarios/get_by_ajax',
             type: 'POST',
             data: function (data) {
                 // Append formdata
@@ -130,7 +130,7 @@ $(document).ready(async () => {
                 let id_usuario = $(this).attr('id_usuario');
 
                 $.ajax({
-                    url: '/usuarios/get_by_id_ajax',
+                    url: '/FiDigital/usuarios/get_by_id_ajax',
                     data: {
                         id_usuario
                     },
@@ -152,7 +152,7 @@ $(document).ready(async () => {
                 let id_usuario = $(this).attr('id_usuario');
 
                 await $.ajax({
-                    url: '/usuarios/post_disable_by_ajax',
+                    url: '/FiDigital/usuarios/post_disable_by_ajax',
                     data: {
                         id_usuario
                     },
@@ -299,7 +299,7 @@ $(document).ready(async () => {
         let id_direccion = $(this).attr('id_direccion');
 
         await $.ajax({
-            url: '/usuarios/get_unidad_by_ajax',
+            url: '/FiDigital/usuarios/get_unidad_by_ajax',
             data: {
                 id_direccion
             },
@@ -352,7 +352,7 @@ $(document).ready(async () => {
         } 
 
         $.ajax({
-            url: '/cuenta/cambiar_contrasena',
+            url: '/FiDigital/cuenta/cambiar_contrasena',
             data: {
                 cactual: $('.cactual').val(),
                 contrasena: $('.contrasena_1').val()

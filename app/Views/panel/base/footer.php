@@ -2,7 +2,7 @@
 	<div class="container-fluid text-center">
 		<div class="row align-items-center justify-content-center">
 			<div class="col-lg-3 col-md-4 col-6 mb-3">
-				<img class="w-100 opacity-9 px-6" src="<?= base_url('imagenes/logo.png'); ?>" alt="logo">
+				<img class="w-100 opacity-9 px-6" src="<?= base_url('public/imagenes/logo.png'); ?>" alt="logo">
 			</div>
 			<div class="col-lg-3 col-md-4 col-6 mb-3">
 				<img class="w-100 opacity-9" src="https://servicios.zapopan.gob.mx:8000/wwwportal/publicfiles/inline-images/iniciozapopan2019-1915x215_3_3.png" alt="logo">

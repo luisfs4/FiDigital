@@ -1,7 +1,7 @@
 <body class="g-sidenav-show  bg-gray-100" style="min-height: 100vh;">
 	<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " data-color="danger" id="sidenav-main">
 		<div class="sidenav-header d-flex">
-			<img src="<?= base_url('imagenes/logo.png'); ?>" class="navbar-brand-img" alt="main_logo" style="width: 100%;max-height: unset;object-fit: contain;object-position: left center;padding-left: 1rem;">
+			<img src="<?= base_url('public/imagenes/logo.png'); ?>" class="navbar-brand-img" alt="main_logo" style="width: 100%;max-height: unset;object-fit: contain;object-position: left center;padding-left: 1rem;">
 		</div>
 		<hr class="horizontal dark mt-0">
 		<div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
@@ -116,7 +116,7 @@
 									<a class="dropdown-item border-radius-md" href="javascript:;">
 										<div class="d-flex py-1">
 											<div class="my-auto">
-												<img src="<?= base_url('imagenes/mejora_regulatoria.png'); ?>" class="avatar avatar-sm  me-3'); ?>">
+												<img src="<?= base_url('public/imagenes/mejora_regulatoria.png'); ?>" class="avatar avatar-sm  me-3'); ?>">
 											</div>
 											<div class="d-flex flex-column justify-content-center">
 												<h6 class="text-sm font-weight-normal mb-1">
