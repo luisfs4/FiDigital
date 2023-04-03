@@ -1,20 +1,20 @@
 <div class="container-fluid pt-2 pb-4">
     <div class="row">
 
-        <div class="btn btn-warning ms-auto me-4 w-auto text-white bg-gradient-danger">
-            <div class="text-white btn_nueva_sesion">
+        <div class="btn btn-warning ms-auto me-4 w-auto text-white bg-gradient-danger btn_nueva_sesion">
+            <div class="text-white">
                 Nueva sesión&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
             </div>
         </div>
 
-        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger">
-            <div class="text-white btn_nuevo_punto">
+        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger btn_nuevo_punto">
+            <div class="text-white">
                 Nuevo punto&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
             </div>
         </div>
 
-        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger">
-            <div class="text-white btn_crear_proveedor">
+        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger btn_crear_proveedor">
+            <div class="text-white">
                 Nuevo proveedor&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
             </div>
         </div>
