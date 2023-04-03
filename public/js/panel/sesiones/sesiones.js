@@ -143,6 +143,10 @@ const crear_sesion = async (json_editar = []) => {
                             }
                         });
 
+                        if(tabla_sesiones){
+                            tabla_sesiones.ajax.reload();
+                        }
+
                         return true;
                     }
                 },
@@ -160,7 +164,7 @@ const crear_sesion = async (json_editar = []) => {
 const editar_sesion = async (id_sesion) => {
 
     await $.ajax({
-        url: '/FiDigital/panel/sesiones/sesiones/get_by_ajax',
+        url: '/FiDigital/panel/sesiones/get_by_ajax',
         data: {
             id_sesion
         },
@@ -192,5 +196,5 @@ $(()=>{
     $('.btn_nueva_sesion').click((e)=>{
         crear_sesion();
     })
-    
+
 })

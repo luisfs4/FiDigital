@@ -1,6 +1,8 @@
+let tabla_sesiones;
+
 $(document).ready(async () => {
 
-    let tabla_quejas = await $('.tabla_sesiones').DataTable({
+    tabla_sesiones = await $('.tabla_sesiones').DataTable({
         dom: 'Blrtip',
         buttons: [{
                 extend: 'excelHtml5',
@@ -61,7 +63,7 @@ $(document).ready(async () => {
             `);
 
 
-            tabla_quejas.buttons().container().appendTo('.contenedor_filtros');
+            tabla_sesiones.buttons().container().appendTo('.contenedor_filtros');
             $('.dt-buttons .dt-button').first().addClass('btn btn-icon btn-xs mx-1 my-auto btn-success bg-gradient-success').html(`<span class="btn-inner--icon"><i class="fas fa-file-excel"></i></span>`)
             $('.dt-buttons .dt-button').last().addClass('btn btn-icon btn-xs mx-1 my-auto btn-danger bg-gradient-danger').html(`<span class="btn-inner--icon"><i class="fas fa-file-pdf"></i></span>`)
         },
@@ -129,6 +131,9 @@ $(document).ready(async () => {
                                 <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
                                     <i class="fas fa-list-ol text-white" aria-hidden="true"></i>
                                 </div>
+                                <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded editar_sesion cursor-pointer" id_sesion="${row.id_sesion}">
+                                    <i class="fas fa-edit text-white" aria-hidden="true"></i>
+                                </div>
                             </div>
                             `;
                 }
@@ -136,7 +141,7 @@ $(document).ready(async () => {
         ],
     });
 
-    tabla_quejas.on('preDraw', function () {
+    tabla_sesiones.on('preDraw', function () {
             startTime = new Date().getTime();
             $('.btn_get_modificaciones').get()
         })
@@ -150,12 +155,17 @@ $(document).ready(async () => {
             $('.detalle_sesion').click((e) => {
                 get_puntos($(e.currentTarget).attr('id_sesion'));
             })
+
+            $('.editar_sesion').click((e) => {
+                editar_sesion($(e.currentTarget).attr('id_sesion'));
+            })
+
         });
 
 
     //Inicializar buscador
     $('.busqueda_nav').keyup(function () {
-        tabla_quejas.search($(this).val()).draw();
+        tabla_sesiones.search($(this).val()).draw();
         //console.log($(this).val());
     });
 
