@@ -159,6 +159,42 @@ class SesionModel extends Model
 		return $consulta->get()->getResultObject();
 	}
 
+	public function post_proveedor($data)
+	{
+		$sesiones = $this->db->table("proveedores");
+
+		if (isset($data['id_proveedor'])) {
+			$id_proveedor = $data['id_proveedor'];
+			unset($data['id_proveedor']);
+		}
+
+		if (empty($id_proveedor)) {
+
+			$data += [
+				"created_at" => date('Y-m-d H:i:s'),
+				"created_by" => $this->session->id_usuario
+			];
+
+			$bandera = $sesiones->insert($data);
+		} else {
+
+			$data += [
+				"updated_at" => date('Y-m-d H:i:s'),
+				"updated_by" => $this->session->id_usuario
+			];
+
+			$sesiones->where('id_proveedor', $id_proveedor);
+			$sesiones->set($data);
+			$bandera = $sesiones->update();
+		}
+
+		if ($bandera) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function post_expediente($data)
 	{
 		$sesiones = $this->db->table("expedientes");

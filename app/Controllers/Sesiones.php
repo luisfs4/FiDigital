@@ -165,6 +165,11 @@ class Sesiones extends BaseController
 		return $this->sendAjaxResponse($this->request->getPost(), 'get_seguimiento');
 	}
 
+	public function agregar_proveedor()
+	{
+		return $this->sendAjaxResponse($this->request->getPost(), 'post_proveedor');
+	}
+
 	public function post_sesion()
 	{
 		return $this->sendAjaxResponse($this->request->getPost(), 'post_sesion');

@@ -67,6 +67,12 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	//Seccion Usuarios
 	$routes->get('Usuarios', 'Usuario::usuarios', ['filter' => 'Permiso_usuarios']);
 
+	//Seccion proveedores
+	$routes->group('proveedores', static function ($routes) {
+		$routes->post('agregar', 'Sesiones::agregar_proveedor');
+
+	});
+
 	//Sección de sesiones
 	$routes->group('Sesiones', ['filter' => 'Permiso_sesiones'], static function ($routes) {
 		//Listado de sesiones

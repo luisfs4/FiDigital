@@ -14,6 +14,12 @@
         </div>
 
         <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger">
+            <div class="text-white btn_crear_proveedor">
+                Nuevo proveedor&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
+            </div>
+        </div>
+
+        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger">
             <a href="/fidigital/panel/sesiones/formulario" class=" text-white">
                 Nuevo expediente&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
             </a>

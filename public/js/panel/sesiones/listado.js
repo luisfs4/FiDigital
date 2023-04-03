@@ -72,7 +72,7 @@ $(document).ready(async () => {
         columns: [{
                 "mData": "nombre_sesion",
                 "mRender": function (data, type, row) {
-                    
+
                     return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
                                 <div>
                                     <button class="btn btn-link text-gradient p-0 m-0 text-dark">
@@ -147,7 +147,7 @@ $(document).ready(async () => {
             //Cambiar color paginacion
             $('#DataTables_Table_0_paginate .pagination').addClass('pagination-warning');
 
-            $('.detalle_sesion').click((e)=>{
+            $('.detalle_sesion').click((e) => {
                 get_puntos($(e.currentTarget).attr('id_sesion'));
             })
         });
@@ -188,4 +188,85 @@ $(document).ready(async () => {
         altFormat: "d/m/Y h:i K"
     });
 
+    $('.btn_crear_proveedor').click(function () {
+        evento_btn_proveedor();
+    });
+
 });
+
+const evento_btn_proveedor = () => {
+    console.log('se ejecuta');
+    Swal.fire({
+        title: 'Agregar proveedor',
+        html: `
+            <form id="formularioProveedor" class="px-2">
+                <div class="mb-3">
+                <label for="nombre_comercial" class="form-label">Nombre comercial</label>
+                <input placeholder="Escribe el nombre" type="text" class="form-control" id="nombre_comercial" name="nombre_comercial" required>
+                </div>
+                <div class="mb-3">
+                <label for="razon_social" class="form-label">Razón social</label>
+                <input type="text" class="form-control" placeholder="Escribe la razón social" id="razon_social" name="razon_social" required>
+                </div>
+            </form>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Agregar',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        reverseButtons: true,
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: "btn bg-gradient-danger ms-3",
+            cancelButton: "btn bg-gradient-secondary"
+        },
+        preConfirm: () => {
+            const nombre_comercial = Swal.getPopup().querySelector('#nombre_comercial');
+            const razon_social = Swal.getPopup().querySelector('#razon_social');
+
+            if(!$(nombre_comercial).parsley().isValid()){
+                $(nombre_comercial).parsley().validate();
+            }
+
+            if(!$(razon_social).parsley().isValid()){
+                $(razon_social).parsley().validate();
+            }
+
+            if (!nombre_comercial.value || !razon_social.value) {
+                Swal.showValidationMessage('Completa todos los campos');
+            }
+
+            return {
+                nombre_comercial: nombre_comercial.value,
+                razon_social: razon_social.value
+            }
+        }
+
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Llamada Ajax para agregar proveedor
+            $.ajax({
+                type: 'POST',
+                url: '/fidigital/panel/proveedores/agregar',
+                data: {
+                    nombre_comercial: result.value.nombre_comercial,
+                    razon_social: result.value.razon_social
+                },
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Proveedor agregado',
+                        text: response.message
+                    });
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseText
+                    });
+                }
+            });
+        }
+    });
+}
