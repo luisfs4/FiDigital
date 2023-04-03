@@ -59,7 +59,7 @@ const crear_punto = async (json_editar = []) => {
             <div class="col-lg-6">
                 <div class="form-group">
                     <label class="form-control-label"><i class="far fa-calendar-alt"></i> Padre:</label>
-                    <select required name="padre_id" class="input_punto form-control input-lg p-2 select2_swal">
+                    <select name="padre_id" class="input_punto form-control input-lg p-2 select2_swal">
                         <option value="">Ninguno</option>
                         ${options_padre}
                     </select>
