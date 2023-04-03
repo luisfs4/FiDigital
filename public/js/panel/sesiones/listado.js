@@ -224,11 +224,11 @@ const evento_btn_proveedor = () => {
             const nombre_comercial = Swal.getPopup().querySelector('#nombre_comercial');
             const razon_social = Swal.getPopup().querySelector('#razon_social');
 
-            if(!$(nombre_comercial).parsley().isValid()){
+            if (!$(nombre_comercial).parsley().isValid()) {
                 $(nombre_comercial).parsley().validate();
             }
 
-            if(!$(razon_social).parsley().isValid()){
+            if (!$(razon_social).parsley().isValid()) {
                 $(razon_social).parsley().validate();
             }
 
@@ -256,14 +256,26 @@ const evento_btn_proveedor = () => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Proveedor agregado',
-                        text: response.message
+                        text: response.message,
+                        confirmButtonText: 'Aceptar',
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: "btn bg-gradient-danger ms-3",
+                            cancelButton: "btn bg-gradient-secondary"
+                        }
                     });
                 },
                 error: function (xhr, status, error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: xhr.responseText
+                        text: xhr.responseText,
+                        confirmButtonText: 'Aceptar',
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: "btn bg-gradient-danger ms-3",
+                            cancelButton: "btn bg-gradient-secondary"
+                        }
                     });
                 }
             });
