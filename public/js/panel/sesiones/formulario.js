@@ -196,7 +196,7 @@ const crear_expediente = () => {
     }
 }
 
-$(document).ready(() => {
+$(document).ready(async () => {
 
     $('.input_expediente_ruta').change(async (e) => {
         let input = `[name=${$(e.currentTarget).attr('target-input')}]`
@@ -225,6 +225,58 @@ $(document).ready(() => {
         } else {
             $(target).removeClass('d-flex').hide(200);
         }
+    });
+
+    let options_sesion = '';
+
+    await $.ajax({
+        url: '/FiDigital/panel/sesiones/get_by_ajax',
+        dataType: 'JSON',
+        type: 'POST',
+        success: function (respuesta, text, xhr) {
+
+            if (xhr.status == 200) {
+                respuesta.forEach(sesion => {
+                    options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
+                });
+
+                $('.input_sesion').append(options_sesion).trigger("change");
+            }
+        }
+    }); // Fin ajax
+
+    $('.input_sesion').change(async (e) => {
+        let valor = $(e.currentTarget).children('option:selected').attr("numero_sesion");
+        $('.input_expediente[name="jerarquia"]').val(valor + ".");
+
+        await $.ajax({
+            url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
+            dataType: 'JSON',
+            data: {
+                id_sesion: valor,
+                sin_expediente: 1
+            },
+            type: 'POST',
+            success: function (respuesta, text, xhr) {
+
+                $('.input_expediente[name="id_punto"]').empty();
+
+                if (xhr.status == 200) {
+                    respuesta.forEach(punto => {
+                        $('.input_expediente[name="id_punto"]').append(`<option jerarquia="${punto.jerarquia}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
+                    });
+
+                } else {
+                    $('.input_expediente[name="id_punto"]').append(`<option value="">La sesión no contiene puntos</option>`);
+                }
+
+                $('.input_expediente[name="id_punto"]').trigger("change");
+            }
+        }); // Fin ajax
+    });
+
+    $('.input_expediente[name="id_punto"]').change((e) => {
+        //
     });
 
     /**

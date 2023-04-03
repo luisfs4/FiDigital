@@ -115,16 +115,18 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
+												<label for="id_punto" class="form-label">Sesión *</label>
+												<select class="select2 form-control input_sesion" required="required">
+													<option value="">Seleccona una opción</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-xxl-4 col-lg-6 col-sm-12">
+											<div class="form-group">
 												<label for="id_punto" class="form-label">Punto *</label>
 												<select name="id_punto" class="select2 form-control input_expediente" required="required">
 													<option value="">Seleccona una opción</option>
-													<?php
-
-													foreach ($puntos as $key => $value) {
-														echo '<option value="' . $value->id_punto . '">' . $value->jerarquia . ' ' . $value->nombre_punto . '</option>';
-													}
-
-													?>
 												</select>
 											</div>
 										</div>
@@ -132,7 +134,7 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="visitador_correo" class="form-label">Dirección *</label>
-												<select name="id_proveedor" class="form-control input_expediente" required="required">
+												<select name="id_direccion" class="form-control input_expediente" required="required">
 													<option value="">Seleccona una opción</option>
 													<?php
 
@@ -148,7 +150,7 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="visitador_correo" class="form-label">Programa *</label>
-												<select name="id_proveedor" class="form-control input_expediente" required="required">
+												<select name="id_programa" class="form-control input_expediente" required="required">
 													<option value="">Seleccona una opción</option>
 													<?php
 
@@ -161,15 +163,12 @@
 											</div>
 										</div>
 
-
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_perfil_visitador" class="form-label">CFDI *</label>
-												<input required type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_cfdi" target=".contenedor_ver_cfdi">
+												<label for="ruta_cfdi" class="form-label">CFDI *</label>
+												<input id="ruta_cfdi" required type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_cfdi" target=".contenedor_ver_cfdi">
 												<input type="hidden" class="form-control input_punto" name="ruta_cfdi">
-
 											</div>
-
 											<div class="col-lg-12 flex justify-content-end align-items-center ms-auto mt-2 contenedor_ver_cfdi" style="display: none;">
 												<a href="" target="_blank" class="btn btn-warning btn-sm flex align-items-center">
 													<i class="fas fa-eye me-2 pe-none" style="font-size: 14px;" aria-hidden="true"></i>Ver CFDI
@@ -180,8 +179,8 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Verificación *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_verificacion" target=".contenedor_ver_verificacion">
+												<label for="ruta_verificacion" class="form-label">Verificación *</label>
+												<input id="ruta_verificacion" type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_verificacion" target=".contenedor_ver_verificacion">
 												<input type="hidden" class="form-control input_punto" name="ruta_verificacion">
 
 											</div>
@@ -196,10 +195,10 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Estado de cuenta *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_edo_cuenta" target=".contenedor_ver_edo_cuenta">
+												<label for="ruta_edo_cuenta" class="form-label">Estado de cuenta *</label>
+												<input id="ruta_edo_cuenta" type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_edo_cuenta" target=".contenedor_ver_edo_cuenta">
 												<input type="hidden" class="form-control input_punto" name="ruta_edo_cuenta">
-
+												
 											</div>
 
 											<div class="col-lg-12 flex justify-content-end align-items-center ms-auto mt-2 contenedor_ver_edo_cuenta" style="display: none;">

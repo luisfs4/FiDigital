@@ -93,6 +93,10 @@ class SesionModel extends Model
 			$consulta->where('id_sesion', $data_filtros['id_sesion']);
 		}
 
+		if (!empty($data_filtros['sin_expediente'])) {
+			$consulta->where('id_expediente is null');
+		}
+
 		return $consulta->get()->getResultObject();
 	}
 
