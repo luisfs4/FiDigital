@@ -151,13 +151,13 @@ const card_expediente = async (id_expediente) => {
 }
 
 //Obtener seguimiento
-const get_seguimiento = (id_sesion) => {
+const get_seguimiento = () => {
 
     $.ajax({
         type: 'post',
         url: '/FiDigital/panel/sesiones/get_seguimiento_by_ajax',
         data: {
-            id_sesion
+            id_expediente
         },
         dataType: 'json',
         success: ((response) => {

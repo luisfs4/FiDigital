@@ -99,6 +99,26 @@ class SesionModel extends Model
 
 		return $consulta->get()->getResultObject();
 	}
+	
+    public function get_seguimiento($filtros)
+    {
+        $seguimientos = $this->db->table("seguimientos as s");
+        $seguimientos->select("s.*");
+        $seguimientos->select("s.created_by as id_usuario_msg");
+        $seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
+        $seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
+        $seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'inner');
+
+        if (isset($filtros['id_expediente'])) {
+            $seguimientos->where('s.id_expediente', $filtros['id_expediente']);
+        }
+
+        $seguimientos->orderBy('s.id_seguimiento');
+
+        $datos = $seguimientos->get()->getResultObject();
+
+        return $datos;
+    }
 
 	public function get_direcciones($data_filtros)
 	{
