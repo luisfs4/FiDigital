@@ -346,7 +346,12 @@ $(document).ready(async () => {
             Swal.fire({
                 title: 'Error',
                 text: 'Tu contraseña no cumple los requerimientos',
-                icon: 'error'
+                icon: 'error',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: "btn bg-gradient-danger me-3",
+                    cancelButton: "btn bg-gradient-secondary"
+                }
             })
             return false;
         } 

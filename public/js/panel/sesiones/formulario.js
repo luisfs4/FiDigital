@@ -105,7 +105,12 @@ const crear_expediente = () => {
         Swal.fire({
             title: 'Cambios registrados con éxito',
             text: 'Tus cambios serán validados por un administrador, es posible que los cambios tarden un tiempo en reflejarse',
-            icon: 'success'
+            icon: 'success',
+            buttonsStyling: false,
+            customClass: {
+                confirmButton: "btn bg-gradient-danger me-3",
+                cancelButton: "btn bg-gradient-secondary"
+            }
         }).then(() => {
             window.location.href = '/fidigital/panel/visitas';
         })

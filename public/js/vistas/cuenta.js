@@ -55,7 +55,7 @@ $('.btn_acceder').click((e) => {
 
             if (localStorage.intentos >= 3 && ahora > new Date(localStorage.tiempoBloqueo)) {
                 localStorage.intentos = 0;
-            } 
+            }
 
             if (
                 (typeof localStorage.intentos == 'undefined' || Number(localStorage.intentos) < 3) ||
@@ -103,16 +103,28 @@ $('.btn_acceder').click((e) => {
                                 title: 'Acceso no autorizado!',
                                 html: response,
                                 icon: 'error',
-                                footer: 'Intento ' + localStorage.intentos + ' de 3'
+                                footer: 'Intento ' + localStorage.intentos + ' de 3',
+                                buttonsStyling: false,
+                                customClass: {
+                                    confirmButton: "btn bg-gradient-danger me-3",
+                                    cancelButton: "btn bg-gradient-secondary"
+                                }
                             });
 
                             enableBtn('.btn__acceder', 'Acceder');
                         }
                     },
                     error: (err) => {
-                        Swal.fire('Error de conexión',
-                            'Ocurrió un problema al tratar de iniciar sesión',
-                            'error');
+                        Swal.fire({
+                            title: 'Error de conexión',
+                            text: 'Ocurrió un problema al tratar de iniciar sesión',
+                            icon: 'error',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: "btn bg-gradient-danger me-3",
+                                cancelButton: "btn bg-gradient-secondary"
+                            }
+                        });
                         enableBtn('.btn__acceder', 'Acceder');
                     }
                 });
@@ -121,8 +133,16 @@ $('.btn_acceder').click((e) => {
             }
         } else {
             enableBtn('.btn__acceder', 'Acceder');
-            Swal.fire('Error de conexión',
-                'Verifique su conexión a internet e intente nuevamente', 'error');
+            Swal.fire({
+                title: 'Error de conexión',
+                text: 'Verifique su conexión a internet e intente nuevamente',
+                icon: 'error',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: "btn bg-gradient-danger me-3",
+                    cancelButton: "btn bg-gradient-secondary"
+                }
+            });
         }
     }
 

@@ -1,5 +1,14 @@
 const error_ajax = (respuesta) => {
-    Swal.fire('Ha ocurrido un problema :(', '<pre style="white-space: pre-line;">' + respuesta + '</pre>', 'error')
+    Swal.fire({
+        title: 'Ha ocurrido un problema :(',
+        html: '<pre style="white-space: pre-line;">' + respuesta + '</pre>',
+        icon: 'error',
+        buttonsStyling: false,
+        customClass: {
+            confirmButton: "btn bg-gradient-danger me-3",
+            cancelButton: "btn bg-gradient-secondary"
+        }
+    })
 }
 
 //Btn
@@ -84,7 +93,7 @@ const scrollTo = (elemento) => {
         behavior: 'smooth'
     });
     return scrollTop;
-    
+
 };
 
 function formatDate(dateVal) {
@@ -249,7 +258,7 @@ $(document).ready(() => {
         sessionStorage.removeItem('logged_in');
         localStorage.removeItem('logged_in');
         localStorage.removeItem('logout');
-        window.location.href = '/cerrar_sesion';
+        window.location.href = '/fidigital/cerrar_sesion';
     })
 
     let sortableIn;

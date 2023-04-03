@@ -19,6 +19,9 @@ class Auth implements FilterInterface
     {
         if ($this->session->has('is_logged')) {
             switch (true) {
+                case $this->session->permisos->permiso_sesiones  == 1:
+                    return redirect()->to(site_url('panel/sesiones'));
+                    break;
                 case $this->session->permisos->permiso_usuarios == 1:
                     return redirect()->to(site_url('panel/usuarios'));
                     break;
