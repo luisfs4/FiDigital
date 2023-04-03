@@ -107,7 +107,7 @@ const crear_expediente = () => {
             text: 'Tus cambios serán validados por un administrador, es posible que los cambios tarden un tiempo en reflejarse',
             icon: 'success'
         }).then(() => {
-            window.location.href = '/panel/visitas';
+            window.location.href = '/fidigital/panel/visitas';
         })
         return;
     }
@@ -181,7 +181,7 @@ const crear_expediente = () => {
                                     cancelButton: "btn bg-gradient-secondary"
                                 }
                             }).then(() => {
-                                window.location.href = '/panel/sesiones/';
+                                window.location.href = '/fidigital/panel/sesiones/';
                             })
                         } else {
                             error_ajax(respuesta)
@@ -225,7 +225,7 @@ $(document).ready(() => {
         } else {
             $(target).removeClass('d-flex').hide(200);
         }
-    })
+    });
 
     /**
      * Si se pasa la variable editar mediante el backend entonces inicializar la funcion de llenado de campos con JSON

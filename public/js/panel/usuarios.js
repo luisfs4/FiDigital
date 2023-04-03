@@ -208,9 +208,9 @@ $(document).ready(async () => {
         let url;
 
         if (typeof id_modificacion != 'undefined' && id_modificacion != 0) {
-            url = '/panel/usuarios/update_usuario';
+            url = '/fidigital/panel/usuarios/update_usuario';
         } else {
-            url = '/panel/usuarios/post_usuario';
+            url = '/fidigital/panel/usuarios/post_usuario';
         }
 
         $('.input_usuario').each(function () {

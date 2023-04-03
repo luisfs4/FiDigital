@@ -29,7 +29,7 @@ const generar_html_punto = (punto) => {
 
 const card_expediente = async (id_expediente) => {
     let expediente = await $.ajax({
-        url: "/panel/sesiones/expedientes/get_by_ajax",
+        url: "/fidigital/panel/sesiones/expedientes/get_by_ajax",
         data: {
             id_expediente
         },

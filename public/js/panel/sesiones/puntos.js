@@ -254,7 +254,7 @@ function render_puntos(hierarchy, level = 0) {
         let html_boton = '';
         if (point.id_expediente) {
             html_boton = `
-                <a href="/panel/sesiones/${point.id_expediente}/detalle" class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded">
+                <a href="/fidigital/panel/sesiones/${point.id_expediente}/detalle" class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded">
                     <i class="fas fa-folder text-white" aria-hidden="true"></i>
                 </a>
             `;
