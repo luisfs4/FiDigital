@@ -37,10 +37,6 @@ class Sesiones extends BaseController
 
 	private function sendAjaxResponse($data_filtros, $method)
 	{
-		if (!$this->request->isAJAX()) {
-			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-		}
-
 		$response = $this->SesionModel->$method($data_filtros);
 
 		return $this->response->setStatusCode($response ? 200 : 204)->setJSON($response);
@@ -183,6 +179,11 @@ class Sesiones extends BaseController
 	public function post_punto()
 	{
 		return $this->sendAjaxResponse($this->request->getPost(), 'post_punto');
+	}
+
+	public function check_jerarquia()
+	{
+		return $this->sendAjaxResponse($this->request->getPost(), 'check_jerarquia');
 	}
 
 	public function get_puntos($data_filtros)

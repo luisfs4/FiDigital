@@ -99,26 +99,26 @@ class SesionModel extends Model
 
 		return $consulta->get()->getResultObject();
 	}
-	
-    public function get_seguimiento($filtros)
-    {
-        $seguimientos = $this->db->table("seguimientos as s");
-        $seguimientos->select("s.*");
-        $seguimientos->select("s.created_by as id_usuario_msg");
-        $seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
-        $seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
-        $seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'inner');
 
-        if (isset($filtros['id_expediente'])) {
-            $seguimientos->where('s.id_expediente', $filtros['id_expediente']);
-        }
+	public function get_seguimiento($filtros)
+	{
+		$seguimientos = $this->db->table("seguimientos as s");
+		$seguimientos->select("s.*");
+		$seguimientos->select("s.created_by as id_usuario_msg");
+		$seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
+		$seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
+		$seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'inner');
 
-        $seguimientos->orderBy('s.id_seguimiento');
+		if (isset($filtros['id_expediente'])) {
+			$seguimientos->where('s.id_expediente', $filtros['id_expediente']);
+		}
 
-        $datos = $seguimientos->get()->getResultObject();
+		$seguimientos->orderBy('s.id_seguimiento');
 
-        return $datos;
-    }
+		$datos = $seguimientos->get()->getResultObject();
+
+		return $datos;
+	}
 
 	public function get_direcciones($data_filtros)
 	{
@@ -266,19 +266,18 @@ class SesionModel extends Model
 
 	public function post_punto($data)
 	{
-		$sesiones = $this->db->table("puntos");
+		$puntos = $this->db->table("puntos");
 		$id_punto = $data['id_punto'];
 		unset($data['id_punto']);
 
-		if (empty($id_sesion)) {
+		if (empty($id_punto)) {
 
 			$data += [
 				"created_at" => date('Y-m-d H:i:s'),
 				"created_by" => $this->session->id_usuario,
-				"estaus" => 'Incompleto'
 			];
 
-			$bandera = $sesiones->insert($data);
+			$bandera = $puntos->insert($data);
 		} else {
 
 			$data += [
@@ -286,15 +285,30 @@ class SesionModel extends Model
 				"updated_by" => $this->session->id_usuario
 			];
 
-			$sesiones->where('id_punto', $id_punto);
-			$sesiones->set($data);
-			$bandera = $sesiones->update();
+			$puntos->where('id_punto', $id_punto);
+			$puntos->set($data);
+			$bandera = $puntos->update();
 		}
 
 		if ($bandera) {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public function check_jerarquia($data_filtros)
+	{
+		$jerarquia = $data_filtros['jerarquia'];
+		$puntos = $this->db->table("puntos");
+
+		$check_jerarquia = $puntos->where('jerarquia', $jerarquia)->countAllResults();
+
+		if ($check_jerarquia > 0) {
+			// Ya existe un registro con la misma jerarquía
+			return ['duplicate' => true];
+		} else {
+			return ['duplicate' => false];
 		}
 	}
 }

@@ -22,7 +22,7 @@ const crear_punto = async (json_editar = []) => {
         type: 'POST',
         success: function (respuesta, text, xhr) {
 
-            if (xhr.status == 200) {                
+            if (xhr.status == 200) {
                 respuesta.forEach(sesion => {
                     options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
                 });
@@ -87,7 +87,7 @@ const crear_punto = async (json_editar = []) => {
         `,
         focusConfirm: false,
         loaderHtml: '<div class="spinner-border text-info text-gradient"></div>',
-        preConfirm: function () {
+        preConfirm: async () => {
             Swal.showLoading() //Boton con animación de carga
 
             //Validar con parsley el formulario
@@ -95,6 +95,24 @@ const crear_punto = async (json_editar = []) => {
                 $(Swal.getPopup().querySelector('.form_sesion')).parsley().validate()
                 Swal.showValidationMessage(`Por favor llena correctamente los campos`)
             }
+
+            // Realizar la solicitud AJAX para verificar la jerarquía duplicada
+            let validacion_jerarquia = await $.ajax({
+                url: '/fidigital/panel/sesiones/puntos/check_jerarquia',
+                type: 'POST',
+                data: {
+                    jerarquia: Swal.getPopup().querySelector('.input_punto[name="jerarquia"]').value.trim()
+                },
+                dataType: 'json',
+            });
+
+            if (validacion_jerarquia.duplicate) {
+                $('[name="jerarquia"]').addClass('parsley-error');
+                $('[name="jerarquia"]').removeClass('parsley-success');
+                Swal.showValidationMessage(`Este id de jerarquia ya ha sido creado`);
+                return false;
+            }
+
 
             return {
                 id_sesion: Swal.getPopup().querySelector('.input_punto[name="id_sesion"]').value.trim(),
@@ -154,7 +172,7 @@ const crear_punto = async (json_editar = []) => {
                             respuesta.forEach(punto => {
                                 $('.input_punto[name="padre_id"]').append(`<option jerarquia="${punto.jerarquia}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
                             });
-                            
+
                             $('.input_punto[name="padre_id"]').trigger("change");
                         }
                     }
@@ -164,7 +182,7 @@ const crear_punto = async (json_editar = []) => {
             $('.input_punto[name="padre_id"]').change((e) => {
                 let valor = $(e.currentTarget).children('option:selected').attr("jerarquia");
 
-                if(valor){
+                if (valor) {
                     $('.input_punto[name="jerarquia"]').val(valor + ".");
                 }
             })

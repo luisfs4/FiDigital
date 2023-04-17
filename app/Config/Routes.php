@@ -56,7 +56,7 @@ $routes->group('cuenta', ['filter' => 'auth'], static function ($routes) {
 	$routes->post('cambiar_contrasena', 'Cuenta::cambiar_contrasena', ['filter' => 'Session_exist']);
 });
 
-$routes->group('panel', ['filter' => 'Session_exist'], static function ($routes) {
+$routes->group('panel', static function ($routes) {
 
 	$routes->get('/', 'Cuenta::redirect');
 
@@ -74,7 +74,7 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	});
 
 	//Sección de sesiones
-	$routes->group('Sesiones', ['filter' => 'Permiso_sesiones'], static function ($routes) {
+	$routes->group('Sesiones', static function ($routes) {
 		//Listado de sesiones
 		$routes->get('/', 'Sesiones::listado');
 		$routes->get('formulario', 'Sesiones::formulario');
@@ -91,6 +91,7 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 
 		$routes->group('puntos', static function ($routes) {
 			$routes->post('post_punto', 'Sesiones::post_punto');
+			$routes->post('check_jerarquia', 'Sesiones::check_jerarquia');
 			$routes->post('get_by_ajax', 'Sesiones::get_puntos_by_ajax');
 		});
 	});
