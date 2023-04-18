@@ -56,7 +56,7 @@ $routes->group('cuenta', ['filter' => 'auth'], static function ($routes) {
 	$routes->post('cambiar_contrasena', 'Cuenta::cambiar_contrasena', ['filter' => 'Session_exist']);
 });
 
-$routes->group('panel', static function ($routes) {
+$routes->group('panel', ['filter' => 'Session_exist'], static function ($routes) {
 
 	$routes->get('/', 'Cuenta::redirect');
 
@@ -74,7 +74,7 @@ $routes->group('panel', static function ($routes) {
 	});
 
 	//Sección de sesiones
-	$routes->group('Sesiones', static function ($routes) {
+	$routes->group('Sesiones', ['filter' => 'Permiso_sesiones'], static function ($routes) {
 		//Listado de sesiones
 		$routes->get('/', 'Sesiones::listado');
 		$routes->get('formulario', 'Sesiones::formulario');
@@ -82,6 +82,7 @@ $routes->group('panel', static function ($routes) {
 		$routes->post('get_by_ajax', 'Sesiones::get_by_ajax');
 		$routes->post('guardar_documento', 'Sesiones::guardar_pdf');
 		$routes->post('post_sesion', 'Sesiones::post_sesion');
+		$routes->post('cambiar_estatus', 'Sesiones::cambiar_estatus');
 		$routes->get('(:num)/detalle', 'Sesiones::detalle/$1');
 		
 		$routes->group('expedientes', static function ($routes) {

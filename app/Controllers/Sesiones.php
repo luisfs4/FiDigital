@@ -37,6 +37,10 @@ class Sesiones extends BaseController
 
 	private function sendAjaxResponse($data_filtros, $method)
 	{
+		if (!$this->request->isAJAX()) {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+
 		$response = $this->SesionModel->$method($data_filtros);
 
 		return $this->response->setStatusCode($response ? 200 : 204)->setJSON($response);
@@ -134,6 +138,11 @@ class Sesiones extends BaseController
 	public function get_by_ajax()
 	{
 		return $this->sendAjaxResponse($this->request->getPost(), 'get_sesiones');
+	}
+
+	public function cambiar_estatus()
+	{
+		return $this->sendAjaxResponse($this->request->getPost(), 'cambiar_estatus');
 	}
 
 	public function get_expedientes_by_ajax()

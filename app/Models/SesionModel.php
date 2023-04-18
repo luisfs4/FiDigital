@@ -77,10 +77,24 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
+		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
+		$consulta->select("COALESCE((
+								SELECT
+									MAX(CAST(SUBSTRING_INDEX(c.jerarquia, '.', -1) AS UNSIGNED)) + 1
+								FROM
+									puntos AS c
+								WHERE
+									c.padre_id = p.id_punto AND LEFT(c.jerarquia, LENGTH(p.jerarquia)) = p.jerarquia
+							), 1) AS siguiente_disponible");
 
 		//Búsqueda
 		if (!empty($data_filtros['id_punto'])) {
 			$consulta->where('id_punto', $data_filtros['id_punto']);
+		}
+
+		//Búsqueda
+		if (!empty($data_filtros['padre_id'])) {
+			$consulta->where('padre_id', $data_filtros['padre_id']);
 		}
 
 		//Búsqueda
@@ -91,12 +105,10 @@ class SesionModel extends Model
 		//Búsqueda
 		if (!empty($data_filtros['id_sesion'])) {
 			$consulta->where('id_sesion', $data_filtros['id_sesion']);
+			$consulta->where("LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 1");
 		}
 
-		if (!empty($data_filtros['sin_expediente'])) {
-			$consulta->where('id_expediente is null');
-		}
-
+		//echo $consulta->getCompiledSelect();exit();
 		return $consulta->get()->getResultObject();
 	}
 
@@ -159,6 +171,21 @@ class SesionModel extends Model
 		return $consulta->get()->getResultObject();
 	}
 
+	public function cambiar_estatus($data_filtros)
+	{
+		$consulta = $this->db->table("sesiones as s");
+
+		$data_update = [
+			"updated_at" => date('Y-m-d H:i:s'),
+			"updated_by" => $this->session->id_usuario,
+			"estatus" => $data_filtros['nuevo_estatus']
+		];
+
+		$consulta->where('id_sesion', $data_filtros['id_sesion']);
+		$consulta->set($data_update);
+		return $consulta->update();
+	}
+
 	public function post_proveedor($data)
 	{
 		$sesiones = $this->db->table("proveedores");
@@ -204,6 +231,18 @@ class SesionModel extends Model
 			unset($data['id_expediente']);
 		}
 
+		$id_carpeta = $data['id_carpeta'];
+		unset($data['id_carpeta']);
+
+		$id_subcarpeta = $data['id_subcarpeta'];
+		unset($data['id_subcarpeta']);
+
+		if (!empty($id_subcarpeta)) {
+			$data['id_punto'] = $id_subcarpeta;
+		} else if (!empty($id_carpeta)) {
+			$data['id_punto'] = $id_carpeta;
+		}
+
 		if (empty($id_expediente)) {
 
 			$data += [
@@ -241,7 +280,8 @@ class SesionModel extends Model
 
 			$data += [
 				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario
+				"created_by" => $this->session->id_usuario,
+				"estatus" => "incompleta"
 			];
 
 			$bandera = $sesiones->insert($data);
@@ -269,6 +309,11 @@ class SesionModel extends Model
 		$puntos = $this->db->table("puntos");
 		$id_punto = $data['id_punto'];
 		unset($data['id_punto']);
+
+		//Insertar null en lugar de 0
+		if ($data['padre_id'] == '') {
+			$data['padre_id'] = null;
+		}
 
 		if (empty($id_punto)) {
 

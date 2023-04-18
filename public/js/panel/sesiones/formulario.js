@@ -254,34 +254,107 @@ $(document).ready(async () => {
         let valor = $(e.currentTarget).children('option:selected').attr("numero_sesion");
         $('.input_expediente[name="jerarquia"]').val(valor + ".");
 
-        await $.ajax({
-            url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
-            dataType: 'JSON',
-            data: {
-                id_sesion: valor,
-                sin_expediente: 1
-            },
-            type: 'POST',
-            success: function (respuesta, text, xhr) {
+        if (valor) {
 
-                $('.input_expediente[name="id_punto"]').empty();
+            await $.ajax({
+                url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
+                dataType: 'JSON',
+                data: {
+                    id_sesion: valor
+                },
+                type: 'POST',
+                success: function (respuesta, text, xhr) {
 
-                if (xhr.status == 200) {
-                    respuesta.forEach(punto => {
-                        $('.input_expediente[name="id_punto"]').append(`<option jerarquia="${punto.jerarquia}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
-                    });
+                    $('.input_expediente[name="id_punto"]').empty();
 
-                } else {
-                    $('.input_expediente[name="id_punto"]').append(`<option value="">La sesión no contiene puntos</option>`);
+                    if (xhr.status == 200) {
+                        respuesta.forEach(punto => {
+                            $('.input_expediente[name="id_punto"]').append(`<option jerarquia="${punto.jerarquia}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
+                        });
+
+                    } else {
+                        $('.input_expediente[name="id_punto"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
+                    }
+
+                    $('.input_expediente[name="id_punto"]').trigger("change");
                 }
-
-                $('.input_expediente[name="id_punto"]').trigger("change");
-            }
-        }); // Fin ajax
+            }); // Fin ajax
+        }else {
+            $('.input_expediente[name="id_punto"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
+        }
     });
 
-    $('.input_expediente[name="id_punto"]').change((e) => {
-        //
+    $('.input_punto').change(async (e) => {
+        let valor = $(e.currentTarget).children('option:selected').attr("jerarquia");
+        let id_punto = $(e.currentTarget).val();
+        $('.input_expediente[name="jerarquia"]').val(valor + ".");
+
+        if (id_punto) {
+
+            await $.ajax({
+                url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
+                dataType: 'JSON',
+                data: {
+                    padre_id: id_punto,
+                    jerarquia: valor
+                },
+                type: 'POST',
+                success: function (respuesta, text, xhr) {
+
+                    $('.input_expediente[name="id_carpeta"]').empty();
+
+                    if (xhr.status == 200) {
+                        respuesta.forEach(punto => {
+                            $('.input_expediente[name="id_carpeta"]').append(`<option jerarquia="${punto.jerarquia}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
+                        });
+
+                    } else {
+                        $('.input_expediente[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`);
+                    }
+
+                    $('.input_expediente[name="id_carpeta"]').trigger("change");
+                }
+            }); // Fin ajax
+        } else {
+            $('.input_expediente[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`).trigger("change");
+        }
+
+    });
+
+    $('.input_carpeta').change(async (e) => {
+        let valor = $(e.currentTarget).children('option:selected').attr("jerarquia");
+        let id_punto = $(e.currentTarget).val();
+
+        if (id_punto) {
+            $('.input_expediente[name="jerarquia"]').val(valor + ".");
+
+            await $.ajax({
+                url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
+                dataType: 'JSON',
+                data: {
+                    padre_id: id_punto
+                },
+                type: 'POST',
+                success: function (respuesta, text, xhr) {
+
+                    $('.input_expediente[name="id_subcarpeta"]').empty();
+
+                    if (xhr.status == 200) {
+                        respuesta.forEach(punto => {
+                            $('.input_expediente[name="id_subcarpeta"]').append(`<option jerarquia="${punto.jerarquia}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
+                        });
+
+                    } else {
+                        $('.input_expediente[name="id_subcarpeta"]').empty().append(`<option value="">La carpeta no contiene subcarpetas</option>`);
+                    }
+
+                    $('.input_expediente[name="id_subcarpeta"]').trigger("change");
+                }
+            }); // Fin ajax
+        } else {
+            $('.input_expediente[name="id_subcarpeta"]').empty().append(`<option value="">La carpeta no contiene subcarpetas</option>`).trigger("change");
+        }
+
     });
 
     /**

@@ -113,7 +113,7 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
+										<div class="col-xxl-3 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="id_punto" class="form-label">Sesión *</label>
 												<select class="select2 form-control input_sesion" required="required">
@@ -122,10 +122,28 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
+										<div class="col-xxl-3 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="id_punto" class="form-label">Punto *</label>
-												<select name="id_punto" class="select2 form-control input_expediente" required="required">
+												<select name="id_punto" class="select2 form-control input_punto input_expediente" required="required">
+													<option value="">Seleccona una opción</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-xxl-3 col-lg-6 col-sm-12">
+											<div class="form-group">
+												<label for="id_punto" class="form-label">Carpeta *</label>
+												<select name="id_carpeta" class="select2 form-control input_carpeta input_expediente">
+													<option value="">Seleccona una opción</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-xxl-3 col-lg-6 col-sm-12">
+											<div class="form-group">
+												<label for="id_punto" class="form-label">Subcarpeta *</label>
+												<select name="id_subcarpeta" class="select2 form-control input_expediente">
 													<option value="">Seleccona una opción</option>
 												</select>
 											</div>

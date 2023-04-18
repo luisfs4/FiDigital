@@ -118,8 +118,19 @@ $(document).ready(async () => {
             {
                 "mData": "estatus",
                 "mRender": function (data, type, row) {
+                    let badge = '';
+                    let nuevo_estauts = '';
+
+                    if(data == 'Incompleta'){
+                        badge = 'badge badge-sm badge-danger'
+                        nuevo_estauts = 'Completa';
+                    }else{
+                        badge = 'badge badge-sm badge-success'
+                        nuevo_estauts = 'Incompleta'
+                    }
+
                     return `<div class="align-middle">
-                                <span class="font-weight-bold text-wrap text-xs">${data ?? '---'}</span>
+                                <span nuevo_estatus="${nuevo_estauts}" id_sesion="${row.id_sesion}" class="${badge} cursor-pointer cambiar_estatus font-weight-bold text-wrap text-xs">${data ?? '---'}</span>
                             </div>`;
                 }
             },
@@ -158,6 +169,37 @@ $(document).ready(async () => {
 
             $('.editar_sesion').click((e) => {
                 editar_sesion($(e.currentTarget).attr('id_sesion'));
+            })
+
+            $('.cambiar_estatus').off('click');
+            $('.cambiar_estatus').click((e)=>{
+                let nuevo_estatus = $(e.currentTarget).attr('nuevo_estatus');
+                let id_sesion = $(e.currentTarget).attr('id_sesion');
+
+                $.ajax({
+                    url: "/FiDigital/panel/sesiones/cambiar_estatus", 
+                    type: "POST",
+                    data: {
+                        nuevo_estatus: nuevo_estatus,
+                        id_sesion: id_sesion
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Cambiado exitosamente',
+                            text: 'La sesión cambió a '+ nuevo_estatus,
+                            icon: 'success'
+                        });
+                        tabla_sesiones.ajax.reload();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(errorThrown, textStatus);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'La sesión no pudo cambiar a '+ nuevo_estatus,
+                            icon: 'error'
+                        })
+                    }
+                });
             })
 
         });
