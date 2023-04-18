@@ -8,7 +8,7 @@
 			<ul class="navbar-nav">
 
 				<li class="nav-item">
-					<a class="nav-link <?= $ruta == 'Inicio' ? 'active' : '' ?>" href="<?= base_url('/Inicio'); ?>">
+					<a class="nav-link <?= $ruta == 'Inicio' ? 'active' : '' ?>" href="<?= base_url('/panel/sesiones') ?>">
 						<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
 							<i class="fas fa-home mb-1" style="font-size: 0.85rem;"></i>
 						</div>
