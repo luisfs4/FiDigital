@@ -24,7 +24,7 @@ function subir_archivo($key, $file, $carpeta)
         if (file_exists($file)) { //Si suben pdf
             $filename = date("Ymdhis") . "." . $file->getExtension();
             $filename =  sanitize_filename($filename);
-            $carpeta = "documentos/$carpeta/$key/";
+            $carpeta = "public/documentos/$carpeta/$key/";
 
             if (!file_exists($carpeta)) { //Crear carpeta si no existe
                 mkdir($carpeta, 0777, true);

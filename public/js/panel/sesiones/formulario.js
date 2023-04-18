@@ -211,12 +211,13 @@ $(document).ready(async () => {
         guardar_pdf.append('documento', $(e.currentTarget)[0].files[0]);
 
         await $.ajax({
-            url: '/FiDigital/panel/sesionesardar_documento',
+            url: '/FiDigital/panel/sesiones/guardar_documento',
             data: guardar_pdf,
             processData: false,
             contentType: false,
             type: 'POST',
             success: function (respuesta) {
+                respuesta = "/FiDigital/"+respuesta
                 $(input).val(respuesta).trigger('change');
             },
             error: (err, texto) => {

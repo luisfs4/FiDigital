@@ -128,8 +128,8 @@ class Sesiones extends BaseController
 		if ($this->request->isAJAX()) {
 			$file = $this->request->getFile('documento');
 			$response = subir_archivo(date('Ymd'), $file, 'sesiones');
-
-			return $this->response->setStatusCode($response ? 200 : 204)->setJSON($response);
+			echo $response;
+			return $this->response->setStatusCode($response ? 200 : 204);
 		} else {
 			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 		}

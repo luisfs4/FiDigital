@@ -27,7 +27,7 @@
 				 */
 
 				echo "
-					<input type=\"hidden\" class=\"input_punto\" name=\"id_visitador\" value=\"$id_visitador\">
+					<input type=\"hidden\" class=\"input_expediente\" name=\"id_visitador\" value=\"$id_visitador\">
 					<input type=\"hidden\" name=\"json_visitador\" value='" . json_encode($visitador) . "'>
 					<script>let editar = 1;</script>
 					<script>let visualizar = 1;</script>
@@ -45,7 +45,7 @@
 				 */
 
 				echo "
-					<input type=\"hidden\" class=\"input_punto\" name=\"id_visitador\" value=\"$id_visitador\">
+					<input type=\"hidden\" class=\"input_expediente\" name=\"id_visitador\" value=\"$id_visitador\">
 					<input type=\"hidden\" name=\"json_visitador\" value='" . json_encode($visitador) . "'>
 					<script>let editar = 1;</script>
 				";
@@ -184,8 +184,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="ruta_cfdi" class="form-label">CFDI *</label>
-												<input id="ruta_cfdi" required type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_cfdi" target=".contenedor_ver_cfdi">
-												<input type="hidden" class="form-control input_punto" name="ruta_cfdi">
+												<input id="ruta_cfdi" required type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_cfdi" target=".contenedor_ver_cfdi">
+												<input type="hidden" class="form-control input_expediente" name="ruta_cfdi">
 											</div>
 											<div class="col-lg-12 flex justify-content-end align-items-center ms-auto mt-2 contenedor_ver_cfdi" style="display: none;">
 												<a href="" target="_blank" class="btn btn-warning btn-sm flex align-items-center">
@@ -198,8 +198,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="ruta_verificacion" class="form-label">Verificación *</label>
-												<input id="ruta_verificacion" type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_verificacion" target=".contenedor_ver_verificacion">
-												<input type="hidden" class="form-control input_punto" name="ruta_verificacion">
+												<input id="ruta_verificacion" type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_verificacion" target=".contenedor_ver_verificacion">
+												<input type="hidden" class="form-control input_expediente" name="ruta_verificacion">
 
 											</div>
 
@@ -214,8 +214,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="ruta_edo_cuenta" class="form-label">Estado de cuenta *</label>
-												<input id="ruta_edo_cuenta" type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_edo_cuenta" target=".contenedor_ver_edo_cuenta">
-												<input type="hidden" class="form-control input_punto" name="ruta_edo_cuenta">
+												<input id="ruta_edo_cuenta" type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_edo_cuenta" target=".contenedor_ver_edo_cuenta">
+												<input type="hidden" class="form-control input_expediente" name="ruta_edo_cuenta">
 												
 											</div>
 
@@ -230,8 +230,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Opinion de cumplimiento *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_opinion_cumplimiento" target=".contenedor_ver_opinion_cumplimiento">
-												<input type="hidden" class="form-control input_punto" name="ruta_opinion_cumplimiento">
+												<input type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_opinion_cumplimiento" target=".contenedor_ver_opinion_cumplimiento">
+												<input type="hidden" class="form-control input_expediente" name="ruta_opinion_cumplimiento">
 
 											</div>
 
@@ -246,8 +246,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Contrato *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_contrato" target=".contenedor_ver_contrato">
-												<input type="hidden" class="form-control input_punto" name="ruta_contrato">
+												<input type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_contrato" target=".contenedor_ver_contrato">
+												<input type="hidden" class="form-control input_expediente" name="ruta_contrato">
 
 											</div>
 
@@ -262,8 +262,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Recepción *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_recepcion" target=".contenedor_ver_recepcion">
-												<input type="hidden" class="form-control input_punto" name="ruta_recepcion">
+												<input type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_recepcion" target=".contenedor_ver_recepcion">
+												<input type="hidden" class="form-control input_expediente" name="ruta_recepcion">
 
 											</div>
 
@@ -278,8 +278,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Testigo *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_testigo" target=".contenedor_ver_testigo">
-												<input type="hidden" class="form-control input_punto" name="ruta_testigo">
+												<input type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_testigo" target=".contenedor_ver_testigo">
+												<input type="hidden" class="form-control input_expediente" name="ruta_testigo">
 
 											</div>
 
@@ -294,8 +294,8 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Caratula *</label>
-												<input type="file" class="form-control input_punto input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_caratula" target=".contenedor_ver_caratuka">
-												<input type="hidden" class="form-control input_punto" name="ruta_caratula">
+												<input type="file" class="form-control input_expediente_ruta" placeholder="Escribe el nombre..." target-input="ruta_caratula" target=".contenedor_ver_caratuka">
+												<input type="hidden" class="form-control input_expediente" name="ruta_caratula">
 
 											</div>
 
