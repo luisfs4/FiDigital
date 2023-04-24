@@ -18,13 +18,15 @@ const cargar_puntos = async (id_sesion) => {
             success: function (respuesta, text, xhr) {
                 $('[name="padre_id"]').empty();
                 if (xhr.status == 200) {
+                    $('[name="padre_id"]').append(`<option value="">Ningun punto</option>`);
                     respuesta.forEach(punto => {
                         $('[name="padre_id"]').append(`<option jerarquia="${punto.jerarquia}" siguiente_disponible="${punto.siguiente_disponible}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
                     });
-                    $('[name="padre_id"]').append(`<option value="">Ningun punto</option>`);
                 } else {
                     $('[name="padre_id"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
                 }
+            },
+            complete: () => {
                 $('[name="padre_id"]').trigger('change')
             }
         }); // Fin ajax
@@ -46,13 +48,15 @@ const cargar_carpetas = async (id_punto, jerarquia) => {
             success: function (respuesta, text, xhr) {
                 $('[name="id_carpeta"]').empty();
                 if (xhr.status == 200) {
+                    $('[name="id_carpeta"]').append(`<option value="">Ninguna carpeta</option>`);
                     respuesta.forEach(punto => {
                         $('[name="id_carpeta"]').append(`<option jerarquia="${punto.jerarquia}" siguiente_disponible="${punto.siguiente_disponible}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
                     });
-                    $('[name="id_carpeta"]').append(`<option value="">Ninguna carpeta</option>`);
                 } else {
                     $('[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`);
                 }
+            },
+            complete: () => {
                 $('[name="id_carpeta"]').trigger('change');
             }
         }); // Fin ajax
@@ -92,7 +96,7 @@ const crear_punto = async (json_editar = []) => {
 
             if (xhr.status == 200) {
                 respuesta.forEach(sesion => {
-                    options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
+                    options_sesion += `<option numero_sesion="${sesion.numero_sesion}" siguiente_disponible="${sesion.siguiente_disponible}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
                 });
 
             }
@@ -230,7 +234,7 @@ const crear_punto = async (json_editar = []) => {
             await $('.id_punto').change(async (e) => {
                 let jerarquia = $(e.currentTarget).children('option:selected').attr("jerarquia");
                 let id_punto = $(e.currentTarget).val();
-                console.log("Punto | id_punto", id_punto, typeof id_punto);
+                console.log("Punto | id_punto", id_punto, typeof id_punto, e.currentTarget, $(e.currentTarget).children('option:selected'));
 
                 await cargar_carpetas(id_punto, jerarquia);
 
@@ -246,30 +250,28 @@ const crear_punto = async (json_editar = []) => {
                 let valor = $(e.currentTarget).children('option:selected').attr("jerarquia");
                 let siguiente_disponible = $(e.currentTarget).children('option:selected').attr("siguiente_disponible");
                 let id_carpeta = $(e.currentTarget).val();
-                console.log("Carpeta | id_carpeta", id_carpeta, typeof id_carpeta);
-
+                let sesion = $('.input_sesion').children('option:selected').attr("numero_sesion");
+              
                 if (id_carpeta && !editar_jerarquia) {
-                    console.log(valor + "." + siguiente_disponible)
-                    $('[name="jerarquia"]').val(valor + "." + siguiente_disponible);
+                  $('[name="jerarquia"]').val(valor + "." + siguiente_disponible);
                 } else if (!editar_jerarquia) {
-                    let jerarquia = $('.id_punto').children('option:selected').attr("jerarquia");
-                    let resultado = '';
-
-                    if (jerarquia) {
-                        const ultimo_caracter_es_punto = jerarquia.slice(-1) === ".";
-                        resultado = ultimo_caracter_es_punto ?
-                            jerarquia + "1" :
-                            jerarquia + ".1";
-
-                    } else {
-                        let sesion = $('.input_sesion').children('option:selected').attr("numero_sesion");
-                        resultado = sesion + ".";
-                    }
-                    console.log(resultado)
-                    $('[name="jerarquia"]').val(resultado);
+                  let siguiente_disponible_padre = $('.id_punto').children('option:selected').attr("siguiente_disponible");
+                  let siguiente_disponible_sesion = $('.input_sesion option:selected').attr("siguiente_disponible");
+                  let jerarquia = $('.id_punto').children('option:selected').attr("jerarquia");
+                  let resultado = '';
+              
+                  if (id_carpeta === '') {
+                    resultado = sesion + ".";
+                    resultado += siguiente_disponible_padre || siguiente_disponible_sesion;
+                  } else if (jerarquia) {
+                    resultado = jerarquia.slice(-1) === "." ? jerarquia + "1" : jerarquia + ".1";
+                  } else {
+                    resultado = sesion + ".";
+                  }
+              
+                  $('[name="jerarquia"]').val(resultado);
                 }
-
-            });
+              });
 
             if (json_editar) {
 

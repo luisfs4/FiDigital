@@ -55,7 +55,15 @@ class SesionModel extends Model
 		$consulta->select("DATE_FORMAT(s.updated_at, '%d/%m/%Y %h:%i %p') as updated_at");
 		$consulta->select("DATE_FORMAT(COALESCE(s.updated_at, s.created_at), '%d/%m/%Y %H:%i:%s') as ultima_modificacion");
 		$consulta->select('CONCAT_WS(" ", u.nombres, u.ape_paterno,  u.ape_materno) as usuario');
-
+		$consulta->select("COALESCE((
+			SELECT
+				MAX(CAST(SUBSTRING_INDEX(p.jerarquia, '.', -1) AS UNSIGNED)) + 1
+			FROM
+				puntos AS p
+			WHERE
+				p.id_sesion = s.id_sesion AND LENGTH(p.jerarquia) - LENGTH(REPLACE(p.jerarquia, '.', '')) = 1
+		), 1) AS siguiente_disponible");
+		
 		$consulta->join('usuarios as u', 'u.id_usuario = s.created_by', 'left');
 
 		//Búsqueda
