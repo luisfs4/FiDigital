@@ -79,13 +79,12 @@ html {
 }
 
 .swal-wide {
-    width: 700px !important;
+    width: 900px !important;
 
     #swal2-content {
-        max-height: 35vw;
+        max-height: 60vh;
         overflow-y: scroll;
         position: relative;
-
     }
 }
 

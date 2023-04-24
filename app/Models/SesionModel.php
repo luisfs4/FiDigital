@@ -91,22 +91,22 @@ class SesionModel extends Model
 
 		//Búsqueda
 		if (!empty($data_filtros['id_punto'])) {
-			$consulta->where('id_punto', $data_filtros['id_punto']);
+			$consulta->where('p.id_punto', $data_filtros['id_punto']);
 		}
 
 		//Búsqueda
 		if (!empty($data_filtros['padre_id'])) {
-			$consulta->where('padre_id', $data_filtros['padre_id']);
+			$consulta->where('p.padre_id', $data_filtros['padre_id']);
 		}
 
 		//Búsqueda
 		if (!empty($data_filtros['id_expediente'])) {
-			$consulta->where('id_expediente', $data_filtros['id_expediente']);
+			$consulta->where('p.id_expediente', $data_filtros['id_expediente']);
 		}
 
 		//Búsqueda
 		if (!empty($data_filtros['id_sesion'])) {
-			$consulta->where('id_sesion', $data_filtros['id_sesion']);
+			$consulta->where('p.id_sesion', $data_filtros['id_sesion']);
 			$consulta->where("LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 1");
 		}
 

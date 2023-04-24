@@ -22,21 +22,21 @@ class PuntoModel extends Model
     private function getChildren($padre_id, $data_filtros)
     {
         $this->select("puntos.*");
-        $this->select("e.*");
+        $this->select("e.estatus");
 
         //Búsqueda
         if (!empty($data_filtros['id_punto'])) {
-            $this->where('id_punto', $data_filtros['id_punto']);
+            $this->where('puntos.id_punto', $data_filtros['id_punto']);
         }
 
         //Búsqueda
         if (!empty($data_filtros['id_expediente'])) {
-            $this->where('id_expediente', $data_filtros['id_expediente']);
+            $this->where('puntos.id_expediente', $data_filtros['id_expediente']);
         }
 
         //Búsqueda
         if (!empty($data_filtros['id_sesion'])) {
-            $this->where('id_sesion', $data_filtros['id_sesion']);
+            $this->where('puntos.id_sesion', $data_filtros['id_sesion']);
         }
 
         $this->where('padre_id', $padre_id);
