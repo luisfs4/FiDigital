@@ -374,24 +374,33 @@ function render_puntos(hierarchy, level = 0) {
 
         let btn_estatus = '';
         let badge = '';
-        let nuevo_estauts = '';
+        let selected_1 = '';
+        let selected_2 = '';
+        let selected_3 = '';
+        let selected_4 = '';
 
         if (point.estatus) {
-            if (point.estatus == 'Incompleto') {
-                badge = 'bg-gradient-danger'
-                nuevo_estauts = 'Completo';
-            } else {
+            if (point.estatus == 'Completo') {
+                selected_1 = 'selected';
                 badge = 'bg-gradient-success'
-                nuevo_estauts = 'Incompleto'
+            } else if (point.estatus == 'Completo con errores') {
+                selected_2 = 'selected';
+                badge = 'bg-gradient-success'
+            } else if (point.estatus == 'Incompleto') {
+                selected_3 = 'selected';
+                badge = 'bg-gradient-danger'
+            } else if (point.estatus == 'Completo sin errores') {
+                selected_4 = 'selected';
+                badge = 'bg-gradient-success'
             }
-        } else {
-            badge = 'bg-gradient-danger'
-            nuevo_estauts = 'Completo';
         }
 
-        btn_estatus = `<div class="cursor-pointer px-3 py-2 my-auto mx-1 cambiar_estatus btn btn-xs ${badge} shadow text-white rounded" id_expediente="${point.id_expediente}" id_sesion="${point.id_sesion}" nuevo_estatus="${nuevo_estauts}">
-                            <span class="cursor-pointer font-weight-bold text-wrap text-xs">${point.estatus ?? '---'}</span>
-                        </div>`;
+        btn_estatus = `<select class="px-3 py-2 mx-1 cambiar_estatus ${badge} border-0 my-1 shadow text-white rounded" id_expediente="${point.id_expediente}" id_sesion="${point.id_sesion}">
+                            <option ${selected_1 ?? ''} class="bg-light text-dark">Completo</li>
+                            <option ${selected_2 ?? ''} class="bg-light text-dark">Completo con errores</li>
+                            <option ${selected_4 ?? ''} class="bg-light text-dark">Completo sin errores</li>
+                            <option ${selected_3 ?? ''} class="bg-light text-dark">Incompleto</li>
+                        </select>`;
 
         //Contenedor de lista
         html += `
@@ -439,6 +448,7 @@ const get_puntos = (id_sesion) => {
                     loader: 'custom-loader',
                     popup: 'swal-wide'
                 },
+                autofocus: false,
                 html: render_puntos(response),
                 focusConfirm: false,
                 didOpen: () => {
@@ -447,9 +457,9 @@ const get_puntos = (id_sesion) => {
                         editar_punto($(e.currentTarget).attr('id_punto'));
                     });
 
-                    $('.cambiar_estatus').off('click');
-                    $('.cambiar_estatus').click((e) => {
-                        let nuevo_estatus = $(e.currentTarget).attr('nuevo_estatus');
+                    $('.cambiar_estatus').off('change');
+                    $('.cambiar_estatus').change((e) => {
+                        let nuevo_estatus = $(e.currentTarget).val();
                         let id_expediente = $(e.currentTarget).attr('id_expediente');
 
                         $.ajax({
@@ -469,7 +479,7 @@ const get_puntos = (id_sesion) => {
                                         confirmButton: "btn bg-gradient-danger me-3",
                                         cancelButton: "btn bg-gradient-secondary"
                                     }
-                                }).then(()=>{
+                                }).then(() => {
                                     get_puntos($(e.currentTarget).attr('id_sesion'));
                                 });
                             },
