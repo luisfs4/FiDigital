@@ -249,7 +249,7 @@ const evento_btn_proveedor = () => {
             // Llamada Ajax para agregar proveedor
             $.ajax({
                 type: 'POST',
-                url: '/fidigital/panel/proveedores/agregar',
+                url: '/FiDigital/panel/proveedores/agregar',
                 data: {
                     nombre_comercial: result.value.nombre_comercial,
                     razon_social: result.value.razon_social
