@@ -2,8 +2,8 @@
 helper('html');
 
 $ruta = '404';
-require_once('../app/Views/panel/base/head.php');
-require_once('../app/Views/panel/cuenta/menu.php');
+require_once('app/Views/panel/base/head.php');
+require_once('app/Views/panel/cuenta/menu.php');
 
 
 
@@ -29,6 +29,6 @@ require_once('../app/Views/panel/cuenta/menu.php');
 </section>
 
 <?php
-require_once(('../app/Views/panel/base/footer.php'));
+require_once(('app/Views/panel/base/footer.php'));
 
 ?>
