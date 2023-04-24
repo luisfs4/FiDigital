@@ -112,7 +112,7 @@ const crear_expediente = () => {
                 cancelButton: "btn bg-gradient-secondary"
             }
         }).then(() => {
-            window.location.href = '/fidigital/panel/visitas';
+            window.location.href = '/FiDigital/panel/visitas';
         })
         return;
     }
@@ -186,7 +186,7 @@ const crear_expediente = () => {
                                     cancelButton: "btn bg-gradient-secondary"
                                 }
                             }).then(() => {
-                                window.location.href = '/fidigital/panel/sesiones/';
+                                window.location.href = '/FiDigital/panel/sesiones/';
                             })
                         } else {
                             error_ajax(respuesta)

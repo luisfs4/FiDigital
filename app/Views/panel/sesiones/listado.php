@@ -20,7 +20,7 @@
         </div>
 
         <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger">
-            <a href="/fidigital/panel/sesiones/formulario" class=" text-white">
+            <a href="/FiDigital/panel/sesiones/formulario" class=" text-white">
                 Nuevo expediente&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
             </a>
         </div>

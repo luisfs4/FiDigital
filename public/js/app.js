@@ -258,7 +258,7 @@ $(document).ready(() => {
         sessionStorage.removeItem('logged_in');
         localStorage.removeItem('logged_in');
         localStorage.removeItem('logout');
-        window.location.href = '/fidigital/cerrar_sesion';
+        window.location.href = '/FiDigital/cerrar_sesion';
     })
 
     let sortableIn;
