@@ -77,7 +77,7 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
-		$consulta->select("e.*");
+		$consulta->select("e.estatus");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((
 								SELECT
