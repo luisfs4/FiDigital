@@ -82,10 +82,10 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('get_by_ajax', 'Sesiones::get_by_ajax');
 		$routes->post('guardar_documento', 'Sesiones::guardar_pdf');
 		$routes->post('post_sesion', 'Sesiones::post_sesion');
-		$routes->post('cambiar_estatus', 'Sesiones::cambiar_estatus');
 		$routes->get('(:num)/detalle', 'Sesiones::detalle/$1');
 		
 		$routes->group('expedientes', static function ($routes) {
+			$routes->post('cambiar_estatus', 'Sesiones::cambiar_estatus');
 			$routes->post('post_expediente', 'Sesiones::post_expediente');
 			$routes->post('get_by_ajax', 'Sesiones::get_expedientes_by_ajax');
 		});

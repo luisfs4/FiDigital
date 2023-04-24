@@ -77,6 +77,7 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
+		$consulta->select("e.*");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((
 								SELECT
@@ -86,6 +87,7 @@ class SesionModel extends Model
 								WHERE
 									c.padre_id = p.id_punto AND LEFT(c.jerarquia, LENGTH(p.jerarquia)) = p.jerarquia
 							), 1) AS siguiente_disponible");
+		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
 
 		//Búsqueda
 		if (!empty($data_filtros['id_punto'])) {
@@ -173,7 +175,7 @@ class SesionModel extends Model
 
 	public function cambiar_estatus($data_filtros)
 	{
-		$consulta = $this->db->table("sesiones as s");
+		$consulta = $this->db->table("expedientes as e");
 
 		$data_update = [
 			"updated_at" => date('Y-m-d H:i:s'),
@@ -181,7 +183,7 @@ class SesionModel extends Model
 			"estatus" => $data_filtros['nuevo_estatus']
 		];
 
-		$consulta->where('id_sesion', $data_filtros['id_sesion']);
+		$consulta->where('id_expediente', $data_filtros['id_expediente']);
 		$consulta->set($data_update);
 		return $consulta->update();
 	}

@@ -49,13 +49,21 @@
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fecha de la sesión</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tipo</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Últ actualización</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Estatus</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-6">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
 
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sesión</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fecha de la sesión</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tipo</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Últ actualización</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-6">Opciones</th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>

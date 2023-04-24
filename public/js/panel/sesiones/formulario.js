@@ -252,16 +252,15 @@ $(document).ready(async () => {
     }); // Fin ajax
 
     $('.input_sesion').change(async (e) => {
-        let valor = $(e.currentTarget).children('option:selected').attr("numero_sesion");
-        $('.input_expediente[name="jerarquia"]').val(valor + ".");
+        let id_sesion = $(e.currentTarget).val();
 
-        if (valor) {
+        if (id_sesion) {
 
             await $.ajax({
                 url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
                 dataType: 'JSON',
                 data: {
-                    id_sesion: valor
+                    id_sesion
                 },
                 type: 'POST',
                 success: function (respuesta, text, xhr) {

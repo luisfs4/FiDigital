@@ -21,6 +21,9 @@ class PuntoModel extends Model
 
     private function getChildren($padre_id, $data_filtros)
     {
+        $this->select("puntos.*");
+        $this->select("e.*");
+
         //Búsqueda
         if (!empty($data_filtros['id_punto'])) {
             $this->where('id_punto', $data_filtros['id_punto']);
@@ -37,7 +40,9 @@ class PuntoModel extends Model
         }
 
         $this->where('padre_id', $padre_id);
+        $this->join("expedientes as e", 'e.id_expediente = puntos.id_expediente', 'left');
         $result = $this->findAll();
+
 
         $hierarchy = [];
         foreach ($result as $row) {

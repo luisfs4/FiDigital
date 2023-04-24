@@ -82,6 +82,11 @@ $('.btn_acceder').click((e) => {
                                 html: 'Bienvenido, serás redireccionado en unos momentos...',
                                 icon: 'success',
                                 timer: 3000,
+                                buttonsStyling: false,
+                                customClass: {
+                                    confirmButton: "btn bg-gradient-danger me-3",
+                                    cancelButton: "btn bg-gradient-secondary"
+                                }
                             }).then(() => {
                                 localStorage.setItem('logged_in', true);
                                 sessionStorage.setItem('logged_in', true);

@@ -25,10 +25,11 @@ const cargar_puntos = async (id_sesion) => {
                 } else {
                     $('[name="padre_id"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
                 }
+                $('[name="padre_id"]').trigger('change')
             }
         }); // Fin ajax
     } else {
-        $('[name="padre_id"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
+        $('[name="padre_id"]').empty().append(`<option value="">La sesión no contiene puntos</option>`).trigger('change');
     }
 };
 
@@ -52,10 +53,11 @@ const cargar_carpetas = async (id_punto, jerarquia) => {
                 } else {
                     $('[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`);
                 }
+                $('[name="id_carpeta"]').trigger('change');
             }
         }); // Fin ajax
     } else {
-        $('[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`);
+        $('[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`).trigger('change');
     }
 };
 
@@ -219,7 +221,7 @@ const crear_punto = async (json_editar = []) => {
                 let nivel_siguiente = obtener_nivel(editar_jerarquia, 3); //Se valida el nivel siguiente para verificar si este nodo no es el ultimo, en caso de ser el ultimo se descarta la selección
                 if (editar_jerarquia && !isNaN(nivel) && !isNaN(nivel_siguiente)) {
                     $(`.id_punto`).find(`option[jerarquia="${nivel}"]`).prop('selected', true).trigger("change");
-                }else if(isNaN(nivel_siguiente)){
+                } else if (isNaN(nivel_siguiente)) {
                     $(`.id_punto`).val('');
                 }
 
@@ -247,6 +249,7 @@ const crear_punto = async (json_editar = []) => {
                 console.log("Carpeta | id_carpeta", id_carpeta, typeof id_carpeta);
 
                 if (id_carpeta && !editar_jerarquia) {
+                    console.log(valor + "." + siguiente_disponible)
                     $('[name="jerarquia"]').val(valor + "." + siguiente_disponible);
                 } else if (!editar_jerarquia) {
                     let jerarquia = $('.id_punto').children('option:selected').attr("jerarquia");
@@ -262,7 +265,7 @@ const crear_punto = async (json_editar = []) => {
                         let sesion = $('.input_sesion').children('option:selected').attr("numero_sesion");
                         resultado = sesion + ".";
                     }
-
+                    console.log(resultado)
                     $('[name="jerarquia"]').val(resultado);
                 }
 
@@ -369,6 +372,27 @@ function render_puntos(hierarchy, level = 0) {
             `;
         }
 
+        let btn_estatus = '';
+        let badge = '';
+        let nuevo_estauts = '';
+
+        if (point.estatus) {
+            if (point.estatus == 'Incompleto') {
+                badge = 'bg-gradient-danger'
+                nuevo_estauts = 'Completo';
+            } else {
+                badge = 'bg-gradient-success'
+                nuevo_estauts = 'Incompleto'
+            }
+        } else {
+            badge = 'bg-gradient-danger'
+            nuevo_estauts = 'Completo';
+        }
+
+        btn_estatus = `<div class="cursor-pointer px-3 py-2 my-auto mx-1 cambiar_estatus btn btn-xs ${badge} shadow text-white rounded" id_expediente="${point.id_expediente}" id_sesion="${point.id_sesion}" nuevo_estatus="${nuevo_estauts}">
+                            <span class="cursor-pointer font-weight-bold text-wrap text-xs">${point.estatus ?? '---'}</span>
+                        </div>`;
+
         //Contenedor de lista
         html += `
             <li class="list-group-item">
@@ -378,6 +402,7 @@ function render_puntos(hierarchy, level = 0) {
                         <span>${point.jerarquia} - ${point.nombre_punto}</span>
                     </div>
                     <div>
+                        ${btn_estatus}
                         ${btn_detalle}
                         ${btn_editar}               
                     </div>   
@@ -420,6 +445,48 @@ const get_puntos = (id_sesion) => {
                     $('.editar_punto').off("click")
                     $('.editar_punto').click((e) => {
                         editar_punto($(e.currentTarget).attr('id_punto'));
+                    });
+
+                    $('.cambiar_estatus').off('click');
+                    $('.cambiar_estatus').click((e) => {
+                        let nuevo_estatus = $(e.currentTarget).attr('nuevo_estatus');
+                        let id_expediente = $(e.currentTarget).attr('id_expediente');
+
+                        $.ajax({
+                            url: "/FiDigital/panel/sesiones/expedientes/cambiar_estatus",
+                            type: "POST",
+                            data: {
+                                nuevo_estatus: nuevo_estatus,
+                                id_expediente: id_expediente
+                            },
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Cambiado exitosamente',
+                                    text: 'El expediente cambió a ' + nuevo_estatus,
+                                    icon: 'success',
+                                    buttonsStyling: false,
+                                    customClass: {
+                                        confirmButton: "btn bg-gradient-danger me-3",
+                                        cancelButton: "btn bg-gradient-secondary"
+                                    }
+                                }).then(()=>{
+                                    get_puntos($(e.currentTarget).attr('id_sesion'));
+                                });
+                            },
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.log(errorThrown, textStatus);
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'El expediente no pudo cambiar a ' + nuevo_estatus,
+                                    icon: 'error',
+                                    buttonsStyling: false,
+                                    customClass: {
+                                        confirmButton: "btn bg-gradient-danger me-3",
+                                        cancelButton: "btn bg-gradient-secondary"
+                                    }
+                                })
+                            }
+                        });
                     })
                 },
             })
