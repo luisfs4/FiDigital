@@ -259,9 +259,11 @@ const crear_punto = async (json_editar = []) => {
                   let siguiente_disponible_sesion = $('.input_sesion option:selected').attr("siguiente_disponible");
                   let jerarquia = $('.id_punto').children('option:selected').attr("jerarquia");
                   let resultado = '';
+
+                  console.log(jerarquia);
               
                   if (id_carpeta === '') {
-                    resultado = sesion + ".";
+                    resultado = (jerarquia || sesion) + ".";
                     resultado += siguiente_disponible_padre || siguiente_disponible_sesion;
                   } else if (jerarquia) {
                     resultado = jerarquia.slice(-1) === "." ? jerarquia + "1" : jerarquia + ".1";
