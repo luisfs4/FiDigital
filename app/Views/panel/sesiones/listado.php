@@ -19,11 +19,9 @@
             </div>
         </div>
 
-        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger">
-            <a href="/FiDigital/panel/sesiones/formulario" class=" text-white">
-                Nuevo expediente&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
-            </a>
-        </div>
+        <a class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger" href="/FiDigital/panel/sesiones/formulario">
+            Nuevo expediente<i class="fa fa-plus-circle ms-2"></i>
+        </a>
 
     </div>
 
@@ -105,7 +103,7 @@
                 <div class="col-xxl-12 col-xl-8">
                     <div class="card overflow-hidden mt-xxl-4 mt-xl-0 mb-4">
                         <div class="card-body p-3">
-                            <div class="row mx-auto" >
+                            <div class="row mx-auto">
                                 <div class="col-lg-12">
                                     <div class="d-flex">
                                         <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">

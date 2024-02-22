@@ -128,7 +128,3 @@ nb-configuration.xml
 /results/
 /phpunit*.xml
 /.phpunit.*.cache
-
-#Env
-.env
-app/Config/Boot/development.php
