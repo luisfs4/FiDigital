@@ -6,105 +6,70 @@ const obtener_nivel = (jerarquia, nivel) => {
     return partes.slice(0, nivel).join(".");
 }
 
-const cargar_puntos = async (id_sesion) => {
-    if (id_sesion) {
-        await $.ajax({
-            url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
-            dataType: 'JSON',
-            data: {
-                id_sesion
-            },
+const cargar_opciones_genericas = async (selector_destino, url, parametros) => {
+    $(selector_destino).empty().append('<option value="">Cargando...</option>');
+    try {
+        const respuesta = await $.ajax({
+            url,
             type: 'POST',
-            success: function (respuesta, text, xhr) {
-                $('[name="padre_id"]').empty();
-                if (xhr.status == 200) {
-                    $('[name="padre_id"]').append(`<option value="">Ningun punto</option>`);
-                    respuesta.forEach(punto => {
-                        $('[name="padre_id"]').append(`<option jerarquia="${punto.jerarquia}" siguiente_disponible="${punto.siguiente_disponible}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
-                    });
-                } else {
-                    $('[name="padre_id"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
-                }
-            },
-            complete: () => {
-                $('[name="padre_id"]').trigger('change')
-            }
-        }); // Fin ajax
-    } else {
-        $('[name="padre_id"]').empty().append(`<option value="">La sesión no contiene puntos</option>`).trigger('change');
-    }
-};
+            data: parametros,
+        });
 
-const cargar_carpetas = async (id_punto, jerarquia) => {
-    if (id_punto) {
-        await $.ajax({
-            url: '/FiDigital/panel/sesiones/puntos/get_by_ajax',
-            dataType: 'JSON',
-            data: {
-                padre_id: id_punto,
-                jerarquia: jerarquia
-            },
-            type: 'POST',
-            success: function (respuesta, text, xhr) {
-                $('[name="id_carpeta"]').empty();
-                if (xhr.status == 200) {
-                    $('[name="id_carpeta"]').append(`<option value="">Ninguna carpeta</option>`);
-                    respuesta.forEach(punto => {
-                        $('[name="id_carpeta"]').append(`<option jerarquia="${punto.jerarquia}" siguiente_disponible="${punto.siguiente_disponible}" value="${punto.id_punto}">${punto.jerarquia} ${punto.nombre_punto}</option>`);
-                    });
-                } else {
-                    $('[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`);
-                }
-            },
-            complete: () => {
-                $('[name="id_carpeta"]').trigger('change');
-            }
-        }); // Fin ajax
-    } else {
-        $('[name="id_carpeta"]').empty().append(`<option value="">El punto no contiene carpetas</option>`).trigger('change');
-    }
-};
-
-const crear_punto = async (json_editar = []) => {
-
-    disableBtn('.btn_nuevo_punto');
-    let titulo = 'Nuevo punto';
-    let btn_confirmar = `Crear punto<i class="fas fa-arrow-right ms-2"></i>`;
-    let titulo_success = '¡Creado!';
-    let texto_success = 'El punto se añadió con éxito';
-
-    //Declarar variable para almacenar id padre
-    let editar_id_padre = '';
-
-    //Declarar variable para almacenar la jerarquia
-    let editar_jerarquia = '';
-
-    if (json_editar.length != 0) {
-        titulo = 'Editar punto';
-        btn_confirmar = `Guardar punto<i class="fas fa-arrow-right ms-2"></i>`
-        titulo_success = 'Guardado!';
-        texto_success = 'El punto se guardó con éxito';
-    }
-
-    let options_sesion = '';
-
-    await $.ajax({
-        url: '/FiDigital/panel/sesiones/get_by_ajax',
-        dataType: 'JSON',
-        type: 'POST',
-        success: function (respuesta, text, xhr) {
-
-            if (xhr.status == 200) {
-                respuesta.forEach(sesion => {
-                    options_sesion += `<option numero_sesion="${sesion.numero_sesion}" siguiente_disponible="${sesion.siguiente_disponible}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
-                });
-
-            }
+        if (respuesta && respuesta.length > 0) {
+            $(selector_destino).empty().append('<option value="">Selecciona una opción</option>');
+            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto }) => {
+                $(selector_destino).append(`<option value="${id_punto}" jerarquia="${jerarquia}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
+            });
+        } else {
+            $(selector_destino).empty().append('<option value="">No hay opciones disponibles</option>');
         }
-    }); // Fin ajax
+    } catch (error) {
+        console.error("Error al cargar opciones: ", error);
+        $(selector_destino).empty().append('<option value="">Error al cargar</option>');
+    }
+};
 
+// Función para cargar opciones a un select específico
+async function cargar_opciones_select(selector, url, tipo, datos = {}) {
+    const respuesta = await realizar_peticion_ajax(url, tipo, datos);
+    let opciones = '<option value="">Selecciona</option>';
+    respuesta.forEach(item => {
+        opciones += `<option value="${item.id}" data-siguiente-disponible="${item.siguiente_disponible}" data-jerarquia="${item.jerarquia || ''}">${item.nombre}</option>`;
+    });
+    $(selector).html(opciones);
+}
 
-    Swal.fire({ //Crar una punto nueva
+// Función para cargar opciones de forma dinámica
+async function cargar_opciones(url, parametro = {}) {
+    let opciones = '';
+    try {
+        const respuesta = await $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'JSON',
+            data: parametro,
+        });
+        respuesta.forEach((item) => {
+            opciones += `<option value="${item.id_sesion}" numero_sesion="${item.numero_sesion}" siguiente_disponible="${item.siguiente_disponible}">${item.numero_sesion ? item.numero_sesion + '.- ' : ''}${item.nombre_sesion} ${item.tipo}</option>`;
+        });
+    } catch (error) {
+        console.error("Error al cargar opciones: ", error);
+    }
+    return opciones;
+}
+
+// Función principal para gestionar la jerarquía
+async function gestionar_jerarquia(json_editar = []) {
+    disableBtn('.btn_nuevo_punto');
+
+    let titulo = json_editar.length ? 'Editar punto' : 'Nuevo punto';
+    let btn_confirmar = json_editar.length ? 'Guardar punto<i class="fas fa-arrow-right ms-2"></i>' : 'Crear punto<i class="fas fa-arrow-right ms-2"></i>';
+    let titulo_success = json_editar.length ? 'Guardado!' : '¡Creado!';
+    let texto_success = json_editar.length ? 'El punto se guardó con éxito' : 'El punto se añadió con éxito';
+
+    let opciones_sesion = await cargar_opciones('/FiDigital/panel/sesiones/get_by_ajax');
+
+    Swal.fire({
         title: titulo,
         buttonsStyling: false,
         reverseButtons: true,
@@ -115,31 +80,45 @@ const crear_punto = async (json_editar = []) => {
             confirmButton: 'btn bg-gradient-danger btn-md mx-2 move-icon-left',
             cancelButton: 'btn btn-gradient-danger btn-md mx-2 move-icon-left',
             loader: 'custom-loader',
-            popup: 'swal-wide'
+            popup: 'col-lg-9'
         },
         html: `
         <form class="w-100 m-auto row p-2 text-start form_sesion" data-validate="parsley">
-            <input type="hidden" class="input_punto form-control" name="id_punto">
-            <div class="col-lg-4">
+            <!-- Campos del formulario -->
+            <div class="col-lg-3">
                 <div class="form-group">
-                    <label class="form-control-label"><i class="fas fa-folder-open"></i> Sesión:</label>
-                    <select required name="id_sesion" class="input_punto input_sesion form-control input-lg p-2 select2_swal">
-                        <option value="">Selecciona</option>
-                        ${options_sesion}
-                    </select>
+                <label class="form-control-label">Sesión:</label>
+                <select required name="id_sesion" class="form-control input-lg p-2 select_sesion">
+                    <option value="">Selecciona</option>
+                    ${opciones_sesion}
+                </select>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <div class="form-group">
                     <label class="form-control-label"><i class="far fa-calendar-alt"></i> Punto:</label>
-                    <select name="padre_id" class="input_punto id_punto form-control input-lg p-2">
+                    <select name="padre_id" class="input_punto select_punto id_punto form-control input-lg p-2">
                     </select>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label class="form-control-label"><i class="far fa-calendar-alt"></i> Sección:</label>
+                    <select name="id_seccion" class="input_punto id_seccion form-control input-lg p-2">
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-2">
                 <div class="form-group">
                     <label class="form-control-label"><i class="far fa-calendar-alt"></i> Carpeta:</label>
                     <select name="id_carpeta" class="input_punto id_carpeta form-control input-lg p-2">
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    <label class="form-control-label"><i class="far fa-calendar-alt"></i> Subcarpeta:</label>
+                    <select name="id_subcarpeta" class="input_punto id_subcarpeta form-control input-lg p-2">
                     </select>
                 </div>
             </div>
@@ -149,7 +128,7 @@ const crear_punto = async (json_editar = []) => {
                     <input required class="input_punto form-control" name="jerarquia" placeholder="1.1.1">
                 </div>
             </div>
-            <div class="col-lg-9">
+            <div class="col-lg-5">
                 <div class="form-group">
                     <label class="form-control-label"><i class="fas fa-laptop-house"></i> Nombre del punto:</label>
                     <input required class="input_punto form-control" name="nombre_punto" placeholder="Escribe el nombre...">
@@ -166,117 +145,88 @@ const crear_punto = async (json_editar = []) => {
         focusConfirm: false,
         loaderHtml: '<div class="spinner-border text-info text-gradient"></div>',
         preConfirm: async () => {
-            Swal.showLoading() //Boton con animación de carga
-
-            //Validar con parsley el formulario
-            if (!$(Swal.getPopup().querySelector('.form_sesion')).parsley().isValid()) {
-                $(Swal.getPopup().querySelector('.form_sesion')).parsley().validate()
-                Swal.showValidationMessage(`Por favor llena correctamente los campos`)
+            // Validación inicial del formulario
+            if (!$('.form_sesion').parsley().isValid()) {
+                Swal.showValidationMessage("Por favor llena correctamente los campos");
+                return false;
             }
 
-            // Realizar la solicitud AJAX para verificar la jerarquía duplicada
-            if (!editar_jerarquia) { //Primero validando que no sea una edición de punto
+            let jerarquia = $('[name="jerarquia"]').val().trim();
+            let id_punto = $('[name="id_punto"]').val(); // Asume que existe un campo oculto para el ID en modo de edición
+
+            // Verificar si estamos en modo de edición y la jerarquía ha cambiado
+            let necesita_validacion_jerarquia = true;
+            if (id_punto) { // Si estamos editando un punto
+                let jerarquia_original = $('[name="jerarquia"]').attr('data-jerarquia-original'); // Asume que guardas la jerarquía original como un atributo data
+                if (jerarquia === jerarquia_original) {
+                    necesita_validacion_jerarquia = false; // No necesita validación si la jerarquía no ha cambiado
+                }
+            }
+
+            // Verificar si la jerarquía ya existe, solo si es necesario
+            if (necesita_validacion_jerarquia) {
                 let validacion_jerarquia = await $.ajax({
                     url: '/FiDigital/panel/sesiones/puntos/check_jerarquia',
                     type: 'POST',
-                    data: {
-                        jerarquia: Swal.getPopup().querySelector('.input_punto[name="jerarquia"]').value.trim()
-                    },
                     dataType: 'json',
+                    data: { jerarquia: jerarquia }
                 });
 
                 if (validacion_jerarquia.duplicate) {
-                    $('[name="jerarquia"]').addClass('parsley-error');
-                    $('[name="jerarquia"]').removeClass('parsley-success');
-                    Swal.showValidationMessage(`Este id de jerarquia ya ha sido creado`);
+                    Swal.showValidationMessage(`Esta jerarquía ya ha sido creada. Por favor, elige otra.`);
                     return false;
                 }
             }
 
-            let padre_id = Swal.getPopup().querySelector('.input_punto[name="padre_id"]').value.trim()
-            let id_carpeta = Swal.getPopup().querySelector('.input_punto[name="id_carpeta"]').value.trim()
+            // Preparar y enviar datos del formulario
+            let datos_formulario = $('.form_sesion').serializeArray();
+            let datos = {};
+            datos_formulario.forEach((campo) => {
+                datos[campo.name] = campo.value;
+            });
 
-            if (id_carpeta) {
-                console.log(id_carpeta);
-                padre_id = id_carpeta;
-            }
-
-            return {
-                id_sesion: Swal.getPopup().querySelector('.input_punto[name="id_sesion"]').value.trim(),
-                id_punto: Swal.getPopup().querySelector('.input_punto[name="id_punto"]').value.trim(),
-                jerarquia: Swal.getPopup().querySelector('.input_punto[name="jerarquia"]').value.trim(),
-                nombre_punto: Swal.getPopup().querySelector('.input_punto[name="nombre_punto"]').value,
-                padre_id,
-                observaciones: Swal.getPopup().querySelector('.input_punto[name="observaciones"]').value.trim()
-            }
-        },
-        willOpen: async (e, ee) => {
-            //Iniciar select2 para las sesiones
-            await $('.select2_swal').select2({
+            return $.ajax({
+                url: '/FiDigital/panel/sesiones/puntos/post_punto',
+                type: 'POST',
+                dataType: 'JSON',
+                data: datos
+            }).fail(function (error) {
+                Swal.showValidationMessage(`Request failed: ${error.statusText}`);
+            });
+        }, willOpen: async () => {
+            // Inicialización de Select2 o cualquier otro plugin para mejorar los selectores
+            $('.select2_swal').select2({
                 placeholder: "Selecciona una opción",
+                allowClear: true,
+                width: '100%',
             });
 
-            await $('.input_sesion').change(async (e) => {
-                let id_sesion = $(e.currentTarget).val();
-                await cargar_puntos(id_sesion);
-
-                //Obtener el nivel de la jerarquia y autoseleccionar la opción guardada
-                let nivel = obtener_nivel(editar_jerarquia, 2);
-                let nivel_siguiente = obtener_nivel(editar_jerarquia, 3); //Se valida el nivel siguiente para verificar si este nodo no es el ultimo, en caso de ser el ultimo se descarta la selección
-                if (editar_jerarquia && !isNaN(nivel) && !isNaN(nivel_siguiente)) {
-                    $(`.id_punto`).find(`option[jerarquia="${nivel}"]`).prop('selected', true).trigger("change");
-                } else if (isNaN(nivel_siguiente)) {
-                    $(`.id_punto`).val('');
-                }
-
-            });
-
-            await $('.id_punto').change(async (e) => {
-                let jerarquia = $(e.currentTarget).children('option:selected').attr("jerarquia");
-                let id_punto = $(e.currentTarget).val();
-                console.log("Punto | id_punto", id_punto, typeof id_punto, e.currentTarget, $(e.currentTarget).children('option:selected'));
-
-                await cargar_carpetas(id_punto, jerarquia);
-
-                //Obtener el nivel de la jerarquia y autoseleccionar la opción guardada
-                let nivel = obtener_nivel(editar_jerarquia, 3);
-                if (editar_jerarquia && !isNaN(nivel)) {
-                    $(`.id_carpeta`).find(`option[jerarquia="${nivel}"]`).prop('selected', true).trigger("change");
-                    console.log(nivel);
-                }
-            });
-
-            await $('.id_carpeta').change(async (e) => {
-                let valor = $(e.currentTarget).children('option:selected').attr("jerarquia");
-                let siguiente_disponible = $(e.currentTarget).children('option:selected').attr("siguiente_disponible");
-                let id_carpeta = $(e.currentTarget).val();
-                let sesion = $('.input_sesion').children('option:selected').attr("numero_sesion");
-              
-                if (id_carpeta && !editar_jerarquia) {
-                  $('[name="jerarquia"]').val(valor + "." + siguiente_disponible);
-                } else if (!editar_jerarquia) {
-                  let siguiente_disponible_padre = $('.id_punto').children('option:selected').attr("siguiente_disponible");
-                  let siguiente_disponible_sesion = $('.input_sesion option:selected').attr("siguiente_disponible");
-                  let jerarquia = $('.id_punto').children('option:selected').attr("jerarquia");
-                  let resultado = '';
-
-                  console.log(jerarquia);
-              
-                  if (id_carpeta === '') {
-                    resultado = (jerarquia || sesion) + ".";
-                    resultado += siguiente_disponible_padre || siguiente_disponible_sesion;
-                  } else if (jerarquia) {
-                    resultado = jerarquia.slice(-1) === "." ? jerarquia + "1" : jerarquia + ".1";
-                  } else {
-                    resultado = sesion + ".";
-                  }
-              
-                  $('[name="jerarquia"]').val(resultado);
-                }
+            $('[name="id_sesion"]').on('change', (e) => {
+                const id_sesion = $(e.currentTarget).val();
+                cargar_opciones_genericas('[name="padre_id"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: id_sesion });
+                $('[name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+              });
+            
+              $('[name="padre_id"]').on('change', (e) => {
+                const id_punto = $(e.currentTarget).val();
+                cargar_opciones_genericas('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_padre: id_punto });
+                $('[name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+              });
+            
+              $('[name="id_seccion"]').on('change', (e) => {
+                const id_punto = $(e.currentTarget).val();
+                cargar_opciones_genericas('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_padre: id_punto });
+                $('[name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+              });
+            
+              $('[name="id_carpeta"]').on('change', (e) => {
+                const id_punto = $(e.currentTarget).val();
+                cargar_opciones_genericas('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_padre: id_punto });
               });
 
-            if (json_editar) {
 
+            // Configuración inicial en caso de edición
+            if (Object.keys(json_editar).length > 0) {
                 for (const key of Object.keys(json_editar)) {
 
                     if (key === 'padre_id') {
@@ -310,49 +260,24 @@ const crear_punto = async (json_editar = []) => {
                     }
                 }
             }
+        },
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            Swal.fire({
+                title: titulo_success,
+                text: texto_success,
+                icon: 'success',
+            }).then(() => {
+                // Realizar acciones después de cerrar el mensaje de éxito, como recargar la página o actualizar una tabla
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            // Manejar la cancelación si es necesario
         }
-    }).then(async (result) => {
+    })
 
-        if (result.isConfirmed) { //Validar clic en boton de aceptar
-            await $.ajax({
-                url: '/FiDigital/panel/sesiones/puntos/post_punto',
-                data: {
-                    id_punto: result.value.id_punto,
-                    jerarquia: result.value.jerarquia,
-                    nombre_punto: result.value.nombre_punto,
-                    padre_id: result.value.padre_id,
-                    observaciones: result.value.observaciones,
-                    id_sesion: result.value.id_sesion
-                },
-                dataType: 'JSON',
-                type: 'POST',
-                success: function (respuesta, text, xhr) {
+    enableBtn('.btn_nuevo_punto')
+}
 
-                    if (xhr.status == 200) {
-                        Swal.fire({
-                            title: titulo_success,
-                            text: texto_success,
-                            icon: 'success',
-                            buttonsStyling: false,
-                            customClass: {
-                                confirmButton: "btn bg-gradient-danger me-3",
-                                cancelButton: "btn bg-gradient-secondary"
-                            }
-                        });
-
-                        return true;
-                    }
-                },
-                error: (err, texto) => {
-                    error_ajax(JSON.parse(err.responseText)['message']);
-                }
-            }); // Fin ajax
-
-        }
-    });
-
-    enableBtn('.btn_nuevo_punto');
-};
 
 function render_puntos(hierarchy, level = 0) {
     if (hierarchy.length === 0) {
@@ -535,7 +460,7 @@ const editar_punto = async (id_punto) => {
                     }
                 });
             } else if (xhr.status == 200) {
-                crear_punto(respuesta[0]);
+                gestionar_jerarquia(respuesta[0]);
             }
         }
     }); // Fin ajax
@@ -545,7 +470,7 @@ $(() => {
 
     //Si dan click en el boton de nueva punto
     $('.btn_nuevo_punto').click((e) => {
-        crear_punto();
+        gestionar_jerarquia();
     })
 
 })

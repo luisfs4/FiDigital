@@ -58,12 +58,6 @@ const crear_sesion = async (json_editar = []) => {
                     </select>
                 </div>
             </div>
-            <div class="col-lg-12">
-                <div class="form-group">
-                    <label class="form-control-label"><i class="far fa-comment-dots"></i> Observaciones:</label>
-                    <textarea name="observaciones" class="input_sesion form-control input-lg p-2" placeholder="Describe tus observaciones..."></textarea>
-                </div>
-            </div>
         </form>
         `,
         focusConfirm: false,
@@ -83,7 +77,6 @@ const crear_sesion = async (json_editar = []) => {
                 nombre_sesion: Swal.getPopup().querySelector('.input_sesion[name="nombre_sesion"]').value.trim(),
                 fecha_sesion: Swal.getPopup().querySelector('.input_sesion[name="fecha_sesion"]').value,
                 tipo: Swal.getPopup().querySelector('.input_sesion[name="tipo"]').value,
-                observaciones: Swal.getPopup().querySelector('.input_sesion[name="observaciones"]').value.trim()
             }
         },
         willOpen: (e, ee) => {
@@ -125,7 +118,6 @@ const crear_sesion = async (json_editar = []) => {
                     nombre_sesion: result.value.nombre_sesion,
                     fecha_sesion: result.value.fecha_sesion,
                     tipo: result.value.tipo,
-                    observaciones: result.value.observaciones
                 },
                 dataType: 'JSON',
                 type: 'POST',

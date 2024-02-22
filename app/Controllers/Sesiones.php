@@ -58,20 +58,28 @@ class Sesiones extends BaseController
 		$data_view = [
 			"ruta" => 'Listado de sesiones',
 			'scripts' => [
-				0 => [
-					'src' => base_url('public/js/panel/sesiones/listado.js')
-				],
-				1 => [
-					'src' => base_url('public/js/panel/sesiones/sesiones.js')
-				],
-				2 => [
-					'src' => base_url('public/js/panel/sesiones/puntos.js')
-				]
+				['src' => base_url('public/js/panel/sesiones/listado.js')],
+				['src' => base_url('public/js/panel/sesiones/sesiones.js')],
+				['src' => base_url('public/js/panel/sesiones/puntos.js')]
 			]
 		];
 
 		// Imprimir vista
 		$this->renderView(['panel/sesiones/listado'], $data_view);
+	}
+
+	public function listado_expedientes()
+	{
+		// Title de la pagina
+		$data_view = [
+			"ruta" => 'Listado de expedientes',
+			'scripts' => [
+				['src' => base_url('public/js/panel/sesiones/listado_expedientes.js')],
+			]
+		];
+
+		// Imprimir vista
+		$this->renderView(['panel/sesiones/expedientes'], $data_view);
 	}
 
 	public function formulario()

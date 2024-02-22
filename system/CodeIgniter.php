@@ -200,7 +200,6 @@ class CodeIgniter
     protected function resolvePlatformExtensions()
     {
         $requiredExtensions = [
-            'curl',
             'intl',
             'json',
             'mbstring',

@@ -2,20 +2,26 @@ let tabla_sesiones;
 
 $(document).ready(async () => {
 
+    $('.btn_crear_proveedor').click(function () {
+        evento_btn_proveedor();
+    });
+
+    manejarSeleccionTipoPersona();
+
     tabla_sesiones = await $('.tabla_sesiones').DataTable({
         dom: 'Blrtip',
         buttons: [{
-                extend: 'excelHtml5',
-                exportOptions: {
-                    columns: [0, 1, 2]
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                exportOptions: {
-                    columns: [0, 1, 2]
-                }
+            extend: 'excelHtml5',
+            exportOptions: {
+                columns: [0, 1, 2]
             }
+        },
+        {
+            extend: 'pdfHtml5',
+            exportOptions: {
+                columns: [0, 1, 2]
+            }
+        }
         ],
         ajax: {
             url: '/FiDigital/panel/sesiones/get_by_ajax',
@@ -70,12 +76,12 @@ $(document).ready(async () => {
         columnDefs: [{
             "width": "40%",
             "targets": 0
-        }, ],
+        },],
         columns: [{
-                "mData": "nombre_sesion",
-                "mRender": function (data, type, row) {
+            "mData": "nombre_sesion",
+            "mRender": function (data, type, row) {
 
-                    return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
+                return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
                                 <div>
                                     <button class="btn btn-link text-gradient p-0 m-0 text-dark">
                                         <i class="fa fa-address-card text-lg avatar avatar-sm rounded-circle me-2 text-dark"></i>
@@ -86,40 +92,40 @@ $(document).ready(async () => {
                                     <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.contador_puntos == '0' ? 'Sin' : row.contador_puntos} puntos asignados</span>
                                 </div>
                             </div>`;
-                }
-            },
-            {
-                "mData": "fecha_sesion",
-                "mRender": function (data, type, row) {
-                    return `<td class="align-middle text-start">
+            }
+        },
+        {
+            "mData": "fecha_sesion",
+            "mRender": function (data, type, row) {
+                return `<td class="align-middle text-start">
                                 <span class="text-xs w-100 text-start font-weight-bold">${data}</span>
                             </td>`;
 
-                }
-            },
-            {
-                "mData": "tipo",
-                "mRender": function (data, type, row) {
-                    return `<td class="align-middle text-start">
+            }
+        },
+        {
+            "mData": "tipo",
+            "mRender": function (data, type, row) {
+                return `<td class="align-middle text-start">
                                 <span class="text-xs w-100 text-start font-weight-bold">${data}</span>
                             </td>`;
 
-                }
-            },
-            {
-                "mData": "ultima_modificacion",
-                "mRender": function (data, type, row) {
-                    return `<div class="align-middle cursor-pointer btn_historial_borrador" id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
+            }
+        },
+        {
+            "mData": "ultima_modificacion",
+            "mRender": function (data, type, row) {
+                return `<div class="align-middle cursor-pointer btn_historial_borrador" id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
                                 <span class="fas fa-clock text-xs"></span>
                                 <span class="font-weight-bold text-xs">${data ?? '---'}</span>
                             </div>`;
-                }
-            },
-            {
-                "mData": "id_sesion",
-                "mRender": function (data, type, row) {
+            }
+        },
+        {
+            "mData": "id_sesion",
+            "mRender": function (data, type, row) {
 
-                    return `<div class="text-center ms-auto">
+                return `<div class="text-center ms-auto">
                                 <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
                                     <i class="fas fa-list-ol text-white" aria-hidden="true"></i>
                                 </div>
@@ -128,15 +134,15 @@ $(document).ready(async () => {
                                 </div>
                             </div>
                             `;
-                }
             }
+        }
         ],
     });
 
     tabla_sesiones.on('preDraw', function () {
-            startTime = new Date().getTime();
-            $('.btn_get_modificaciones').get()
-        })
+        startTime = new Date().getTime();
+        $('.btn_get_modificaciones').get()
+    })
         .on('draw.dt', function () {
             console.log('La tabla tardó: ' + (new Date().getTime() - startTime) + 'ms en cargar');
             $('.table').removeClass('is-loading');
@@ -190,97 +196,228 @@ $(document).ready(async () => {
         altFormat: "d/m/Y h:i K"
     });
 
-    $('.btn_crear_proveedor').click(function () {
-        evento_btn_proveedor();
-    });
-
 });
 
 const evento_btn_proveedor = () => {
-    console.log('se ejecuta');
     Swal.fire({
-        title: 'Agregar proveedor',
+        title: 'Proveedor',
         html: `
             <form id="formularioProveedor" class="px-2">
-                <div class="mb-3">
-                <label for="nombre_comercial" class="form-label">Nombre comercial</label>
-                <input placeholder="Escribe el nombre" type="text" class="form-control" id="nombre_comercial" name="nombre_comercial" required>
+                <div class="container mt-3">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="tipo_persona" class="form-label">Tipo de Persona <i class="fas fa-users"></i></label>
+                            <select class="form-select" id="tipo_persona">
+                                <option value="">Selecciona un tipo</option>
+                                <option value="fisica">Persona Física</option>
+                                <option value="moral">Persona Moral</option>
+                            </select>
+                        </div>
+                
+                        <div class="col-6 mb-3">
+                            <div class="form-check pt-1 mt-4 d-flex">
+                                <input class="form-check-input" type="checkbox" id="es_agente_capacitador">
+                                <label class="form-check-label mb-0 ms-2 mt-1" for="es_agente_capacitador">
+                                    ¿Es Agente Capacitador Externo? <i class="fas fa-chalkboard-teacher"></i>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="campos_persona_fisica" style="display: none;">
+                        <hr class="horizontal dark my-3">
+                        <!-- Campos Persona Física -->
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="nombre_fisica" class="form-label">Nombre <i class="fas fa-user"></i></label>
+                                <input type="text" class="form-control" id="nombre_fisica" placeholder="Nombre Completo">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="correo_fisica" class="form-label">Correo <i class="fas fa-envelope"></i></label>
+                                <input type="email" class="form-control" id="correo_fisica" placeholder="correo@ejemplo.com">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="telefono_fisica" class="form-label">Teléfono <i class="fas fa-phone"></i></label>
+                                <input type="text" class="form-control" id="telefono_fisica" placeholder="3333333333">
+                            </div>
+                            
+                        </div>
+                    </div>
+                
+                    <div id="campos_persona_moral" style="display: none;">
+                        <hr class="horizontal dark my-3">  
+                        <!-- Campos Persona Moral -->
+                        <div class="row g-3">
+                            <!-- Repite los campos de persona física aquí para archivos -->
+                            <div class="col-md-4">
+                                <label for="nombre_enlace" class="form-label">Nombre del Enlace <i class="fas fa-user-tie"></i></label>
+                                <input type="text" class="form-control" id="nombre_enlace" placeholder="Nombre del Enlace">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="telefono_enlace" class="form-label">Teléfono <i class="fas fa-phone"></i></label>
+                                <input type="text" class="form-control" id="telefono_enlace" placeholder="+52 123 456 7890">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="correo_enlace" class="form-label">Correo <i class="fas fa-envelope"></i></label>
+                                <input type="email" class="form-control" id="correo_enlace" placeholder="correo@ejemplo.com">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="nombre_fiscal_empresa" class="form-label">Nombre Fiscal de la Empresa <i class="fas fa-building"></i></label>
+                                <input type="text" class="form-control" id="nombre_fiscal_empresa" placeholder="Nombre Fiscal">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="nombre_comercial_empresa" class="form-label">Nombre Comercial de la Empresa <i class="fas fa-store"></i></label>
+                                <input type="text" class="form-control" id="nombre_comercial_empresa" placeholder="Nombre Comercial">
+                            </div>
+                            <!-- Campos exclusivos de archivos para Persona Moral -->
+                            <div class="col-md-6">
+                                <label for="acta_constitutiva" class="form-label">Acta Constitutiva <i class="fas fa-file-contract"></i></label>
+                                <input type="file" class="form-control" id="acta_constitutiva">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="boleta_registro" class="form-label">Boleta de Registro <i class="fas fa-clipboard-list"></i></label>
+                                <input type="file" class="form-control" id="boleta_registro">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="poder_representante_legal" class="form-label">Poder del Representante Legal <i class="fas fa-gavel"></i></label>
+                                <input type="file" class="form-control" id="poder_representante_legal">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos para Agente Capacitador Externo -->
+                    <div id="campos_agente_capacitador" style="display: none;">
+                        <hr class="horizontal dark my-3">  
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="solicitud_registro" class="form-label">Solicitud de Registro <i class="fas fa-file-signature"></i></label>
+                                <input type="file" class="form-control" id="solicitud_registro">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="curriculum_empresarial" class="form-label">Currículum Empresarial <i class="fas fa-briefcase"></i></label>
+                                <input type="file" class="form-control" id="curriculum_empresarial">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="horizontal dark my-3">  
+                    
+                    <div class="row mb-4">
+                        <!-- Campos de archivos para comunes -->
+                        <div class="col-md-6">
+                            <label for="identificacion_oficial" class="form-label">Identificación Oficial Vigente <i class="fas fa-id-card"></i></label>
+                            <input type="file" class="form-control" id="identificacion_oficial">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="comprobante_domicilio" class="form-label">Comprobante de Domicilio del Negocio <i class="fas fa-home"></i></label>
+                            <input type="file" class="form-control" id="comprobante_domicilio">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="constancia_situacion_fiscal" class="form-label">Constancia de Situación Fiscal <i class="fas fa-file-invoice-dollar"></i></label>
+                            <input type="file" class="form-control" id="constancia_situacion_fiscal">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="opinion_cumplimiento" class="form-label">Opinión de Cumplimiento <i class="fas fa-thumbs-up"></i></label>
+                            <input type="file" class="form-control" id="opinion_cumplimiento">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="estado_cuenta_bancario" class="form-label">Estado de Cuenta Bancario <i class="fas fa-university"></i></label>
+                            <input type="file" class="form-control" id="estado_cuenta_bancario">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="documento_datos_contacto" class="form-label">Documento de Datos de Contacto <i class="fas fa-address-book"></i></label>
+                            <input type="file" class="form-control" id="documento_datos_contacto">
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-3">
-                <label for="razon_social" class="form-label">Razón social</label>
-                <input type="text" class="form-control" placeholder="Escribe la razón social" id="razon_social" name="razon_social" required>
-                </div>
+            
             </form>
         `,
         showCancelButton: true,
-        confirmButtonText: 'Agregar',
-        cancelButtonText: 'Cancelar',
-        focusConfirm: false,
         reverseButtons: true,
         buttonsStyling: false,
+        confirmButtonText: `Guardar <i class="fas fa-arrow-right ms-2"></i>`,
+        cancelButtonText: 'No, cancelar',
         customClass: {
-            confirmButton: "btn bg-gradient-danger ms-3",
-            cancelButton: "btn bg-gradient-secondary"
+            confirmButton: 'btn bg-gradient-danger btn-md mx-2 move-icon-left',
+            cancelButton: 'btn btn-gradient-danger btn-md mx-2 move-icon-left',
+            loader: 'custom-loader',
+            popup: 'col-lg-8'
         },
-        preConfirm: () => {
-            const nombre_comercial = Swal.getPopup().querySelector('#nombre_comercial');
-            const razon_social = Swal.getPopup().querySelector('#razon_social');
+        didOpen: () => {
+            manejarSeleccionTipoPersona();
+        },
+        preConfirm: async () => {
+            const tipo_persona = document.getElementById('tipo_persona').value;
+            const nombre = document.getElementById('nombre') ? document.getElementById('nombre').value : '';
+            const correo = document.getElementById('correo') ? document.getElementById('correo').value : '';
+            const telefono = document.getElementById('telefono') ? document.getElementById('telefono').value : '';
+            const nombre_enlace = document.getElementById('nombre_enlace') ? document.getElementById('nombre_enlace').value : '';
+            const nombre_fiscal_empresa = document.getElementById('nombre_fiscal_empresa') ? document.getElementById('nombre_fiscal_empresa').value : '';
+            const nombre_comercial_empresa = document.getElementById('nombre_comercial_empresa') ? document.getElementById('nombre_comercial_empresa').value : '';
 
-            if (!$(nombre_comercial).parsley().isValid()) {
-                $(nombre_comercial).parsley().validate();
+            // Aquí deberías agregar tus propias validaciones
+            if (!tipo_persona || (tipo_persona === 'fisica' && (!nombre || !correo || !telefono)) ||
+                (tipo_persona === 'moral' && (!nombre || !correo || !telefono || !nombre_enlace || !nombre_fiscal_empresa || !nombre_comercial_empresa))) {
+                Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
+                return false;
             }
 
-            if (!$(razon_social).parsley().isValid()) {
-                $(razon_social).parsley().validate();
-            }
+            const formData = new FormData();
+            formData.append('tipo_persona', tipo_persona);
+            formData.append('nombre', nombre);
+            formData.append('correo', correo);
+            formData.append('telefono', telefono);
+            formData.append('nombre_enlace', nombre_enlace);
+            formData.append('nombre_fiscal_empresa', nombre_fiscal_empresa);
+            formData.append('nombre_comercial_empresa', nombre_comercial_empresa);
 
-            if (!nombre_comercial.value || !razon_social.value) {
-                Swal.showValidationMessage('Completa todos los campos');
-            }
+            try {
+                const response = await fetch('/FiDigital/panel/proveedores/agregar', {
+                    method: 'POST',
+                    body: formData, // Asegúrate de enviar formData si manejas archivos
+                });
 
-            return {
-                nombre_comercial: nombre_comercial.value,
-                razon_social: razon_social.value
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+
+                const data = await response.json();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Proveedor agregado',
+                    text: data.message,
+                    confirmButtonText: 'Aceptar',
+
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn bg-gradient-danger ms-3",
+                        cancelButton: "btn bg-gradient-secondary",
+                        popup: "col-lg-8"
+                    }
+                });
+            } catch (error) {
+                Swal.showValidationMessage(`Request failed: ${error}`);
             }
         }
+    })
+};
 
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Llamada Ajax para agregar proveedor
-            $.ajax({
-                type: 'POST',
-                url: '/FiDigital/panel/proveedores/agregar',
-                data: {
-                    nombre_comercial: result.value.nombre_comercial,
-                    razon_social: result.value.razon_social
-                },
-                success: function (response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Proveedor agregado',
-                        text: response.message,
-                        confirmButtonText: 'Aceptar',
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: "btn bg-gradient-danger ms-3",
-                            cancelButton: "btn bg-gradient-secondary"
-                        }
-                    });
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: xhr.responseText,
-                        confirmButtonText: 'Aceptar',
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: "btn bg-gradient-danger ms-3",
-                            cancelButton: "btn bg-gradient-secondary"
-                        }
-                    });
-                }
-            });
+const manejarSeleccionTipoPersona = () => {
+    $(document).on('change', '#tipo_persona', function () {
+        const tipo = $(this).val();
+        $('#campos_persona_fisica, #campos_persona_moral, #campos_agente_capacitador').hide();
+        if (tipo === 'fisica') {
+            $('#campos_persona_fisica').show();
+        } else if (tipo === 'moral') {
+            $('#campos_persona_moral').show();
         }
     });
-}
+
+    $(document).on('change', '#es_agente_capacitador', function () {
+        document.getElementById('campos_agente_capacitador').style.display = this.checked ? 'block' : 'none';
+    });
+};

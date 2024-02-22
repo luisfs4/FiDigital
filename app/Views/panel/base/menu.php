@@ -32,6 +32,51 @@
 				?>
 
 				<?php 
+				if ($permisos->permiso_direcciones == 1) {
+				?>
+					<li class="nav-item">
+						<a class="nav-link <?= $ruta == 'Listado de direcciones' ? 'active' : '' ?>" href="<?= base_url('/panel/direcciones') ?>">
+							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+								<i class="fas fa-building mb-1" style="font-size: 0.85rem;"></i>
+							</div>
+							<span class="nav-link-text ms-1">Direcciones</span>
+						</a>
+					</li>
+				<?php
+				}
+				?>
+
+				<?php 
+				if ($permisos->permiso_programas == 1) {
+				?>
+					<li class="nav-item">
+						<a class="nav-link <?= $ruta == 'Listado de programas' ? 'active' : '' ?>" href="<?= base_url('/panel/programas') ?>">
+							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+								<i class="fas fa-tasks mb-1" style="font-size: 0.85rem;"></i>
+							</div>
+							<span class="nav-link-text ms-1">Programas</span>
+						</a>
+					</li>
+				<?php
+				}
+				?>
+
+				<?php 
+				if ($permisos->permiso_expedientes == 1) {
+				?>
+					<li class="nav-item">
+						<a class="nav-link <?= $ruta == 'Listado de expedientes' ? 'active' : '' ?>" href="<?= base_url('/panel/sesiones/expedientes') ?>">
+							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+								<i class="fas fa-archive mb-1" style="font-size: 0.85rem;"></i>
+							</div>
+							<span class="nav-link-text ms-1">Expedientes</span>
+						</a>
+					</li>
+				<?php
+				}
+				?>
+
+				<?php 
 				if ($permisos->permiso_usuarios == 1) {
 				?>
 					<li class="nav-item">

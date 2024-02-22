@@ -41,7 +41,7 @@ echo script_tag(base_url('public/vendors/boostrap_lib/js/plugins/smooth-scrollba
 echo script_tag(base_url('public/vendors/boostrap_lib/js/plugins/chartjs.min.js'));
 
 // Libreria SWEET ALERT
-echo script_tag('public/js/librerias/sweetalert2.all.min.js');
+echo script_tag('//cdn.jsdelivr.net/npm/sweetalert2@11');
 
 // Libreria Intro JS
 echo script_tag('https://unpkg.com/intro.js/minified/intro.min.js');

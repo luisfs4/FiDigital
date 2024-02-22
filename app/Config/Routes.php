@@ -70,7 +70,6 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	//Seccion proveedores
 	$routes->group('proveedores', static function ($routes) {
 		$routes->post('agregar', 'Sesiones::agregar_proveedor');
-
 	});
 
 	//Sección de sesiones
@@ -83,11 +82,13 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('guardar_documento', 'Sesiones::guardar_pdf');
 		$routes->post('post_sesion', 'Sesiones::post_sesion');
 		$routes->get('(:num)/detalle', 'Sesiones::detalle/$1');
-		
+
 		$routes->group('expedientes', static function ($routes) {
+			$routes->get('/', 'Sesiones::listado_expedientes');
 			$routes->post('cambiar_estatus', 'Sesiones::cambiar_estatus');
 			$routes->post('post_expediente', 'Sesiones::post_expediente');
 			$routes->post('get_by_ajax', 'Sesiones::get_expedientes_by_ajax');
+			$routes->post('get_expedientes', 'Sesiones::get_expedientes_by_ajax');
 		});
 
 		$routes->group('puntos', static function ($routes) {
@@ -95,6 +96,22 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 			$routes->post('check_jerarquia', 'Sesiones::check_jerarquia');
 			$routes->post('get_by_ajax', 'Sesiones::get_puntos_by_ajax');
 		});
+	});
+
+	//Sección de direcciones
+	$routes->group('direcciones', ['filter' => 'Permiso_direcciones'], static function ($routes) {
+		//Listado de sesiones
+		$routes->get('/', 'direccion::listado');
+		$routes->post('post_direccion', 'Direccion::post_direccion');
+		$routes->post('get_direcciones',  'Direccion::get_direcciones');
+	});
+
+	//Sección de programas
+	$routes->group('programas', ['filter' => 'Permiso_programas'], static function ($routes) {
+		//Listado de programas
+		$routes->get('/', 'programa::listado');
+		$routes->post('post_programa', 	 'programa::post_programa');
+		$routes->post('get_programas',   'programa::get_programas');
 	});
 });
 

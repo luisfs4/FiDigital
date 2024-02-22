@@ -281,7 +281,7 @@ select[readonly]~.select2.select2-container {
 
         .input-group-text,
         .form-control.busqueda_principal {
-            border-color: #f9a352 !important;
+            border-color: #E50695 !important;
             box-shadow: none !important;
         }
     }
@@ -290,7 +290,7 @@ select[readonly]~.select2.select2-container {
 
         &,
         .input-group {
-            border-color: #f9a352 !important;
+            border-color: #E50695 !important;
             box-shadow: none !important;
         }
     }
@@ -581,8 +581,8 @@ li {
 }
 
 .form-control:focus {
-    border-color: #f9a352;
-    box-shadow: 0 0 0 2px #f9a352;
+    border-color: #E50695;
+    box-shadow: 0 0 0 2px #E50695;
 }
 
 .custom-loader {
