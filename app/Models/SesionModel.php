@@ -317,8 +317,11 @@ class SesionModel extends Model
 	public function post_punto($data)
 	{
 		$puntos = $this->db->table("puntos");
-		$id_punto = $data['id_punto'];
-		unset($data['id_punto']);
+
+		if(isset($data['id_punto'])){	
+			$id_punto = $data['id_punto'];
+			unset($data['id_punto']);
+		}
 
 		//Insertar null en lugar de 0
 		if ($data['padre_id'] == '') {

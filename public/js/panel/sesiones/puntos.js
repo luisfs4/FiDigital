@@ -6,7 +6,7 @@ const obtener_nivel = (jerarquia, nivel) => {
     return partes.slice(0, nivel).join(".");
 }
 
-const cargar_opciones_genericas = async (selector_destino, url, parametros) => {
+const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
     $(selector_destino).empty().append('<option value="">Cargando...</option>');
     try {
         const respuesta = await $.ajax({
@@ -60,6 +60,8 @@ async function cargar_opciones(url, parametro = {}) {
 
 // Función principal para gestionar la jerarquía
 async function gestionar_jerarquia(json_editar = []) {
+    let editar_jerarquia = '';
+
     disableBtn('.btn_nuevo_punto');
 
     let titulo = json_editar.length ? 'Editar punto' : 'Nuevo punto';
@@ -88,7 +90,7 @@ async function gestionar_jerarquia(json_editar = []) {
             <div class="col-lg-3">
                 <div class="form-group">
                 <label class="form-control-label">Sesión:</label>
-                <select required name="id_sesion" class="form-control input-lg p-2 select_sesion">
+                <select required name="id_sesion" class="input_punto form-control input-lg p-2 select_sesion">
                     <option value="">Selecciona</option>
                     ${opciones_sesion}
                 </select>
@@ -97,7 +99,7 @@ async function gestionar_jerarquia(json_editar = []) {
             <div class="col-lg-3">
                 <div class="form-group">
                     <label class="form-control-label"><i class="far fa-calendar-alt"></i> Punto:</label>
-                    <select name="padre_id" class="input_punto select_punto id_punto form-control input-lg p-2">
+                    <select name="id_punto" class="input_punto select_punto id_punto form-control input-lg p-2">
                     </select>
                 </div>
             </div>
@@ -152,13 +154,12 @@ async function gestionar_jerarquia(json_editar = []) {
             }
 
             let jerarquia = $('[name="jerarquia"]').val().trim();
-            let id_punto = $('[name="id_punto"]').val(); // Asume que existe un campo oculto para el ID en modo de edición
+            let id_punto = $('[name="id_punto"]').val().trim();
 
             // Verificar si estamos en modo de edición y la jerarquía ha cambiado
             let necesita_validacion_jerarquia = true;
             if (id_punto) { // Si estamos editando un punto
-                let jerarquia_original = $('[name="jerarquia"]').attr('data-jerarquia-original'); // Asume que guardas la jerarquía original como un atributo data
-                if (jerarquia === jerarquia_original) {
+                if (jerarquia === editar_jerarquia) {
                     necesita_validacion_jerarquia = false; // No necesita validación si la jerarquía no ha cambiado
                 }
             }
@@ -178,12 +179,31 @@ async function gestionar_jerarquia(json_editar = []) {
                 }
             }
 
-            // Preparar y enviar datos del formulario
-            let datos_formulario = $('.form_sesion').serializeArray();
-            let datos = {};
-            datos_formulario.forEach((campo) => {
-                datos[campo.name] = campo.value;
-            });
+
+            let padre_id = id_punto
+            let id_seccion = $('.input_punto[name="id_seccion"]').val().trim()
+            let id_carpeta = $('.input_punto[name="id_carpeta"]').val().trim()
+            let id_subcarpeta = $('.input_punto[name="id_subcarpeta"]').val().trim()
+
+            if (id_seccion) {
+                padre_id = id_seccion;
+            }
+
+            if (id_carpeta) {
+                padre_id = id_carpeta;
+            }
+
+            if (id_subcarpeta) {
+                padre_id = id_subcarpeta;
+            }
+
+            let datos = {
+                id_sesion: $('.input_punto[name="id_sesion"]').val().trim(),
+                jerarquia: jerarquia,
+                nombre_punto: $('.input_punto[name="nombre_punto"]').val(),
+                padre_id,
+                observaciones: $('.input_punto[name="observaciones"]').val().trim()
+            }
 
             return $.ajax({
                 url: '/FiDigital/panel/sesiones/puntos/post_punto',
@@ -201,64 +221,62 @@ async function gestionar_jerarquia(json_editar = []) {
                 width: '100%',
             });
 
+            $('[name="id_punto"], [name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').on('change', function () {
+                let siguienteDisponible = $(this).find('option:selected').attr('siguiente_disponible');
+                let jerarquia = $(this).find('option:selected').attr('jerarquia');
+
+                if (siguienteDisponible) {
+                    let nuevaJerarquia = jerarquia ? `${jerarquia}.${siguienteDisponible}` : siguienteDisponible;
+                    $('[name="jerarquia"]').val(nuevaJerarquia);
+                }
+            });
+
             $('[name="id_sesion"]').on('change', (e) => {
                 const id_sesion = $(e.currentTarget).val();
-                cargar_opciones_genericas('[name="padre_id"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: id_sesion });
+                cargar_opciones_puntos('[name="id_punto"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: id_sesion });
                 $('[name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
-              });
-            
-              $('[name="padre_id"]').on('change', (e) => {
+            });
+
+            $('[name="id_punto"]').on('change', (e) => {
                 const id_punto = $(e.currentTarget).val();
-                cargar_opciones_genericas('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_padre: id_punto });
+                cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_punto });
                 $('[name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
-              });
-            
-              $('[name="id_seccion"]').on('change', (e) => {
+            });
+
+            $('[name="id_seccion"]').on('change', (e) => {
                 const id_punto = $(e.currentTarget).val();
-                cargar_opciones_genericas('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_padre: id_punto });
+                cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_punto });
                 $('[name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
-              });
-            
-              $('[name="id_carpeta"]').on('change', (e) => {
+            });
+
+            $('[name="id_carpeta"]').on('change', (e) => {
                 const id_punto = $(e.currentTarget).val();
-                cargar_opciones_genericas('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_padre: id_punto });
-              });
+                cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_punto });
+            });
 
 
             // Configuración inicial en caso de edición
             if (Object.keys(json_editar).length > 0) {
-                for (const key of Object.keys(json_editar)) {
 
-                    if (key === 'padre_id') {
-                        editar_id_padre = json_editar[key];
-                    }
+                // await cargar_opciones_puntos('[name="id_punto"]',       '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: json_editar.id_sesion });
+                // await cargar_opciones_puntos('[name="id_seccion"]',     '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: json_editar.id_punto });
+                // await cargar_opciones_puntos('[name="id_carpeta"]',     '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: json_editar.id_punto });
+                // await cargar_opciones_puntos('[name="id_subcarpeta"]',  '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: json_editar.id_punto });
 
-                    if (key === 'jerarquia') {
-                        editar_jerarquia = json_editar[key];
-                    }
+                $('[name="id_sesion"]').val(json_editar.id_sesion).trigger('change');
 
-                    if (
-                        key === 'siguiente_disponible' ||
-                        key === 'contador_hijos' ||
-                        key === 'created_at' ||
-                        key === 'created_by' ||
-                        key === 'updated_by' ||
-                        key === 'updated_at' ||
-                        key === 'padre_id' ||
-                        key === 'id_expediente'
-                    ) continue;
+                $('[name="id_seccion"]').val(json_editar.id_seccion).trigger('change');
 
-                    const input = e.querySelector(`[name="${key}"]`);
-                    console.log(input, key);
+                $('[name="id_punto"]').val(json_editar.padre_id).trigger('change');
 
-                    if (input) {
-                        input.value = json_editar[key];
-                        console.log(input);
-                        // Crear y disparar el evento 'change'
-                        const event = new Event('change');
-                        input.dispatchEvent(event);
-                    }
-                }
+                $('[name="id_carpeta"]').val(json_editar.id_carpeta).trigger('change');
+
+                $('[name="id_subcarpeta"]').val(json_editar.id_subcarpeta).trigger('change');
+
+                //No dinamicos
+                $('[name="jerarquia"]').val(json_editar.jerarquia);
+                $('[name="nombre_punto"]').val(json_editar.nombre_punto);
+                $('[name="observaciones"]').val(json_editar.observaciones);
             }
         },
     }).then((result) => {
