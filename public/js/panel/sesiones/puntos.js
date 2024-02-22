@@ -136,6 +136,12 @@ async function gestionar_jerarquia(json_editar = []) {
                     <input required class="input_punto form-control" name="nombre_punto" placeholder="Escribe el nombre...">
                 </div>
             </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label class="form-control-label"><i class="fas fa-money"></i> Presupuesto autorizado:</label>
+                    <input required type="number" class="input_punto form-control" name="presupuesto_autorizado" placeholder="Ingresa el presupuesto...">
+                </div>
+            </div>
             <div class="col-lg-12">
                 <div class="form-group">
                     <label class="form-control-label"><i class="far fa-comment-dots"></i> Observaciones:</label>
@@ -184,6 +190,7 @@ async function gestionar_jerarquia(json_editar = []) {
             let id_seccion = $('.input_punto[name="id_seccion"]').val().trim()
             let id_carpeta = $('.input_punto[name="id_carpeta"]').val().trim()
             let id_subcarpeta = $('.input_punto[name="id_subcarpeta"]').val().trim()
+            let presupuesto_autorizado = $('.input_punto[name="presupuesto_autorizado"]').val().trim()
 
             if (id_seccion) {
                 padre_id = id_seccion;
@@ -200,6 +207,7 @@ async function gestionar_jerarquia(json_editar = []) {
             let datos = {
                 id_sesion: $('.input_punto[name="id_sesion"]').val().trim(),
                 jerarquia: jerarquia,
+                presupuesto_autorizado: presupuesto_autorizado,
                 nombre_punto: $('.input_punto[name="nombre_punto"]').val(),
                 padre_id,
                 observaciones: $('.input_punto[name="observaciones"]').val().trim()
@@ -277,6 +285,7 @@ async function gestionar_jerarquia(json_editar = []) {
                 $('[name="jerarquia"]').val(json_editar.jerarquia);
                 $('[name="nombre_punto"]').val(json_editar.nombre_punto);
                 $('[name="observaciones"]').val(json_editar.observaciones);
+                $('[name="presupuesto_autorizado"]').val(json_editar.presupuesto_autorizado);
             }
         },
     }).then((result) => {
