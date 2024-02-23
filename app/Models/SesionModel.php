@@ -63,7 +63,7 @@ class SesionModel extends Model
 			WHERE
 				p.id_sesion = s.id_sesion AND LENGTH(p.jerarquia) - LENGTH(REPLACE(p.jerarquia, '.', '')) = 1
 		), 1) AS siguiente_disponible");
-		
+
 		$consulta->join('usuarios as u', 'u.id_usuario = s.created_by', 'left');
 
 		//Búsqueda
@@ -157,14 +157,21 @@ class SesionModel extends Model
 
 	public function get_proveedores($data_filtros)
 	{
-		$consulta = $this->db->table("proveedores as p");
-		$consulta->select("p.*");
+		// Preparar la subconsulta SQL directamente como una cadena
+		$subconsultaSQL = "(SELECT e.id_proveedor, COUNT(e.id_expediente) as total_expedientes FROM expedientes e GROUP BY e.id_proveedor) as exp";
 
-		//Búsqueda
+		// Consulta principal
+		$consulta = $this->db->table("proveedores as p")
+			->select("p.*, ce.*, exp.total_expedientes") // Incluye el total de expedientes en la selección
+			->join("cat_estatus ce", "p.id_estatus = ce.id_estatus", "inner")
+			->join($subconsultaSQL, "p.id_proveedor = exp.id_proveedor", "left"); // Unir con la subconsulta
+
+		// Aplicar filtros de búsqueda si existen
 		if (!empty($data_filtros['id_proveedor'])) {
-			$consulta->where('id_proveedor', $data_filtros['id_proveedor']);
+			$consulta->where('p.id_proveedor', $data_filtros['id_proveedor']);
 		}
 
+		// Ejecutar la consulta y retornar el resultado
 		return $consulta->get()->getResultObject();
 	}
 
@@ -198,7 +205,7 @@ class SesionModel extends Model
 
 	public function post_proveedor($data)
 	{
-		$sesiones = $this->db->table("proveedores");
+		$proveedores = $this->db->table("proveedores");
 
 		if (isset($data['id_proveedor'])) {
 			$id_proveedor = $data['id_proveedor'];
@@ -207,12 +214,74 @@ class SesionModel extends Model
 
 		if (empty($id_proveedor)) {
 
-			$data += [
-				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario
+			$datos = [
+				'tipo_persona' => $data['tipo_persona'],
+				'nombre' => $data['nombre'],
+				'correo' => $data['correo'],
+				'telefono' => $data['telefono'],
+				'nombre_enlace' => $data['tipo_persona'] === 'moral' ? $data['nombre_enlace'] : null,
+				'telefono_enlace' => $data['tipo_persona'] === 'moral' ? $data['telefono_enlace'] : null,
+				'correo_enlace' => $data['tipo_persona'] === 'moral' ? $data['correo_enlace'] : null,
+				'nombre_fiscal_empresa' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal_empresa'] : null,
+				'nombre_comercial_empresa' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial_empresa'] : null,
+				// Los campos de archivos se asumen que serán actualizados después, aquí los inicializamos
+				'acta_constitutiva' => null,
+				'boleta_registro' => null,
+				'poder_representante_legal' => null,
+				'solicitud_registro' => null,
+				'curriculum_empresarial' => null,
+				'identificacion_oficial' => null,
+				'comprobante_domicilio' => null,
+				'constancia_situacion_fiscal' => null,
+				'opinion_cumplimiento' => null,
+				'estado_cuenta_bancario' => null,
+				'documento_datos_contacto' => null,
+				// Puedes agregar más campos según sean necesarios para tu formulario y base de datos
 			];
 
-			$bandera = $sesiones->insert($data);
+			try {
+
+				$this->db->transStart(); // Inicia la transacción
+
+				$id_proveedor = $proveedores->insert($datos, true);
+				if ($id_proveedor === false) {
+					throw new \Exception('No se pudieron insertar los datos básicos del proveedor.');
+				}
+
+				// Ruta base para guardar archivos, asegúrate de que exista y tenga permisos adecuados
+				$rutaBase = WRITEPATH . 'documentos/proveedores/' . $id_proveedor;
+				if (!is_dir($rutaBase)) {
+					mkdir($rutaBase, 0777, true);
+				}
+
+				// Procesar cada archivo esperado
+				$archivos = ['acta_constitutiva', 'boleta_registro', 'poder_representante_legal', 'solicitud_registro', 'curriculum_empresarial', 'identificacion_oficial', 'comprobante_domicilio', 'constancia_situacion_fiscal', 'opinion_cumplimiento', 'estado_cuenta_bancario', 'documento_datos_contacto'];
+				foreach ($archivos as $archivo) {
+					if ($img = $this->request->getFile($archivo)) {
+						if ($img->isValid() && !$img->hasMoved()) {
+							$nuevoNombre = $img->getRandomName();
+							$img->move($rutaBase, $nuevoNombre);
+							// Actualizar la base de datos con la ruta del archivo
+							$proveedores->update($id_proveedor, [$archivo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
+						} else {
+							throw new \RuntimeException('Error al mover el archivo: ' . $archivo);
+						}
+					}
+				}
+
+				$this->db->transComplete(); // Completa la transacción
+
+				if ($this->db->transStatus() === false) {
+					throw new \RuntimeException('La transacción falló.');
+				}
+
+				return $id_proveedor; // Ajusta esto a tu ruta de éxito
+			} catch (\Exception $e) {
+				$this->db->transRollback(); // Revertir todos los cambios si algo falla
+				return redirect()->back()->withInput()->with('error', 'Hubo un problema al guardar la información: ' . $e->getMessage());
+			}
+
+			$bandera = $proveedores->insert($data);
 		} else {
 
 			$data += [
@@ -220,9 +289,9 @@ class SesionModel extends Model
 				"updated_by" => $this->session->id_usuario
 			];
 
-			$sesiones->where('id_proveedor', $id_proveedor);
-			$sesiones->set($data);
-			$bandera = $sesiones->update();
+			$proveedores->where('id_proveedor', $id_proveedor);
+			$proveedores->set($data);
+			$bandera = $proveedores->update();
 		}
 
 		if ($bandera) {
@@ -318,7 +387,7 @@ class SesionModel extends Model
 	{
 		$puntos = $this->db->table("puntos");
 
-		if(isset($data['id_punto'])){	
+		if (isset($data['id_punto'])) {
 			$id_punto = $data['id_punto'];
 			unset($data['id_punto']);
 		}

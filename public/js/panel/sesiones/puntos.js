@@ -6,29 +6,6 @@ const obtener_nivel = (jerarquia, nivel) => {
     return partes.slice(0, nivel).join(".");
 }
 
-const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
-    $(selector_destino).empty().append('<option value="">Cargando...</option>');
-    try {
-        const respuesta = await $.ajax({
-            url,
-            type: 'POST',
-            data: parametros,
-        });
-
-        if (respuesta && respuesta.length > 0) {
-            $(selector_destino).empty().append('<option value="">Selecciona una opción</option>');
-            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto }) => {
-                $(selector_destino).append(`<option value="${id_punto}" jerarquia="${jerarquia}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
-            });
-        } else {
-            $(selector_destino).empty().append('<option value="">No hay opciones disponibles</option>');
-        }
-    } catch (error) {
-        console.error("Error al cargar opciones: ", error);
-        $(selector_destino).empty().append('<option value="">Error al cargar</option>');
-    }
-};
-
 // Función para cargar opciones a un select específico
 async function cargar_opciones_select(selector, url, tipo, datos = {}) {
     const respuesta = await realizar_peticion_ajax(url, tipo, datos);

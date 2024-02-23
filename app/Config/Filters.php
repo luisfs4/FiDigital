@@ -8,6 +8,7 @@ use App\Filters\Permiso_usuarios;
 use App\Filters\Permiso_sesiones;
 use App\Filters\Permiso_direcciones;
 use App\Filters\Permiso_programas;
+use App\Filters\Permiso_proveedores;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -34,7 +35,8 @@ class Filters extends BaseConfig
         'Permiso_usuarios'              => Permiso_usuarios::class,
         'Permiso_sesiones'              => Permiso_sesiones::class,
         'Permiso_direcciones'           => Permiso_direcciones::class,
-        'Permiso_programas'             => Permiso_programas::class
+        'Permiso_programas'             => Permiso_programas::class,
+        'Permiso_proveedores'           => Permiso_proveedores::class
     ];
 
     /**

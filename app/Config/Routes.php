@@ -68,7 +68,9 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	$routes->get('Usuarios', 'Usuario::usuarios', ['filter' => 'Permiso_usuarios']);
 
 	//Seccion proveedores
-	$routes->group('proveedores', static function ($routes) {
+	$routes->group('proveedores', ['filter' => 'Permiso_proveedores'], static function ($routes) {
+		$routes->get('/', 'Sesiones::listado_proveedores');
+		$routes->post('get_proveedores_by_ajax', 'Sesiones::get_proveedores_by_ajax');
 		$routes->post('agregar', 'Sesiones::agregar_proveedor');
 	});
 
@@ -108,10 +110,17 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 
 	//Sección de programas
 	$routes->group('programas', ['filter' => 'Permiso_programas'], static function ($routes) {
-		//Listado de programas
 		$routes->get('/', 'programa::listado');
 		$routes->post('post_programa', 	 'programa::post_programa');
 		$routes->post('get_programas',   'programa::get_programas');
+	});
+
+	$routes->group('solicitudes', ['filter' => 'Permiso_programas'], static function ($routes) {
+		$routes->get('/', 'Solicitud::listado');
+		$routes->post('post_solicitud', 	 'Solicitud::post_solicitud');
+		$routes->post('get_solicitudes',   'Solicitud::get_solicitudes');
+		$routes->get('formulario', 		'Solicitud::formulario');
+
 	});
 });
 

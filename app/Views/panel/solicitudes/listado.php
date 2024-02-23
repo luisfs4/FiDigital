@@ -1,27 +1,11 @@
 <div class="container-fluid pt-2 pb-4">
     <div class="row">
-
-        <div class="btn btn-warning ms-auto me-4 w-auto text-white bg-gradient-danger btn_nueva_sesion">
-            <div class="text-white">
-                Nueva sesión&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
-            </div>
+        
+        <div class="btn btn-warning ms-auto me-4 w-auto text-white bg-gradient-danger btn_crear_proveedor">
+            <a class="text-white" href="<?= base_url("/panel/solicitudes/formulario"); ?>">
+                Nueva solicitud&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
+            </a>
         </div>
-
-        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger btn_nuevo_punto">
-            <div class="text-white">
-                Nuevo punto&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
-            </div>
-        </div>
-
-        <div class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger btn_crear_proveedor">
-            <div class="text-white">
-                Nuevo proveedor&nbsp;&nbsp;<div class="fa fa-plus-circle"></div>
-            </div>
-        </div>
-
-        <a class="btn btn-warning ms-2 me-4 w-auto text-white bg-gradient-danger" href="/FiDigital/panel/sesiones/formulario">
-            Nuevo expediente<i class="fa fa-plus-circle ms-2"></i>
-        </a>
 
     </div>
 
@@ -31,37 +15,30 @@
                 <div class="card-header p-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="mb-0">Sesiones</h6>
-                        </div>
-                        <div class="col-md-6 d-flex justify-content-end align-items-center">
-                            <small>Filtrando todas los sesiones</small>
+                            <h6 class="mb-0 ms-4">Solicitudes <span class="nombre_sesion"></span></h6>
                         </div>
                     </div>
                     <hr class="horizontal dark mb-0">
                 </div>
                 <div class="card-body p-3 pt-0">
-                    <table class="table align-items-center justify-content-center mb-0 tabla_sesiones">
+                    <table class="table align-items-center justify-content-center mb-0 tabla_solicitudes">
                         <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sesión</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fecha de la sesión</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tipo</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Últ actualización</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-6">Opciones</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Direccíon</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">#</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Admisión/Prevención</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Descripción</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Programa</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tipo de Adquisión</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Proveedor</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Monto</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Presupuesto</th>
+
                             </tr>
                         </thead>
                         <tbody>
 
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sesión</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Fecha de la sesión</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tipo</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Últ actualización</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-6">Opciones</th>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -162,101 +139,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    window.addEventListener('load', () => {
-        var ctx1 = document.getElementById("chart-line").getContext("2d");
-
-        var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
-
-        gradientStroke1.addColorStop(1, 'rgba(33,82,255,0.1)');
-        gradientStroke1.addColorStop(0.2, 'rgba(33,82,255,0.0)');
-        gradientStroke1.addColorStop(0, 'rgba(33,82,255,0)'); //purple colors
-
-        new Chart(ctx1, {
-            type: "line",
-            data: {
-                labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                datasets: [{
-                    label: "Tasks",
-                    tension: 0.3,
-                    pointRadius: 2,
-                    pointBackgroundColor: "#2152ff",
-                    borderColor: "#2152ff",
-                    borderWidth: 2,
-                    backgroundColor: gradientStroke1,
-                    data: [40, 45, 42, 41, 40, 43, 40, 42, 39],
-                    maxBarThickness: 6,
-                    fill: true
-                }],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false,
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                scales: {
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                        },
-                        ticks: {
-                            display: false
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: false,
-                            drawTicks: false,
-                        },
-                        ticks: {
-                            color: '#252f40',
-                            padding: 10
-                        }
-                    },
-                    y: {
-                        grid: {
-                            drawBorder: false,
-                            display: false,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#9ca2b7'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            drawBorder: false,
-                            display: true,
-                            drawOnChartArea: true,
-                            drawTicks: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            display: true,
-                            padding: 10,
-                            color: '#9ca2b7'
-                        }
-                    },
-                },
-            },
-        });
-
-    })
-</script>

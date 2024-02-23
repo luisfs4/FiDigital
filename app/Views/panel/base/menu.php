@@ -16,7 +16,22 @@
 					</a>
 				</li>
 
-				<?php 
+				<?php
+				if ($permisos->permiso_solicitudes == 1) {
+				?>
+					<li class="nav-item">
+						<a class="nav-link <?= $ruta == 'Solicitudes' ? 'active' : '' ?>" href="<?= base_url('/panel/solicitudes'); ?>">
+							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+								<i class="fas fa-user-plus mb-1" style="font-size: 0.85rem;"></i>
+							</div>
+							<span class="nav-link-text ms-1">Solicitudes</span>
+						</a>
+					</li>
+				<?php
+				}
+				?>
+
+				<?php
 				if ($permisos->permiso_sesiones == 1) {
 				?>
 					<li class="nav-item">
@@ -31,7 +46,7 @@
 				}
 				?>
 
-				<?php 
+				<?php
 				if ($permisos->permiso_direcciones == 1) {
 				?>
 					<li class="nav-item">
@@ -46,7 +61,7 @@
 				}
 				?>
 
-				<?php 
+				<?php
 				if ($permisos->permiso_programas == 1) {
 				?>
 					<li class="nav-item">
@@ -61,7 +76,22 @@
 				}
 				?>
 
-				<?php 
+				<?php
+				if ($permisos->permiso_proveedores == 1) {
+				?>
+					<li class="nav-item">
+						<a class="nav-link <?= $ruta == 'Listado de proveedores' ? 'active' : '' ?>" href="<?= base_url('/panel/proveedores') ?>">
+							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+								<i class="fas fa-user-friends mb-1" style="font-size: 0.85rem;"></i>
+							</div>
+							<span class="nav-link-text ms-1">Proveedores</span>
+						</a>
+					</li>
+				<?php
+				}
+				?>
+
+				<?php
 				if ($permisos->permiso_expedientes == 1) {
 				?>
 					<li class="nav-item">
@@ -76,7 +106,7 @@
 				}
 				?>
 
-				<?php 
+				<?php
 				if ($permisos->permiso_usuarios == 1) {
 				?>
 					<li class="nav-item">
@@ -90,7 +120,6 @@
 				<?php
 				}
 				?>
-
 				<li class="nav-item mt-3">
 					<h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Cuenta</h6>
 				</li>

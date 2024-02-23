@@ -84,6 +84,9 @@ class Cuenta extends BaseController
                 case $this->session->permisos->permiso_programas == 1:
                     return redirect()->to(site_url('panel/programas'));
                     break;
+                case $this->session->permisos->permiso_proveedores == 1:
+                    return redirect()->to(site_url('panel/proveedores'));
+                    break;
                 default:
                     return redirect()->to(site_url('403'));
                     break;

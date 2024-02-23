@@ -82,6 +82,20 @@ class Sesiones extends BaseController
 		$this->renderView(['panel/sesiones/expedientes'], $data_view);
 	}
 
+	public function listado_proveedores()
+	{
+		// Title de la pagina
+		$data_view = [
+			"ruta" => 'Proveedores',
+			'scripts' => [
+				['src' => base_url('public/js/panel/proveedores/listado.js')],
+			]
+		];
+
+		// Imprimir vista
+		$this->renderView(['panel/proveedores/listado'], $data_view);
+	}
+
 	public function formulario()
 	{
 		// Tittle de la pagina
@@ -90,6 +104,7 @@ class Sesiones extends BaseController
 			"direcciones" => $this->get_direcciones([]),
 			"programas" => $this->get_programas([]),
 			"proveedores" => $this->get_proveedores([]),
+			"sesiones" => $this->get_sesiones([]),
 			"puntos" => $this->get_puntos([]),
 			'scripts' => [
 				0 => [
@@ -141,6 +156,11 @@ class Sesiones extends BaseController
 		} else {
 			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 		}
+	}
+
+	public function get_sesiones()
+	{
+		return $this->sendResponse($this->request->getPost(), 'get_sesiones');
 	}
 
 	public function get_by_ajax()
