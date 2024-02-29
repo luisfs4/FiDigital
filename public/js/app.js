@@ -393,8 +393,8 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
 
         if (respuesta && respuesta.length > 0) {
             $(selector_destino).empty().append('<option value="">Selecciona una opción</option>');
-            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado }) => {
-                $(selector_destino).append(`<option value="${id_punto}" presupuesto_autorizado="${presupuesto_autorizado}" jerarquia="${jerarquia}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
+            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, monto_restante }) => {
+                $(selector_destino).append(`<option value="${id_punto}" monto_restante="${monto_restante}" jerarquia="${jerarquia}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
             });
         } else {
             $(selector_destino).empty().append('<option value="">No hay opciones disponibles</option>');

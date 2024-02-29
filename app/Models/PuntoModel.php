@@ -22,8 +22,10 @@ class PuntoModel extends Model
     private function getChildren($padre_id, $data_filtros)
     {
         $this->select("puntos.*");
-        $this->select("e.estatus");
 		$this->select("ce.estatus");
+        $this->select("puntos.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+        FROM expedientes e 
+        WHERE e.id_punto = puntos.id_punto), 0) AS monto_restante", false);
 
         
         //Búsqueda

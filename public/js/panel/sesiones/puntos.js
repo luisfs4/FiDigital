@@ -331,7 +331,7 @@ function render_puntos(hierarchy, level = 0) {
                 badge = 'bg-gradient-success'
             }
 
-            btn_estatus = `<select class="px-3 py-2 mx-1 cambiar_estatus ${badge} border-0 my-1 shadow text-white rounded" id_expediente="${point.id_expediente}" id_sesion="${point.id_sesion}">
+            btn_estatus = `<select class="px-3 py-2 mx-1 rounded cambiar_estatus ${badge} border-0 my-1 shadow text-xs text-white rounded" id_expediente="${point.id_expediente}" id_sesion="${point.id_sesion}">
                                 <option ${selected_1 ?? ''} class="bg-light text-dark">Completo</li>
                                 <option ${selected_2 ?? ''} class="bg-light text-dark">Completo con errores</li>
                                 <option ${selected_4 ?? ''} class="bg-light text-dark">Completo sin errores</li>

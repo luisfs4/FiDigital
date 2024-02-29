@@ -87,6 +87,10 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
+        $consulta->select("p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+		FROM expedientes e 
+		WHERE e.id_punto = p.id_punto), 0) AS monto_restante", false);
+
 		$consulta->select("ce.estatus");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((

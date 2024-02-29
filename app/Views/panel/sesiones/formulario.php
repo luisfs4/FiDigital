@@ -430,7 +430,7 @@
 		$('[name="id_punto"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
 			if (id_punto) {
-				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('presupuesto_autorizado')
+				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('monto_restante')
 				actualizar_max_monto(monto_autorizado_punto)
 				cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
 					padre_id: id_punto
@@ -442,7 +442,7 @@
 		$('[name="id_seccion"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
 			if (id_punto) {
-				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('presupuesto_autorizado')
+				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('monto_restante')
 				actualizar_max_monto(monto_autorizado_punto)
 				cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
 					padre_id: id_punto
@@ -454,7 +454,7 @@
 		$('[name="id_carpeta"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
 			if (id_punto) {
-				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('presupuesto_autorizado')
+				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('monto_restante')
 				actualizar_max_monto(monto_autorizado_punto)
 				cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
 					padre_id: id_punto
