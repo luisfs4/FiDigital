@@ -64,6 +64,12 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	$routes->get('Perfil', 'Usuario::perfil');
 	$routes->add('Puntos', 'Punto::get_jerarquia');
 
+	//Sección de seguimiento
+	$routes->group('seguimiento', static function ($routes) {
+		$routes->post('get_by_ajax', 'Sesiones::get_seguimiento_by_ajax');
+		$routes->post('post_seguimiento', 'Sesiones::post_seguimiento');
+	});
+
 	//Seccion Usuarios
 	$routes->get('Usuarios', 'Usuario::usuarios', ['filter' => 'Permiso_usuarios']);
 
@@ -72,6 +78,7 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->get('/', 'Sesiones::listado_proveedores');
 		$routes->post('get_proveedores_by_ajax', 'Sesiones::get_proveedores_by_ajax');
 		$routes->post('agregar', 'Sesiones::agregar_proveedor');
+		$routes->post('post_proveedor', 'Sesiones::post_proveedor');
 	});
 
 	//Sección de sesiones
@@ -83,7 +90,7 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('get_by_ajax', 'Sesiones::get_by_ajax');
 		$routes->post('guardar_documento', 'Sesiones::guardar_pdf');
 		$routes->post('post_sesion', 'Sesiones::post_sesion');
-		$routes->get('(:num)/detalle', 'Sesiones::detalle/$1');
+		$routes->get('expedientes/(:num)/detalle', 'Sesiones::detalle/$1');
 
 		$routes->group('expedientes', static function ($routes) {
 			$routes->get('/', 'Sesiones::listado_expedientes');
@@ -120,7 +127,6 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('post_solicitud', 	 'Solicitud::post_solicitud');
 		$routes->post('get_solicitudes',   'Solicitud::get_solicitudes');
 		$routes->get('formulario', 		'Solicitud::formulario');
-
 	});
 });
 

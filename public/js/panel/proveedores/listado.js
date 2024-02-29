@@ -67,7 +67,7 @@ $(document).ready(async () => {
                                     </button>
                                 </div>
                                 <div class="my-auto">
-                                    <h6 class="mb-0 text-sm text-wrap">${row.nombre_comercial}</h6>
+                                    <h6 class="mb-0 text-sm text-wrap">${row.nombre}</h6>
                                     <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.total_expedientes == null ? 'Sin' : row.total_expedientes} expedientes asignados</span>
                                 </div>
                             </div>`;
@@ -196,8 +196,8 @@ const obtener_detalle_proveedor = async (id_proveedor) => {
         });
         return response;
     } catch (error) {
-        console.error("Error al obtener el proveedor:", error);
-        Swal.fire('Error', 'No se pudo obtener la información del proveedor', 'error');
+        console.error("Hay un problema al obtener el proveedor:", error);
+        Swal.fire('Aún no disponible', 'Estamos trabjando para que pronto puedas editar los proveedores', 'info');
         return null;
     }
 };

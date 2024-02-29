@@ -38,9 +38,8 @@ const card_expediente = async (id_expediente) => {
     });
 
     expediente = expediente[0];
+    let punto = JSON.parse(expediente.puntos)[0] ?? [];
 
-    console.log(expediente);
-    
     if (!expediente) {
         const swalOptions = {
             title: "Upss",
@@ -65,7 +64,7 @@ const card_expediente = async (id_expediente) => {
     const li_puntos = puntos ?
         `<li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
           <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_expendiente_puntos" aria-expanded="false" aria-controls="collapse_expendiente_puntos">
-              Puntos
+              Punto al que pertenece el expediente
               <div class="collapse-close badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
                   <i class="fa fa-plus text-xs" aria-hidden="true"></i>
               </div>
@@ -86,10 +85,10 @@ const card_expediente = async (id_expediente) => {
     const card_body = `
       <div class="card-header pb-0 text-left">
           <div class="d-flex justify-content-between align-items-center">
-              <h3 class="font-weight-bolder mb-4 text-info text-gradient">
-                  ${expediente.direccion}
-              </h3>
-                <h3 class="far fa-file-alt mb-4 text-info text-gradient"></h3>
+                <h3 class="font-weight-bolder mb-4 text-info text-gradient">
+                    Expediente ${punto.jerarquia}
+                </h3>
+                <span class="badge badge-${expediente.color} mb-4 text-${expediente.color} text-gradient"><i class="${expediente.icono} me-2"></i>${expediente.estatus}</span>
             </div>
             <div class="row px-2">
                 <div class="col-lg-6">
@@ -97,7 +96,23 @@ const card_expediente = async (id_expediente) => {
                         <i class="fas fa-calendar-alt text-xs me-1" aria-hidden="true"></i> Proveedor
                     </p>
                     <p>
-                        ${expediente.nombre_comercial}
+                        ${expediente.nombre}
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <p class="text-bold mb-0">
+                        <i class="fas fa-phone-alt text-xs me-1" aria-hidden="true"></i> Teléfono del proveedor
+                    </p>
+                    <p>
+                        ${expediente.telefono}
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <p class="text-bold mb-0">
+                        <i class="fas fa-building text-xs me-1" aria-hidden="true"></i> Dirección
+                    </p>
+                    <p>
+                        ${expediente.direccion ?? 'No disponible'}
                     </p>
                 </div>
                 <div class="col-lg-6">
@@ -107,6 +122,22 @@ const card_expediente = async (id_expediente) => {
                     <p>
                         ${expediente.programa ?? 'No disponible'}
                     </p>
+                </div>
+                <div class="col-lg-6">
+                    <p class="text-bold mb-0">
+                        <i class="fas fa-hand-holding-usd text-xs me-1" aria-hidden="true"></i> Monto total pagado
+                    </p>
+                    <p>
+                        ${expediente.monto_pagado ?? 'No disponible'}
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <p class="text-bold mb-0">
+                        <i class="fas fa-money-check-alt text-xs me-1" aria-hidden="true"></i> Monto total autorizado
+                    </p>
+                    <span class="badge badge-success text-xs mt-1">
+                        $ ${Number(expediente.monto_autorizado).toFixed(2) ?? 'No disponible'}
+                    </span>
                 </div>
             </div>
         </div>
@@ -131,6 +162,25 @@ const card_expediente = async (id_expediente) => {
                     <div class="collapse p-3 w-100" id="collapse_expendiente_observaciones_expediente">
                         <div class="card card-body">
                             ${expediente.observaciones ?? 'Sin observaciones'}
+                        </div>
+                    </div>
+                </li>
+               
+                <li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
+
+                    <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_expendiente_pagos_expediente" aria-expanded="false" aria-controls="collapse_expendiente_pagos_expediente">
+                        Pagos del expediente
+                        <div class="collapse-close badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
+                            <i class="fa fa-plus text-xs" aria-hidden="true"></i>
+                        </div>
+                        <div class="collapse-open badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
+                            <i class="fa fa-minus text-xs" aria-hidden="true"></i>
+                        </div>
+                    </button>
+
+                    <div class="collapse p-3 w-100" id="collapse_expendiente_pagos_expediente">
+                        <div class="card card-body">
+                            ${expediente.pagos ?? 'Sin pagos registrados'}
                         </div>
                     </div>
                 </li>
@@ -372,7 +422,7 @@ const post_seguimiento = (texto) => {
 
     $.ajax({
         type: 'post',
-        url: '/FiDigital/panel/quejas/seguimiento/post_seguimiento',
+        url: '/FiDigital/panel/seguimiento/post_seguimiento',
         data: formdata,
         cache: false,
         contentType: false,

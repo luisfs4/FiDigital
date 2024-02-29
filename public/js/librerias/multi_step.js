@@ -112,9 +112,9 @@ const setFormHeight = () => {
 
 const countInputsByPanel = (activePanel, activePanelNum, next_btn = 0) => {
 	let contador_inputs = 0;
-	let contador_total = $(activePanel).find('.input_tramite').length;
+	let contador_total = $(activePanel).find('.input_expediente:required').length;
 
-	$(activePanel).find('.input_tramite:not(.input_tramite_requisitos)').each(function () {
+	$(activePanel).find('.input_expediente:required').each(function () {
 		if (next_btn == 1) {
 			if (typeof $(this).attr('disabled') != 'undefined' || typeof $(this).attr('required') == 'undefined') {
 				contador_inputs += 1;
@@ -139,7 +139,7 @@ const validatePanelForm = (activePanel, activePanelNum) => {
 
 	//Contador de inputs llenados
 	let contador_inputs = 0;
-	let contador_total = $(activePanel).find('.input_tramite').length;
+	let contador_total = $(activePanel).find('.input_expediente:required').length;
 	let activeStep = $('.multisteps-form__progress-btn').eq(activePanelNum);
 
 	//Validar form y setear colores

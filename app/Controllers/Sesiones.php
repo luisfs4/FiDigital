@@ -129,7 +129,7 @@ class Sesiones extends BaseController
 	public function detalle($id_expediente)
 	{
 		$data_view = [
-			"ruta" => 'Listado de sesiones',
+			"ruta" => 'Listado de expedientes',
 			'scripts' => [
 				['src' => base_url('public/js/panel/sesiones/detalle.js')]
 			]
@@ -198,11 +198,43 @@ class Sesiones extends BaseController
 		return $this->sendAjaxResponse($this->request->getPost(), 'get_seguimiento');
 	}
 
-	public function agregar_proveedor()
+	public function post_proveedor()
 	{
-		return $this->sendAjaxResponse($this->request->getPost(), 'post_proveedor');
+		$archivos = []; // Para almacenar información de archivos
+
+		// Asumiendo que tienes campos de archivo en tu formulario
+		$nombresArchivos = ['acta_constitutiva', 'boleta_registro', 'poder_representante_legal', 'solicitud_registro', 'curriculum_empresarial', 'identificacion_oficial', 'comprobante_domicilio', 'constancia_situacion_fiscal', 'opinion_cumplimiento', 'estado_cuenta_bancario', 'documento_datos_contacto'];
+	
+		foreach ($nombresArchivos as $nombreArchivo) {
+			$archivo = $this->request->getFile($nombreArchivo);
+			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+				// Aquí podrías mover el archivo y guardar la ruta en $archivos
+				$nuevoNombre = $archivo->getRandomName();
+				// Asegúrate de tener definida la ruta base y que tenga los permisos adecuados
+				$rutaBase = WRITEPATH . 'documentos/proveedores/';
+				$archivo->move($rutaBase, $nuevoNombre);
+	
+				// Guardar la ruta del archivo para pasarla al modelo
+				$archivos[$nombreArchivo] = $rutaBase . $nuevoNombre;
+			}
+		}
+
+		return $this->sendAjaxResponse(array_merge($this->request->getPost(), ['archivos' => $archivos]), 'post_proveedor');
 	}
 
+	/**
+	 * ----------------------------- Inicio Sección Seguimiento ------------------------------------
+	 */
+
+	 public function post_seguimiento()
+	 {
+		 return $this->sendAjaxResponse($this->request->getPost(), 'post_seguimiento');
+	 }
+ 
+	 /**
+	  * ------------------------------ Fin Sección Seguimiento ------------------------------------
+	  */
+ 
 	public function post_sesion()
 	{
 		return $this->sendAjaxResponse($this->request->getPost(), 'post_sesion');

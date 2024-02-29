@@ -23,24 +23,27 @@ class PuntoModel extends Model
     {
         $this->select("puntos.*");
         $this->select("e.estatus");
+		$this->select("ce.estatus");
 
+        
         //Búsqueda
         if (!empty($data_filtros['id_punto'])) {
             $this->where('puntos.id_punto', $data_filtros['id_punto']);
         }
-
+        
         //Búsqueda
         if (!empty($data_filtros['id_expediente'])) {
             $this->where('puntos.id_expediente', $data_filtros['id_expediente']);
         }
-
+        
         //Búsqueda
         if (!empty($data_filtros['id_sesion'])) {
             $this->where('puntos.id_sesion', $data_filtros['id_sesion']);
         }
-
+        
         $this->where('padre_id', $padre_id);
         $this->join("expedientes as e", 'e.id_expediente = puntos.id_expediente', 'left');
+        $this->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
         $result = $this->findAll();
 
 

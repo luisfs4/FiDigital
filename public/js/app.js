@@ -389,10 +389,12 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
             data: parametros,
         });
 
+        console.log(respuesta);
+
         if (respuesta && respuesta.length > 0) {
             $(selector_destino).empty().append('<option value="">Selecciona una opción</option>');
-            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto }) => {
-                $(selector_destino).append(`<option value="${id_punto}" jerarquia="${jerarquia}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
+            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado }) => {
+                $(selector_destino).append(`<option value="${id_punto}" presupuesto_autorizado="${presupuesto_autorizado}" jerarquia="${jerarquia}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
             });
         } else {
             $(selector_destino).empty().append('<option value="">No hay opciones disponibles</option>');
@@ -608,8 +610,8 @@ const evento_btn_proveedor = () => {
             // Validaciones antes de enviar los datos
             if (!tipo_persona || (tipo_persona === 'fisica' && (!campos_relacionados['nombre'] || !campos_relacionados['correo'] || !campos_relacionados['telefono'])) ||
                 (tipo_persona === 'moral' && (!campos_relacionados['nombre'] || !campos_relacionados['correo'] || !campos_relacionados['telefono'] || !campos_relacionados.hasOwnProperty('nombre_enlace') || !campos_relacionados.hasOwnProperty('nombre_fiscal') || !campos_relacionados.hasOwnProperty('nombre_comercial')))) {
-                Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
-                return false;
+                //Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
+                //return false;
             }
 
             // Preparar datos para enviar
@@ -620,11 +622,12 @@ const evento_btn_proveedor = () => {
 
             // Envío de datos por AJAX
             $.ajax({
-                url: '/FiDigital/panel/proveedores/agregar', // Ajusta esto a la URL real del servidor
+                url: '/FiDigital/panel/proveedores/post_proveedor', // Ajusta esto a la URL real del servidor
                 type: 'POST',
                 data: formulario_datos,
                 processData: false, // No procesar los datos
                 contentType: false, // No establecer tipo de contenido automáticamente
+                type: 'POST',
                 success: function (respuesta) {
                     console.log(respuesta);
                     // Aquí manejas la respuesta del servidor

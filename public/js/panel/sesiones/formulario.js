@@ -119,17 +119,20 @@ const crear_expediente = () => {
 
     //Validar los datos generales
     let datos_expediente = validatePanelForm($('.multisteps-form__panel').eq(0), 0);
+    let archivos_expediente = validatePanelForm($('.multisteps-form__panel').eq(1), 1);
+    let datos_proveedor = validatePanelForm($('.multisteps-form__panel').eq(2), 2);
 
     let expediente_form = new FormData();
     let expediente_form_text = new FormData();
 
     //Validar 
-    if (datos_expediente) {
+    if (datos_expediente && archivos_expediente && datos_proveedor) {
         //Si los campos son validos iteramos para guardar
         $('.input_expediente').each(function (index, input) { //Buscar todos los inputs
 
             //Hacer el append al formdata de los valores
             let valor = $(input).val();
+            console.log(valor, typeof valor);
             if (typeof valor === 'string') {
                 valor = valor.trim();
             } else if (typeof valor === 'object') {
@@ -138,18 +141,16 @@ const crear_expediente = () => {
                 }
             }
 
-            if ($(this).prop('type') == 'file') {
+            if ($(this).hasClass('filepond')) {
+                expediente_form.append($(this).children('input').attr('name'), $(this).children('input').val() != null ? $(this).children('input')[0].files[0] : 0);
+            } else if ($(this).prop('type') == 'file') {
+                console.log($(this).attr('name'), $(this), $(this).val() != null ? $(this)[0].files[0] : 0);
                 expediente_form.append($(this).attr('name'), $(this).val() != null ? $(this)[0].files[0] : 0);
             } else {
+                console.log($(this).attr('name'), $(this), valor);
                 expediente_form.append($(input).attr('name'), valor);
             }
 
-            //FormData de textos
-            if ($(input).attr('name').substring(0, 3) == 'id_') {
-                expediente_form_text.append($(input).closest('.form-group').find('label').text(), $(input).children('option:selected').text());
-            } else {
-                expediente_form_text.append($(input).closest('.form-group').find('label').text(), $(input).val());
-            }
         });
 
         Swal.fire({
@@ -217,7 +218,7 @@ $(document).ready(async () => {
             contentType: false,
             type: 'POST',
             success: function (respuesta) {
-                respuesta = "/FiDigital/"+respuesta
+                respuesta = "/FiDigital/" + respuesta
                 $(input).val(respuesta).trigger('change');
             },
             error: (err, texto) => {
@@ -279,7 +280,7 @@ $(document).ready(async () => {
                     $('.input_expediente[name="id_punto"]').trigger("change");
                 }
             }); // Fin ajax
-        }else {
+        } else {
             $('.input_expediente[name="id_punto"]').empty().append(`<option value="">La sesión no contiene puntos</option>`);
         }
     });

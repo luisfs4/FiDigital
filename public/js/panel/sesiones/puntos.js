@@ -279,7 +279,11 @@ async function gestionar_jerarquia(json_editar = []) {
         }
     })
 
-    enableBtn('.btn_nuevo_punto')
+    enableBtn('.btn_nuevo_punto');
+
+    if(typeof tabla_sesiones != 'undefined'){
+        tabla_sesiones.ajax.reload();
+    }
 }
 
 

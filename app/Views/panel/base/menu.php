@@ -80,7 +80,7 @@
 				if ($permisos->permiso_proveedores == 1) {
 				?>
 					<li class="nav-item">
-						<a class="nav-link <?= $ruta == 'Listado de proveedores' ? 'active' : '' ?>" href="<?= base_url('/panel/proveedores') ?>">
+						<a class="nav-link <?= $ruta == 'Proveedores' ? 'active' : '' ?>" href="<?= base_url('/panel/proveedores') ?>">
 							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
 								<i class="fas fa-user-friends mb-1" style="font-size: 0.85rem;"></i>
 							</div>

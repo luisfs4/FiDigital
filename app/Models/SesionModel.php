@@ -18,19 +18,21 @@ class SesionModel extends Model
 	public function get_expedientes($data_filtros)
 	{
 		$consulta = $this->db->table("expedientes as e")
-			->select('e.*')
 			->select('cd.*')
 			->select('p.*')
 			->select('pg.*')
+			->select('ce.*')
 			->select('(SELECT COUNT(*) FROM puntos WHERE puntos.id_expediente = e.id_expediente) as contador_puntos')
 			->select("DATE_FORMAT(e.created_at, '%d/%m/%Y %h:%i %p') as created_at")
 			->select("DATE_FORMAT(e.updated_at, '%d/%m/%Y %h:%i %p') as updated_at")
 			->select("DATE_FORMAT(COALESCE(e.updated_at, e.created_at), '%d/%m/%Y %H:%i:%s') as ultima_modificacion")
+			->select('e.*')
 			->select('CONCAT_WS(" ", u.nombres, u.ape_paterno,  u.ape_materno) as usuario')
 			->join('usuarios as u', 'u.id_usuario = e.created_by', 'left')
 			->join('cat_direcciones as cd', 'cd.id_direccion = e.id_direccion', 'left')
 			->join('proveedores as p', 'p.id_proveedor = e.id_proveedor', 'left')
-			->join('cat_programas as pg', 'pg.id_programa = e.id_programa', 'left');
+			->join('cat_programas as pg', 'pg.id_programa = e.id_programa', 'left')
+			->join('cat_estatus as ce', 'ce.id_estatus = e.id_estatus', 'left');
 
 		if (isset($data_filtros['id_expediente'])) {
 			$consulta->where('e.id_expediente', $data_filtros['id_expediente']);
@@ -85,7 +87,7 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
-		$consulta->select("e.estatus");
+		$consulta->select("ce.estatus");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((
 								SELECT
@@ -96,6 +98,7 @@ class SesionModel extends Model
 									c.padre_id = p.id_punto AND LEFT(c.jerarquia, LENGTH(p.jerarquia)) = p.jerarquia
 							), 1) AS siguiente_disponible");
 		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
+		$consulta->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
 
 		//Búsqueda
 		if (!empty($data_filtros['id_punto'])) {
@@ -122,25 +125,42 @@ class SesionModel extends Model
 		return $consulta->get()->getResultObject();
 	}
 
-	public function get_seguimiento($filtros)
-	{
-		$seguimientos = $this->db->table("seguimientos as s");
-		$seguimientos->select("s.*");
-		$seguimientos->select("s.created_by as id_usuario_msg");
-		$seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
-		$seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
-		$seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'inner');
 
-		if (isset($filtros['id_expediente'])) {
-			$seguimientos->where('s.id_expediente', $filtros['id_expediente']);
-		}
+    /**
+     * --------------------------------- Inicio Sección Seguimiento ----------------------------------------
+     */
 
-		$seguimientos->orderBy('s.id_seguimiento');
-
-		$datos = $seguimientos->get()->getResultObject();
-
-		return $datos;
-	}
+	 public function post_seguimiento($data_seguimiento)
+	 {
+		 $data_seguimiento += [
+			 "created_by" => $this->session->id_usuario,
+			 "created_at" => date('Y-m-d H:i:s'),
+		 ];
+ 
+		 $seguimientos = $this->db->table("seguimientos");
+		 $seguimientos->set($data_seguimiento);
+		 return $seguimientos->insert();
+	 }
+ 
+	 public function get_seguimiento($filtros)
+	 {
+		 $seguimientos = $this->db->table("seguimientos as s");
+		 $seguimientos->select("s.*");
+		 $seguimientos->select("s.created_by as id_usuario_msg");
+		 $seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
+		 $seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
+		 $seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'left');
+ 
+		 if (!empty($filtros['id_expediente'])) {
+			 $seguimientos->where('s.id_expediente', $filtros['id_expediente']);
+		 }
+ 
+		 $seguimientos->orderBy('s.id_seguimiento');
+ 
+		 $datos = $seguimientos->get()->getResultObject();
+ 
+		 return $datos;
+	 }
 
 	public function get_direcciones($data_filtros)
 	{
@@ -219,11 +239,8 @@ class SesionModel extends Model
 				'nombre' => $data['nombre'],
 				'correo' => $data['correo'],
 				'telefono' => $data['telefono'],
-				'nombre_enlace' => $data['tipo_persona'] === 'moral' ? $data['nombre_enlace'] : null,
-				'telefono_enlace' => $data['tipo_persona'] === 'moral' ? $data['telefono_enlace'] : null,
-				'correo_enlace' => $data['tipo_persona'] === 'moral' ? $data['correo_enlace'] : null,
-				'nombre_fiscal_empresa' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal_empresa'] : null,
-				'nombre_comercial_empresa' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial_empresa'] : null,
+				'nombre_fiscal' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal'] : null,
+				'nombre_comercial' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial'] : null,
 				// Los campos de archivos se asumen que serán actualizados después, aquí los inicializamos
 				'acta_constitutiva' => null,
 				'boleta_registro' => null,
@@ -236,6 +253,8 @@ class SesionModel extends Model
 				'opinion_cumplimiento' => null,
 				'estado_cuenta_bancario' => null,
 				'documento_datos_contacto' => null,
+				'created_by' => $this->session->id_usuario,
+				'created_at' => date('Y-m-d H:i:s'),
 				// Puedes agregar más campos según sean necesarios para tu formulario y base de datos
 			];
 
@@ -255,17 +274,16 @@ class SesionModel extends Model
 				}
 
 				// Procesar cada archivo esperado
-				$archivos = ['acta_constitutiva', 'boleta_registro', 'poder_representante_legal', 'solicitud_registro', 'curriculum_empresarial', 'identificacion_oficial', 'comprobante_domicilio', 'constancia_situacion_fiscal', 'opinion_cumplimiento', 'estado_cuenta_bancario', 'documento_datos_contacto'];
-				foreach ($archivos as $archivo) {
-					if ($img = $this->request->getFile($archivo)) {
-						if ($img->isValid() && !$img->hasMoved()) {
-							$nuevoNombre = $img->getRandomName();
-							$img->move($rutaBase, $nuevoNombre);
-							// Actualizar la base de datos con la ruta del archivo
-							$proveedores->update($id_proveedor, [$archivo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
-						} else {
-							throw new \RuntimeException('Error al mover el archivo: ' . $archivo);
-						}
+				foreach ($data['archivos'] as $nombre_archivo => $archivo) {
+
+					var_dump($archivo);
+					if ($archivo->isValid() && !$archivo->hasMoved()) {
+						$nuevoNombre = $archivo->getRandomName();
+						$archivo->move($rutaBase, $nuevoNombre);
+						// Actualizar la base de datos con la ruta del archivo
+						$proveedores->update($id_proveedor, [$archivo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
+					} else {
+						throw new \RuntimeException('Error al mover el archivo: ' . $archivo);
 					}
 				}
 
@@ -289,6 +307,8 @@ class SesionModel extends Model
 				"updated_by" => $this->session->id_usuario
 			];
 
+			unset($data['archivos']);
+
 			$proveedores->where('id_proveedor', $id_proveedor);
 			$proveedores->set($data);
 			$bandera = $proveedores->update();
@@ -310,6 +330,9 @@ class SesionModel extends Model
 			unset($data['id_expediente']);
 		}
 
+		$id_seccion = $data['id_seccion'];
+		unset($data['id_seccion']);
+
 		$id_carpeta = $data['id_carpeta'];
 		unset($data['id_carpeta']);
 
@@ -320,13 +343,16 @@ class SesionModel extends Model
 			$data['id_punto'] = $id_subcarpeta;
 		} else if (!empty($id_carpeta)) {
 			$data['id_punto'] = $id_carpeta;
+		} else if (!empty($id_seccion)) {
+			$data['id_punto'] = $id_seccion;
 		}
 
 		if (empty($id_expediente)) {
 
 			$data += [
 				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario
+				"created_by" => $this->session->id_usuario,
+				"id_estatus" => 1
 			];
 
 			$bandera = $sesiones->insert($data);

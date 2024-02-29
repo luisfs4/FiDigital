@@ -200,12 +200,12 @@
                         </div>
 
                         <div class="card-footer p-3 pt-0">
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center">
                                 <div>
                                     <p class="mb-2 text-sm"><i class="fas fa-user me-2"></i> ${e.usuario}</p>
                                 </div>
-                                <div class="d-flex ms-auto">
-                                    <button class="btn btn-sm btn-outline-danger mb-0 ms-auto" hidden>Detalles</button>
+                                <div class="d-flex ms-auto w-100 mt-2">
+                                    <a href="/FiDigital/panel/sesiones/expedientes/${e.id_expediente}/detalle" class="btn btn-sm btn-outline-info mb-0 ms-auto">Detalles</a>
                                     ${btn_archivar}
                                 </div>
                             </div>

@@ -98,7 +98,7 @@
 										<div class="col-lg-3">
 											<div class="form-group">
 												<label class="form-control-label">Sesión:</label>
-												<select name="id_sesion" class="input_punto form-control input-lg p-2 select_sesion input_sesion">
+												<select name="id_sesion" class="input_punto form-control input-lg p-2 select_sesion input_sesion input_expediente" required>
 													<option value="">Selecciona una opción</option>
 												</select>
 											</div>
@@ -106,7 +106,7 @@
 										<div class="col-lg-3">
 											<div class="form-group">
 												<label class="form-control-label"><i class="far fa-calendar-alt"></i> Punto:</label>
-												<select name="id_punto" class="input_punto select_punto id_punto form-control input-lg p-2">
+												<select name="id_punto" class="input_punto select_punto id_punto form-control input-lg p-2 input_expediente" required>
 												</select>
 											</div>
 										</div>
@@ -114,21 +114,21 @@
 										<div class="col-lg-2">
 											<div class="form-group">
 												<label class="form-control-label"><i class="far fa-calendar-alt"></i> Sección:</label>
-												<select name="id_seccion" class="input_punto id_seccion form-control input-lg p-2">
+												<select name="id_seccion" class="input_punto id_seccion form-control input-lg p-2 input_expediente">
 												</select>
 											</div>
 										</div>
 										<div class="col-lg-2">
 											<div class="form-group">
 												<label class="form-control-label"><i class="far fa-calendar-alt"></i> Carpeta:</label>
-												<select name="id_carpeta" class="input_punto id_carpeta form-control input-lg p-2">
+												<select name="id_carpeta" class="input_punto id_carpeta form-control input-lg p-2 input_expediente">
 												</select>
 											</div>
 										</div>
 										<div class="col-lg-2">
 											<div class="form-group">
 												<label class="form-control-label"><i class="far fa-calendar-alt"></i> Subcarpeta:</label>
-												<select name="id_subcarpeta" class="input_punto id_subcarpeta form-control input-lg p-2">
+												<select name="id_subcarpeta" class="input_punto id_subcarpeta form-control input-lg p-2 input_expediente">
 												</select>
 											</div>
 										</div>
@@ -136,28 +136,28 @@
 										<div class="col-xxl-2 col-lg-4 col-sm-12">
 											<div class="form-group">
 												<label for="monto_autorizado" class="form-label">Monto autorizado*</label>
-												<input type="number" id="monto_autorizado" class="form-control input_expediente" placeholder="0" name="monto_autorizado" min="0" max="999999999">
+												<input type="number" id="monto_autorizado" class="form-control input_expediente" placeholder="0" name="monto_autorizado" min="0" max="999999999" required>
 											</div>
 										</div>
 
 										<div class="col-xxl-2 col-lg-4 col-sm-12">
 											<div class="form-group">
 												<label for="monto_pagado" class="form-label">Monto pagado*</label>
-												<input type="number" id="monto_pagado" class="form-control input_expediente" placeholder="0" name="monto_pagado" min="0" max="999999999">
+												<input type="number" id="monto_pagado" class="form-control input_expediente" placeholder="0" name="monto_pagado" min="0" max="999999999" required>
 											</div>
 										</div>
 
 										<div class="col-xxl-2 col-lg-4 col-sm-12">
 											<div class="form-group">
-												<label for="" class="form-label">Fecha de pago *</label>
-												<input type="date" class="form-control input_expediente" name="fecha_pago">
+												<label for="" class="form-label">Fecha de pago</label>
+												<input type="date" class="form-control input_expediente" name="fecha_pago" required>
 											</div>
 										</div>
 
 										<div class="col-xxl-2 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="visitador_correo" class="form-label">Dirección *</label>
-												<select name="id_direccion" class="form-control input_expediente">
+												<label for="visitador_correo" class="form-label">Dirección</label>
+												<select name="id_direccion" class="form-control input_expediente" required>
 													<option value="">Seleccona una opción</option>
 													<?php
 
@@ -172,8 +172,8 @@
 
 										<div class="col-xxl-3 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="visitador_correo" class="form-label">Programa *</label>
-												<select name="id_programa" class="form-control input_expediente"="required">
+												<label for="visitador_correo" class="form-label">Programa</label>
+												<select name="id_programa" class="form-control input_expediente" required>
 													<option value="">Seleccona una opción</option>
 													<?php
 
@@ -188,7 +188,7 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="" class="form-label">Observaciones *</label>
+												<label for="" class="form-label">Observaciones</label>
 												<textarea placeholder="Escribe tus observaciones aquí..." class="form-control input_expediente" name="observaciones"></textarea>
 											</div>
 										</div>
@@ -200,7 +200,7 @@
 
 								<div class="row flex-row justify-content-end mt-4">
 									<div class="w-auto">
-										<button class="btn bg-gradient-dark ms-2 mb-0 crear_expediente" type="button" title="Crear">Crear expediente</button>
+										<button class="btn bg-gradient-dark ms-2 mb-0 js-btn-next" type="button" title="Siguiente">Siguiente</button>
 									</div>
 								</div>
 							</div>
@@ -220,57 +220,57 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_cfdi" class="form-label">CFDI *</label>
+												<label for="ruta_cfdi" class="form-label">CFDI</label>
 												<input id="ruta_cfdi" type="file" class="form-control input_expediente_ruta filepond" name="ruta_cfdi" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_verificacion" class="form-label">Verificación *</label>
+												<label for="ruta_verificacion" class="form-label">Verificación</label>
 												<input id="ruta_verificacion" type="file" class="form-control input_expediente_ruta filepond" name="ruta_verificacion" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_edo_cuenta" class="form-label">Estado de cuenta *</label>
+												<label for="ruta_edo_cuenta" class="form-label">Estado de cuenta</label>
 												<input id="ruta_edo_cuenta" type="file" class="form-control input_expediente_ruta filepond" name="ruta_edo_cuenta" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Opinion de cumplimiento *</label>
-												<input type="file" class="form-control input_expediente_ruta filepond" name="ruta_opinion_cumplimiento" data-max-file-size="5MB" data-max-files="1">
+												<label class="form-label">Opinion de cumplimiento</label>
+												<input type="file" class="form-control input_expediente filepond" name="ruta_opinion_cumplimiento" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Contrato *</label>
-												<input type="file" class="form-control input_expediente_ruta filepond" name="ruta_contrato" data-max-file-size="5MB" data-max-files="1" required>
+												<label class="form-label">Contrato</label>
+												<input type="file" class="form-control input_expediente filepond" name="ruta_contrato" data-max-file-size="5MB" data-max-files="1" required>
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Recepción *</label>
-												<input type="file" class="form-control input_expediente_ruta filepond" name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
+												<label class="form-label">Recepción</label>
+												<input type="file" class="form-control input_expediente filepond" name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Testigo *</label>
-												<input type="file" class="form-control input_expediente_ruta filepond" name="ruta_testigo" data-max-file-size="5MB" data-max-files="1">
+												<label class="form-label">Testigo</label>
+												<input type="file" class="form-control input_expediente filepond" name="ruta_testigo" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Caratula *</label>
-												<input type="file" class="form-control input_expediente_ruta filepond" name="ruta_caratula" data-max-file-size="5MB" data-max-files="1">
+												<label class="form-label">Caratula</label>
+												<input type="file" class="form-control input_expediente filepond" name="ruta_caratula" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
@@ -279,7 +279,7 @@
 
 								<div class="row flex-row justify-content-end mt-4">
 									<div class="w-auto">
-										<button class="btn bg-gradient-dark ms-2 mb-0 crear_expediente" type="button" title="Crear">Crear expediente</button>
+										<button class="btn bg-gradient-dark ms-2 mb-0 js-btn-next" type="button" title="Siguiente">Siguiente</button>
 									</div>
 								</div>
 							</div>
@@ -292,7 +292,7 @@
 									<div class="row align-items-start gy-2">
 
 										<div class="col-lg-12 text-center">
-											<h6 class="mb-0 font-weight-normal text-info text-gradient">Datos del expediente</h6>
+											<h6 class="mb-0 font-weight-normal text-info text-gradient">Datos del proveedor</h6>
 											<p class="text-sm mb-0">Por favor completa todos los campos requeridos</p>
 										</div>
 
@@ -300,7 +300,7 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="id_proveedor" class="form-label">Proveedor *</label>
+												<label for="id_proveedor" class="form-label">Proveedor</label>
 												<select name="id_proveedor" id="id_proveedor" class="form-control input_expediente" required>
 													<option value="">Selecciona una opción</option>
 													<?php
@@ -312,31 +312,16 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-2 col-lg-4 col-sm-12">
-											<div class="form-group">
-												<label for="" class="form-label">Monto a pagar*</label>
-												<input type="number" class="form-control input_expediente" placeholder="0" name="monto_pagar" min="0" max="999999999" required>
-											</div>
-										</div>
-
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="" class="form-label">Fecha de pago *</label>
-												<input type="date" class="form-control input_expediente" name="fecha_pago">
-											</div>
-										</div>
-
-
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
-												<label for="ruta_cfdi" class="form-label">Identificación oficial *</label>
+												<label for="ruta_cfdi" class="form-label">Identificación oficial</label>
 												<input type="file" class="form-control input_expediente filepond" name="ruta_cfdi" data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_verificacion" class="form-label">Comprobante de domicilio *</label>
+												<label for="ruta_verificacion" class="form-label">Comprobante de domicilio</label>
 												<input type="file" class="form-control input_expediente filepond" name="ruta_verificacion" data-max-file-size="5MB" data-max-files="1">
 											</div>
 
@@ -344,7 +329,7 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Opinión de cumplimiento *</label>
+												<label class="form-label">Opinión de cumplimiento</label>
 												<input type="file" class="form-control input_expediente filepond" name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
 											</div>
 
@@ -352,7 +337,7 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Estado de Cuenta *</label>
+												<label class="form-label">Estado de Cuenta</label>
 												<input type="file" class="form-control input_expediente filepond" name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
 											</div>
 
@@ -387,6 +372,8 @@
 <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css" rel="stylesheet">
 
 <script>
+	let monto_autorizado_punto = 0;
+
 	document.addEventListener('DOMContentLoaded', function() {
 		// Asegúrate de registrar los plugins que necesitas
 		FilePond.registerPlugin(
@@ -442,25 +429,37 @@
 
 		$('[name="id_punto"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
-			cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
-				padre_id: id_punto
-			});
-			$('[name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+			if (id_punto) {
+				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('presupuesto_autorizado')
+				actualizar_max_monto(monto_autorizado_punto)
+				cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
+					padre_id: id_punto
+				});
+				$('[name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+			}
 		});
 
 		$('[name="id_seccion"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
-			cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
-				padre_id: id_punto
-			});
-			$('[name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+			if (id_punto) {
+				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('presupuesto_autorizado')
+				actualizar_max_monto(monto_autorizado_punto)
+				cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
+					padre_id: id_punto
+				});
+				$('[name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+			}
 		});
 
 		$('[name="id_carpeta"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
-			cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
-				padre_id: id_punto
-			});
+			if (id_punto) {
+				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('presupuesto_autorizado')
+				actualizar_max_monto(monto_autorizado_punto)
+				cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
+					padre_id: id_punto
+				});
+			}
 		});
 
 		$('#monto_autorizado').on('change', function() {
@@ -468,5 +467,9 @@
 			$('#monto_pagado').attr('max', valorAutorizado);
 			$('#monto_pagado').parsley().validate();
 		});
+
+		const actualizar_max_monto = (monto) => {
+			$('#monto_autorizado').attr('max', monto);
+		}
 	});
 </script>
