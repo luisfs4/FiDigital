@@ -47,7 +47,6 @@ Vagrantfile
 #-------------------------
 # Temporary Files
 #-------------------------
-app/Config/Boot/*
 public/documentos/*
 tramites/*
 
