@@ -308,6 +308,11 @@ function render_puntos(hierarchy, level = 0) {
                 </a>             
             `;
         }
+        
+        let span_restante = ``;
+        if (point.monto_restante) {
+            span_restante = `<span class="badge badge-info ms-2">$ ${point.monto_restante} restante</span>`;
+        }
 
         let btn_estatus = '';
         let badge = '';
@@ -346,6 +351,7 @@ function render_puntos(hierarchy, level = 0) {
                     <div class="text-start">
                         ${"&nbsp;".repeat(level * 2)}
                         <span>${point.jerarquia} - ${point.nombre_punto}</span>
+                        ${span_restante}
                     </div>
                     <div>
                         ${btn_estatus}
