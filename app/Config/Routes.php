@@ -110,16 +110,16 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	//Sección de direcciones
 	$routes->group('direcciones', ['filter' => 'Permiso_direcciones'], static function ($routes) {
 		//Listado de sesiones
-		$routes->get('/', 'direccion::listado');
+		$routes->get('/', 'Direccion::listado');
 		$routes->post('post_direccion', 'Direccion::post_direccion');
 		$routes->post('get_direcciones',  'Direccion::get_direcciones');
 	});
 
 	//Sección de programas
 	$routes->group('programas', ['filter' => 'Permiso_programas'], static function ($routes) {
-		$routes->get('/', 'programa::listado');
-		$routes->post('post_programa', 	 'programa::post_programa');
-		$routes->post('get_programas',   'programa::get_programas');
+		$routes->get('/', 'Programa::listado');
+		$routes->post('post_programa', 	 'Programa::post_programa');
+		$routes->post('get_programas',   'Programa::get_programas');
 	});
 
 	$routes->group('solicitudes', ['filter' => 'Permiso_programas'], static function ($routes) {
