@@ -38,6 +38,14 @@ class SesionModel extends Model
 			$consulta->where('e.id_expediente', $data_filtros['id_expediente']);
 		}
 
+		if (isset($data_filtros['id_punto'])) {
+			$consulta->where('e.id_punto', $data_filtros['id_punto']);
+		}
+
+		if (isset($data_filtros['not_id_expediente'])) {
+			$consulta->where('e.id_expediente !=', $data_filtros['not_id_expediente']);
+		}
+
 		$expedientes = $consulta->get()->getResultObject();
 
 		foreach ($expedientes as $key => $expediente) {

@@ -169,7 +169,7 @@ const card_expediente = async (id_expediente) => {
                 <li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
 
                     <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_expendiente_pagos_expediente" aria-expanded="false" aria-controls="collapse_expendiente_pagos_expediente">
-                        Pagos del expediente
+                        Expedientes relacionados
                         <div class="collapse-close badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
                             <i class="fa fa-plus text-xs" aria-hidden="true"></i>
                         </div>
@@ -180,7 +180,7 @@ const card_expediente = async (id_expediente) => {
 
                     <div class="collapse p-3 w-100" id="collapse_expendiente_pagos_expediente">
                         <div class="card card-body">
-                            ${expediente.pagos ?? 'Sin pagos registrados'}
+                            ${html_relacionados ?? 'Sin expedientes relacionadoss'}
                         </div>
                     </div>
                 </li>

@@ -303,7 +303,7 @@ function render_puntos(hierarchy, level = 0) {
 
         if (point.id_expediente) {
             btn_detalle = `
-                <a href="/FiDigital/panel/sesiones/${point.id_expediente}/detalle" class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded">
+                <a href="/FiDigital/panel/sesiones/expedientes/${point.id_expediente}/detalle" class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded">
                     <i class="fas fa-folder text-white" aria-hidden="true"></i>
                 </a>             
             `;
