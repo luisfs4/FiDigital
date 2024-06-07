@@ -2,10 +2,6 @@ let tabla_sesiones;
 
 $(document).ready(async () => {
 
-    $('.btn_crear_proveedor').click(function () {
-        evento_btn_proveedor();
-    });
-
     manejarSeleccionTipoPersona();
 
     tabla_sesiones = await $('.tabla_sesiones').DataTable({

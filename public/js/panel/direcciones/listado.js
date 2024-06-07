@@ -2,10 +2,6 @@ let tabla_direcciones;
 
 $(document).ready(async () => {
 
-    $('.btn_crear_proveedor').click(function () {
-        evento_btn_proveedor();
-    });
-
     tabla_direcciones = await $('.tabla_direcciones').DataTable({
         dom: 'Blrtip',
         buttons: [{

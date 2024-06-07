@@ -39,12 +39,19 @@ async function cargar_opciones(url, parametro = {}) {
 async function gestionar_jerarquia(json_editar = []) {
     let editar_jerarquia = '';
 
+    if(json_editar != []){
+        console.log(json_editar);
+        editar_jerarquia = json_editar.jerarquia
+    }
+
     disableBtn('.btn_nuevo_punto');
 
-    let titulo = json_editar.length ? 'Editar punto' : 'Nuevo punto';
-    let btn_confirmar = json_editar.length ? 'Guardar punto<i class="fas fa-arrow-right ms-2"></i>' : 'Crear punto<i class="fas fa-arrow-right ms-2"></i>';
-    let titulo_success = json_editar.length ? 'Guardado!' : '¡Creado!';
-    let texto_success = json_editar.length ? 'El punto se guardó con éxito' : 'El punto se añadió con éxito';
+    console.log(json_editar, typeof json_editar);
+
+    let titulo = json_editar != [] ? 'Editar punto' : 'Nuevo punto';
+    let btn_confirmar = json_editar != [] ? 'Guardar punto<i class="fas fa-arrow-right ms-2"></i>' : 'Crear punto<i class="fas fa-arrow-right ms-2"></i>';
+    let titulo_success = json_editar != [] ? 'Guardado!' : '¡Creado!';
+    let texto_success = json_editar != [] ? 'El punto se guardó con éxito' : 'El punto se añadió con éxito';
 
     let opciones_sesion = await cargar_opciones('/FiDigital/panel/sesiones/get_by_ajax');
 
@@ -141,7 +148,9 @@ async function gestionar_jerarquia(json_editar = []) {
 
             // Verificar si estamos en modo de edición y la jerarquía ha cambiado
             let necesita_validacion_jerarquia = true;
+            console.log(id_punto);
             if (id_punto) { // Si estamos editando un punto
+                console.log(jerarquia, editar_jerarquia);
                 if (jerarquia === editar_jerarquia) {
                     necesita_validacion_jerarquia = false; // No necesita validación si la jerarquía no ha cambiado
                 }
@@ -243,20 +252,12 @@ async function gestionar_jerarquia(json_editar = []) {
             // Configuración inicial en caso de edición
             if (Object.keys(json_editar).length > 0) {
 
-                // await cargar_opciones_puntos('[name="id_punto"]',       '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: json_editar.id_sesion });
-                // await cargar_opciones_puntos('[name="id_seccion"]',     '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: json_editar.id_punto });
-                // await cargar_opciones_puntos('[name="id_carpeta"]',     '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: json_editar.id_punto });
-                // await cargar_opciones_puntos('[name="id_subcarpeta"]',  '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: json_editar.id_punto });
-
                 $('[name="id_sesion"]').val(json_editar.id_sesion).trigger('change');
-
+                
+                $('[name="id_punto"]').val(json_editar.id_nivel_1)
                 $('[name="id_seccion"]').val(json_editar.id_seccion).trigger('change');
-
-                $('[name="id_punto"]').val(json_editar.padre_id).trigger('change');
-
-                $('[name="id_carpeta"]').val(json_editar.id_carpeta).trigger('change');
-
-                $('[name="id_subcarpeta"]').val(json_editar.id_subcarpeta).trigger('change');
+                $('[name="id_carpeta"]').val(json_editar.id_nivel_3).trigger('change');
+                $('[name="id_subcarpeta"]').val(json_editar.id_nivel_4).trigger('change');
 
                 //No dinamicos
                 $('[name="jerarquia"]').val(json_editar.jerarquia);

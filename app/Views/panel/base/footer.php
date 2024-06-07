@@ -68,13 +68,14 @@ echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts
 echo script_tag('https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js');
 echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js');
 echo script_tag('https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js');
+echo script_tag('https://unpkg.com/filepond/dist/filepond.js');
 
 // JS general
 echo script_tag('public/js/app.js');
 
 if (!empty($scripts)) {
 	foreach ($scripts as $key => $script) {
-		echo script_tag($script['src']);
+		echo script_tag($script['src'] . "?=v".time());
 	}
 }
 

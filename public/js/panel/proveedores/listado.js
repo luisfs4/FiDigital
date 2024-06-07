@@ -2,10 +2,6 @@ let tabla_proveedores;
 
 $(document).ready(async () => {
 
-    $('.btn_crear_proveedor').click(function () {
-        evento_btn_proveedor();
-    });
-
     tabla_proveedores = await $('.tabla_proveedores').DataTable({
         dom: 'Blrtip',
         buttons: [{
@@ -57,8 +53,6 @@ $(document).ready(async () => {
         columns: [{
             "mData": "nombre_sesion",
             "mRender": function (data, type, row) {
-
-                console.log(row.total_expedientes);
 
                 return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_proveedor="${row.id_proveedor}">
                                 <div>
@@ -127,7 +121,7 @@ $(document).ready(async () => {
                 }
 
                 return `<div class="text-center ms-auto">
-                            <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded editar_proveedor cursor-pointer" id_proveedor="${row.id_proveedor}">
+                            <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded btn_editar_proveedor cursor-pointer" id_proveedor="${row.id_proveedor}">
                                 <i class="fas fa-edit text-white" aria-hidden="true"></i>
                             </div>
                             ${btn_archivado}
@@ -163,12 +157,6 @@ $(document).ready(async () => {
     $('.busqueda_nav').keyup(function () {
         tabla_proveedores.search($(this).val()).draw();
         //console.log($(this).val());
-    });
-
-    // Evento para el botón de editar proveedor
-    $(document).on('click', '.editar_proveedor', function () {
-        let id_proveedor = $(this).attr('id_proveedor');
-        mostrar_formulario_proveedor(id_proveedor);
     });
 });
 
@@ -238,17 +226,21 @@ const mostrar_formulario_proveedor = async (id_proveedor = null) => {
         },
         buttonsStyling: false,
         focusConfirm: false,
-        preConfirm: () => {
+        preConfirm: async () => {
             const proveedor = document.getElementById('proveedor').value;
             const id_direccion = document.getElementById('id_direccion').value;
             if (!proveedor) {
                 Swal.showValidationMessage('Por favor ingresa el nombre del proveedor');
                 return false;
             }
-            return guardar_proveedor({ proveedor, id_direccion, id_proveedor });
+            const resultado = await guardar_proveedor({ proveedor, id_direccion, id_proveedor });
+            if (!resultado) {
+                Swal.showValidationMessage('Hubo un error al guardar el proveedor');
+            }
+            return resultado;
         }
     }).then(result => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed && result.value) {
             Swal.fire({
                 title: '¡Éxito!',
                 text: 'El proveedor ha sido guardado correctamente.',
@@ -275,7 +267,7 @@ const guardar_proveedor = async ({ proveedor, id_direccion, id_proveedor }) => {
         return response;
     } catch (error) {
         Swal.showValidationMessage(`Error: ${error.responseText}`);
-        return false; ñ
+        return false;
     }
 };
 

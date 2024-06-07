@@ -49,6 +49,9 @@
     <!-- CSS Versión Moviles -->
     <link href="<?= base_url('public/css/moviles.css?v=').date('YmdHis'); ?>" rel="stylesheet" />
 
+    <!-- Filepond -->
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="<?=base_url('public/imagenes/favicon/apple-touch-icon.png')?>">
     <link rel="icon" type="image/png" sizes="32x32" href="<?=base_url('public/imagenes/favicon/favicon-32x32.png')?>">

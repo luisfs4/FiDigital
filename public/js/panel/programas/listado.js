@@ -2,10 +2,6 @@ let tabla_programas;
 
 $(document).ready(async () => {
 
-    $('.btn_crear_proveedor').click(function () {
-        evento_btn_proveedor();
-    });
-
     tabla_programas = await $('.tabla_programas').DataTable({
         dom: 'Blrtip',
         buttons: [{

@@ -168,6 +168,14 @@ $(document).ready(() => {
             }
         });
     }
+    
+    $(document).on('click', '.btn_crear_proveedor', () => {
+        evento_btn_proveedor();
+    });
+
+    $(document).on('click', '.btn_editar_proveedor', (e) => {
+        evento_btn_proveedor($(e.currentTarget).attr('id_proveedor'));
+    });
 
     //Inicializar FlatPickr
     $('.flatpickr_time').flatpickr({
@@ -389,8 +397,6 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
             data: parametros,
         });
 
-        console.log(respuesta);
-
         if (respuesta && respuesta.length > 0) {
             $(selector_destino).empty().append('<option value="">Selecciona una opción</option>');
             respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, monto_restante }) => {
@@ -405,141 +411,140 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
     }
 };
 
-const evento_btn_proveedor = () => {
+const evento_btn_proveedor = (proveedor_id = null) => {
     Swal.fire({
         title: 'Proveedor',
         html: `
-            <form id="formularioProveedor" class="px-2">
-                <div class="container mt-3">
-                    <div class="row">
-                        <div class="col-6 mb-3">
-                            <label for="tipo_persona" class="form-label">Tipo de Persona <i class="fas fa-users"></i></label>
-                            <select class="form-select" id="tipo_persona">
-                                <option value="">Selecciona un tipo</option>
-                                <option value="fisica">Persona Física</option>
-                                <option value="moral">Persona Moral</option>
-                            </select>
-                        </div>
-                
-                        <div class="col-6 mb-3">
-                            <div class="form-check pt-1 mt-4 d-flex">
-                                <input class="form-check-input" type="checkbox" id="es_agente_capacitador" name="es_agente_capacitador">
-                                <label class="form-check-label mb-0 ms-2 mt-1" for="es_agente_capacitador">
-                                    ¿Es Agente Capacitador Externo? <i class="fas fa-chalkboard-teacher"></i>
-                                </label>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div id="campos_persona_fisica" style="display: none;">
-                        <hr class="horizontal dark my-3">
-                        <!-- Campos Persona Física -->
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label for="nombre_fisica" class="form-label">Nombre <i class="fas fa-user"></i></label>
-                                <input type="text" class="form-control" id="nombre_fisica" placeholder="Nombre Completo">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="correo_fisica" class="form-label">Correo <i class="fas fa-envelope"></i></label>
-                                <input type="email" class="form-control" id="correo_fisica" placeholder="correo@ejemplo.com">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="telefono_fisica" class="form-label">Teléfono <i class="fas fa-phone"></i></label>
-                                <input type="text" class="form-control" id="telefono_fisica" placeholder="3333333333">
-                            </div>
-                            
-                        </div>
-                    </div>
-                
-                    <div id="campos_persona_moral" style="display: none;">
-                        <hr class="horizontal dark my-3">  
-                        <!-- Campos Persona Moral -->
-                        <div class="row g-3">
-                            <!-- Repite los campos de persona física aquí para archivos -->
-                            <div class="col-md-4">
-                                <label for="nombre_enlace" class="form-label">Nombre del Enlace <i class="fas fa-user-tie"></i></label>
-                                <input type="text" class="form-control" id="nombre_enlace" placeholder="Nombre del Enlace">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="telefono_enlace" class="form-label">Teléfono <i class="fas fa-phone"></i></label>
-                                <input type="text" class="form-control" id="telefono_enlace" placeholder="+52 123 456 7890">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="correo_enlace" class="form-label">Correo <i class="fas fa-envelope"></i></label>
-                                <input type="email" class="form-control" id="correo_enlace" placeholder="correo@ejemplo.com">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="nombre_fiscal_empresa" class="form-label">Nombre Fiscal de la Empresa <i class="fas fa-building"></i></label>
-                                <input type="text" class="form-control" id="nombre_fiscal_empresa" placeholder="Nombre Fiscal">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="nombre_comercial_empresa" class="form-label">Nombre Comercial de la Empresa <i class="fas fa-store"></i></label>
-                                <input type="text" class="form-control" id="nombre_comercial_empresa" placeholder="Nombre Comercial">
-                            </div>
-                            <!-- Campos exclusivos de archivos para Persona Moral -->
-                            <div class="col-md-6">
-                                <label for="acta_constitutiva" class="form-label">Acta Constitutiva <i class="fas fa-file-contract"></i></label>
-                                <input type="file" class="form-control" id="acta_constitutiva">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="boleta_registro" class="form-label">Boleta de Registro <i class="fas fa-clipboard-list"></i></label>
-                                <input type="file" class="form-control" id="boleta_registro">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="poder_representante_legal" class="form-label">Poder del Representante Legal <i class="fas fa-gavel"></i></label>
-                                <input type="file" class="form-control" id="poder_representante_legal">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Campos para Agente Capacitador Externo -->
-                    <div id="campos_agente_capacitador" style="display: none;">
-                        <hr class="horizontal dark my-3">  
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="solicitud_registro" class="form-label">Solicitud de Registro <i class="fas fa-file-signature"></i></label>
-                                <input type="file" class="form-control" id="solicitud_registro">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="curriculum_empresarial" class="form-label">Currículum Empresarial <i class="fas fa-briefcase"></i></label>
-                                <input type="file" class="form-control" id="curriculum_empresarial">
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr class="horizontal dark my-3">  
-                    
-                    <div class="row mb-4">
-                        <!-- Campos de archivos para comunes -->
-                        <div class="col-md-6">
-                            <label for="identificacion_oficial" class="form-label">Identificación Oficial Vigente <i class="fas fa-id-card"></i></label>
-                            <input type="file" class="form-control" id="identificacion_oficial">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="comprobante_domicilio" class="form-label">Comprobante de Domicilio del Negocio <i class="fas fa-home"></i></label>
-                            <input type="file" class="form-control" id="comprobante_domicilio">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="constancia_situacion_fiscal" class="form-label">Constancia de Situación Fiscal <i class="fas fa-file-invoice-dollar"></i></label>
-                            <input type="file" class="form-control" id="constancia_situacion_fiscal">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="opinion_cumplimiento" class="form-label">Opinión de Cumplimiento <i class="fas fa-thumbs-up"></i></label>
-                            <input type="file" class="form-control" id="opinion_cumplimiento">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="estado_cuenta_bancario" class="form-label">Estado de Cuenta Bancario <i class="fas fa-university"></i></label>
-                            <input type="file" class="form-control" id="estado_cuenta_bancario">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="documento_datos_contacto" class="form-label">Documento de Datos de Contacto <i class="fas fa-address-book"></i></label>
-                            <input type="file" class="form-control" id="documento_datos_contacto">
-                        </div>
+        <form id="formularioProveedor" class="px-2">
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label for="tipo_persona" class="form-label">Tipo de Persona <i class="fas fa-users"></i></label>
+                    <select class="form-select" id="tipo_persona">
+                        <option value="">Selecciona un tipo</option>
+                        <option value="fisica">Persona Física</option>
+                        <option value="moral">Persona Moral</option>
+                    </select>
+                </div>
+        
+                <div class="col-6 mb-3">
+                    <div class="form-check pt-1 mt-4 d-flex">
+                        <input class="form-check-input" type="checkbox" id="es_agente_capacitador" name="es_agente_capacitador">
+                        <label class="form-check-label mb-0 ms-2 mt-1" for="es_agente_capacitador">
+                            ¿Es Agente Capacitador Externo? <i class="fas fa-chalkboard-teacher"></i>
+                        </label>
                     </div>
                 </div>
+
+            </div>
+
+            <div id="campos_persona_fisica" style="display: none;">
+                <hr class="horizontal dark my-3">
+                <!-- Campos Persona Física -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="nombre_fisica" class="form-label">Nombre <i class="fas fa-user"></i></label>
+                        <input type="text" class="form-control" id="nombre_fisica" placeholder="Nombre Completo">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="correo_fisica" class="form-label">Correo <i class="fas fa-envelope"></i></label>
+                        <input type="email" class="form-control" id="correo_fisica" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="telefono_fisica" class="form-label">Teléfono <i class="fas fa-phone"></i></label>
+                        <input type="text" class="form-control" id="telefono_fisica" placeholder="3333333333">
+                    </div>
+                    
+                </div>
+            </div>
+        
+            <div id="campos_persona_moral" style="display: none;">
+                <hr class="horizontal dark my-3">  
+                <!-- Campos Persona Moral -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="nombre_enlace" class="form-label">Nombre del Enlace <i class="fas fa-user-tie"></i></label>
+                        <input type="text" class="form-control" id="nombre_enlace" placeholder="Nombre del Enlace">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="telefono_enlace" class="form-label">Teléfono <i class="fas fa-phone"></i></label>
+                        <input type="text" class="form-control" id="telefono_enlace" placeholder="+52 123 456 7890">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="correo_enlace" class="form-label">Correo <i class="fas fa-envelope"></i></label>
+                        <input type="email" class="form-control" id="correo_enlace" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="nombre_fiscal_empresa" class="form-label">Nombre Fiscal de la Empresa <i class="fas fa-building"></i></label>
+                        <input type="text" class="form-control" id="nombre_fiscal_empresa" placeholder="Nombre Fiscal">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="nombre_comercial_empresa" class="form-label">Nombre Comercial de la Empresa <i class="fas fa-store"></i></label>
+                        <input type="text" class="form-control" id="nombre_comercial_empresa" placeholder="Nombre Comercial">
+                    </div>
+                    <!-- Campos exclusivos de archivos para Persona Moral -->
+                    <div class="col-md-6">
+                        <label for="acta_constitutiva" class="form-label">Acta Constitutiva <i class="fas fa-file-contract"></i></label>
+                        <input type="file" class="filepond" id="acta_constitutiva" name="acta_constitutiva">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="boleta_registro" class="form-label">Boleta de Registro <i class="fas fa-clipboard-list"></i></label>
+                        <input type="file" class="filepond" id="boleta_registro" name="boleta_registro">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="poder_representante_legal" class="form-label">Poder del Representante Legal <i class="fas fa-gavel"></i></label>
+                        <input type="file" class="filepond" id="poder_representante_legal" name="poder_representante_legal">
+                    </div>
+                </div>
+            </div>
             
-            </form>
+            <!-- Campos para Agente Capacitador Externo -->
+            <div id="campos_agente_capacitador" style="display: none;">
+                <hr class="horizontal dark my-3">  
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="solicitud_registro" class="form-label">Solicitud de Registro <i class="fas fa-file-signature"></i></label>
+                        <input type="file" class="filepond" id="solicitud_registro" name="solicitud_registro">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="curriculum_empresarial" class="form-label">Currículum Empresarial <i class="fas fa-briefcase"></i></label>
+                        <input type="file" class="filepond" id="curriculum_empresarial" name="curriculum_empresarial">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="horizontal dark my-3">  
+            
+            <div class="row mb-4">
+                <!-- Campos de archivos para comunes -->
+                <div class="col-md-6">
+                    <label for="identificacion_oficial" class="form-label">Identificación Oficial Vigente <i class="fas fa-id-card"></i></label>
+                    <input type="file" class="filepond" id="identificacion_oficial" name="identificacion_oficial">
+                </div>
+                <div class="col-md-6">
+                    <label for="comprobante_domicilio" class="form-label">Comprobante de Domicilio del Negocio <i class="fas fa-home"></i></label>
+                    <input type="file" class="filepond" id="comprobante_domicilio" name="comprobante_domicilio">
+                </div>
+                <div class="col-md-6">
+                    <label for="constancia_situacion_fiscal" class="form-label">Constancia de Situación Fiscal <i class="fas fa-file-invoice-dollar"></i></label>
+                    <input type="file" class="filepond" id="constancia_situacion_fiscal" name="constancia_situacion_fiscal">
+                </div>
+                <div class="col-md-6">
+                    <label for="opinion_cumplimiento" class="form-label">Opinión de Cumplimiento <i class="fas fa-thumbs-up"></i></label>
+                    <input type="file" class="filepond" id="opinion_cumplimiento" name="opinion_cumplimiento">
+                </div>
+                <div class="col-md-6">
+                    <label for="estado_cuenta_bancario" class="form-label">Estado de Cuenta Bancario <i class="fas fa-university"></i></label>
+                    <input type="file" class="filepond" id="estado_cuenta_bancario" name="estado_cuenta_bancario">
+                </div>
+                <div class="col-md-6">
+                    <label for="documento_datos_contacto" class="form-label">Documento de Datos de Contacto <i class="fas fa-address-book"></i></label>
+                    <input type="file" class="filepond" id="documento_datos_contacto" name="documento_datos_contacto">
+                </div>
+            </div>
+        </div>
+    
+    </form>
         `,
         showCancelButton: true,
         reverseButtons: true,
@@ -554,30 +559,29 @@ const evento_btn_proveedor = () => {
         },
         didOpen: () => {
             manejarSeleccionTipoPersona();
+            inicializarFilePond();
+            if (proveedor_id) {
+                cargarDatosProveedor(proveedor_id);
+            }
         },
         preConfirm: async () => {
-            // Objeto para almacenar los campos relacionados
             const campos_relacionados = {};
 
-            // Obtener el tipo de persona seleccionado
             const tipo_persona = $('#tipo_persona').val();
-
-            // Agregar el tipo de persona al objeto campos_relacionados
             campos_relacionados['tipo_persona'] = tipo_persona;
 
-            // Función para agregar campos relacionados al objeto campos_relacionados
             const agregar_campo_relacionado = (id, nombre_campo) => {
                 const valor = $(`#${id}`).val();
                 campos_relacionados[nombre_campo] = valor;
             };
 
-            // Función para agregar campos de archivos relacionados al objeto campos_relacionados
             const agregar_campo_archivo = id => {
-                const archivo = $(`#${id}`)[0].files[0];
-                campos_relacionados[id] = archivo;
+                const archivo = FilePond.find(document.querySelector(`#${id}`)).getFile();
+                if (archivo) {
+                    campos_relacionados[id] = archivo.file;
+                }
             };
 
-            // Verificar el tipo de persona y agregar los campos relacionados al objeto campos_relacionados
             if (tipo_persona === 'fisica') {
                 agregar_campo_relacionado('nombre_fisica', 'nombre');
                 agregar_campo_relacionado('correo_fisica', 'correo');
@@ -593,13 +597,11 @@ const evento_btn_proveedor = () => {
                 agregar_campo_archivo('poder_representante_legal');
             }
 
-            // Agregar campos para Agente Capacitador Externo si está seleccionado
             if ($('#es_agente_capacitador').is(':checked')) {
                 agregar_campo_archivo('solicitud_registro');
                 agregar_campo_archivo('curriculum_empresarial');
             }
 
-            // Agregar campos comunes
             agregar_campo_archivo('identificacion_oficial');
             agregar_campo_archivo('comprobante_domicilio');
             agregar_campo_archivo('constancia_situacion_fiscal');
@@ -607,39 +609,60 @@ const evento_btn_proveedor = () => {
             agregar_campo_archivo('estado_cuenta_bancario');
             agregar_campo_archivo('documento_datos_contacto');
 
-            // Validaciones antes de enviar los datos
-            if (!tipo_persona || (tipo_persona === 'fisica' && (!campos_relacionados['nombre'] || !campos_relacionados['correo'] || !campos_relacionados['telefono'])) ||
-                (tipo_persona === 'moral' && (!campos_relacionados['nombre'] || !campos_relacionados['correo'] || !campos_relacionados['telefono'] || !campos_relacionados.hasOwnProperty('nombre_enlace') || !campos_relacionados.hasOwnProperty('nombre_fiscal') || !campos_relacionados.hasOwnProperty('nombre_comercial')))) {
-                //Swal.showValidationMessage('Por favor, completa todos los campos requeridos.');
-                //return false;
-            }
-
-            // Preparar datos para enviar
             const formulario_datos = new FormData();
             Object.keys(campos_relacionados).forEach(clave => {
                 formulario_datos.append(clave, campos_relacionados[clave]);
             });
+            
+            if(proveedor_id){
+                formulario_datos.append('id_proveedor', proveedor_id);
+            }
 
-            // Envío de datos por AJAX
             $.ajax({
-                url: '/FiDigital/panel/proveedores/post_proveedor', // Ajusta esto a la URL real del servidor
+                url: '/FiDigital/panel/proveedores/post_proveedor',
                 type: 'POST',
                 data: formulario_datos,
-                processData: false, // No procesar los datos
-                contentType: false, // No establecer tipo de contenido automáticamente
-                type: 'POST',
+                processData: false,
+                contentType: false,
                 success: function (respuesta) {
-                    console.log(respuesta);
-                    // Aquí manejas la respuesta del servidor
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: 'El proveedor ha sido guardado correctamente.',
+                        icon: 'success'
+                    });
+                    tabla_proveedores.ajax.reload();
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
-                    // Manejo del error
                 }
             });
 
         }
-    })
+    });
+
+    const inicializarFilePond = () => {
+        const opcionesFilePond = {
+            labelIdle: 'Arrastra y suelta tu archivo o <span class="filepond--label-action">Examinar</span>',
+            labelFileProcessingComplete: 'Carga completa',
+            labelFileProcessingAborted: 'Carga cancelada',
+            labelFileProcessingError: 'Error durante la carga',
+            labelTapToCancel: 'toca para cancelar',
+            labelTapToRetry: 'toca para reintentar',
+            labelTapToUndo: 'toca para deshacer'
+        };
+
+        FilePond.create(document.querySelector('#acta_constitutiva'), opcionesFilePond);
+        FilePond.create(document.querySelector('#boleta_registro'), opcionesFilePond);
+        FilePond.create(document.querySelector('#poder_representante_legal'), opcionesFilePond);
+        FilePond.create(document.querySelector('#solicitud_registro'), opcionesFilePond);
+        FilePond.create(document.querySelector('#curriculum_empresarial'), opcionesFilePond);
+        FilePond.create(document.querySelector('#identificacion_oficial'), opcionesFilePond);
+        FilePond.create(document.querySelector('#comprobante_domicilio'), opcionesFilePond);
+        FilePond.create(document.querySelector('#constancia_situacion_fiscal'), opcionesFilePond);
+        FilePond.create(document.querySelector('#opinion_cumplimiento'), opcionesFilePond);
+        FilePond.create(document.querySelector('#estado_cuenta_bancario'), opcionesFilePond);
+        FilePond.create(document.querySelector('#documento_datos_contacto'), opcionesFilePond);
+    };
 };
 
 const manejarSeleccionTipoPersona = () => {
@@ -655,5 +678,75 @@ const manejarSeleccionTipoPersona = () => {
 
     $(document).on('change', '#es_agente_capacitador', function () {
         document.getElementById('campos_agente_capacitador').style.display = this.checked ? 'block' : 'none';
+    });
+};
+
+const cargarDatosProveedor = (proveedor_id) => {
+    // Realiza una petición para obtener los datos del proveedor
+    $.ajax({
+        url: `/FiDigital/panel/proveedores/get_proveedores_by_ajax`,
+        type: 'POST',
+        data: {
+            id_proveedor: proveedor_id
+        },
+        success: function (response) {
+            const proveedor = response[0];
+            
+            // Completa los campos con los datos del proveedor
+            $('#tipo_persona').val(proveedor.tipo_persona).trigger('change');
+            if (proveedor.tipo_persona === 'fisica') {
+                $('#nombre_fisica').val(proveedor.nombre);
+                $('#correo_fisica').val(proveedor.correo);
+                $('#telefono_fisica').val(proveedor.telefono);
+            } else if (proveedor.tipo_persona === 'moral') {
+                $('#nombre_enlace').val(proveedor.nombre_enlace);
+                $('#telefono_enlace').val(proveedor.telefono_enlace);
+                $('#correo_enlace').val(proveedor.correo_enlace);
+                $('#nombre_fiscal_empresa').val(proveedor.nombre_fiscal_empresa);
+                $('#nombre_comercial_empresa').val(proveedor.nombre_comercial_empresa);
+                
+                // Cargar archivos existentes en FilePond
+                if (proveedor.acta_constitutiva) {
+                    FilePond.find(document.querySelector('#acta_constitutiva')).addFile(proveedor.acta_constitutiva);
+                }
+                if (proveedor.boleta_registro) {
+                    FilePond.find(document.querySelector('#boleta_registro')).addFile(proveedor.boleta_registro);
+                }
+                if (proveedor.poder_representante_legal) {
+                    FilePond.find(document.querySelector('#poder_representante_legal')).addFile(proveedor.poder_representante_legal);
+                }
+            }
+            if (proveedor.es_agente_capacitador) {
+                $('#es_agente_capacitador').prop('checked', true).trigger('change');
+                if (proveedor.solicitud_registro) {
+                    FilePond.find(document.querySelector('#solicitud_registro')).addFile(proveedor.solicitud_registro);
+                }
+                if (proveedor.curriculum_empresarial) {
+                    FilePond.find(document.querySelector('#curriculum_empresarial')).addFile(proveedor.curriculum_empresarial);
+                }
+            }
+            // Cargar archivos comunes
+            if (proveedor.identificacion_oficial) {
+                FilePond.find(document.querySelector('#identificacion_oficial')).addFile(proveedor.identificacion_oficial);
+            }
+            if (proveedor.comprobante_domicilio) {
+                FilePond.find(document.querySelector('#comprobante_domicilio')).addFile(proveedor.comprobante_domicilio);
+            }
+            if (proveedor.constancia_situacion_fiscal) {
+                FilePond.find(document.querySelector('#constancia_situacion_fiscal')).addFile(proveedor.constancia_situacion_fiscal);
+            }
+            if (proveedor.opinion_cumplimiento) {
+                FilePond.find(document.querySelector('#opinion_cumplimiento')).addFile(proveedor.opinion_cumplimiento);
+            }
+            if (proveedor.estado_cuenta_bancario) {
+                FilePond.find(document.querySelector('#estado_cuenta_bancario')).addFile(proveedor.estado_cuenta_bancario);
+            }
+            if (proveedor.documento_datos_contacto) {
+                FilePond.find(document.querySelector('#documento_datos_contacto')).addFile(proveedor.documento_datos_contacto);
+            }
+        },
+        error: function (error) {
+            console.error('Error al cargar los datos del proveedor:', error);
+        }
     });
 };
