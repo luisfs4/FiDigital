@@ -211,7 +211,7 @@ class Sesiones extends BaseController
 				// Aquí podrías mover el archivo y guardar la ruta en $archivos
 				$nuevoNombre = $archivo->getRandomName();
 				// Asegúrate de tener definida la ruta base y que tenga los permisos adecuados
-				$rutaBase = WRITEPATH . "documentos/proveedores/";
+				$rutaBase = FCPATH . "documentos/proveedores/";
 				$archivo->move($rutaBase, $nuevoNombre);
 	
 				// Guardar la ruta del archivo para pasarla al modelo
