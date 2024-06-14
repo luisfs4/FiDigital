@@ -42,6 +42,7 @@ async function gestionar_jerarquia(json_editar = []) {
     if(json_editar != []){
         console.log(json_editar);
         editar_jerarquia = json_editar.jerarquia
+        id_punto_editar = json_editar.id_punto
     }
 
     disableBtn('.btn_nuevo_punto');
@@ -143,6 +144,7 @@ async function gestionar_jerarquia(json_editar = []) {
                 return false;
             }
 
+            let id_sesion = $('.input_punto[name="id_sesion"]').val().trim();
             let jerarquia = $('[name="jerarquia"]').val().trim();
             let id_punto = $('[name="id_punto"]').val().trim();
 
@@ -162,7 +164,7 @@ async function gestionar_jerarquia(json_editar = []) {
                     url: '/FiDigital/panel/sesiones/puntos/check_jerarquia',
                     type: 'POST',
                     dataType: 'json',
-                    data: { jerarquia: jerarquia }
+                    data: { jerarquia: jerarquia, id_sesion: id_sesion }
                 });
 
                 if (validacion_jerarquia.duplicate) {
@@ -191,12 +193,16 @@ async function gestionar_jerarquia(json_editar = []) {
             }
 
             let datos = {
-                id_sesion: $('.input_punto[name="id_sesion"]').val().trim(),
+                id_sesion: id_sesion,
                 jerarquia: jerarquia,
                 presupuesto_autorizado: presupuesto_autorizado,
                 nombre_punto: $('.input_punto[name="nombre_punto"]').val(),
                 padre_id,
                 observaciones: $('.input_punto[name="observaciones"]').val().trim()
+            }
+
+            if(id_punto_editar){
+                datos.id_punto = id_punto_editar;
             }
 
             return $.ajax({
@@ -309,10 +315,9 @@ function render_puntos(hierarchy, level = 0) {
                 </a>             
             `;
         }
-        
         let span_restante = ``;
         if (point.monto_restante) {
-            span_restante = `<span class="badge badge-info ms-2">$ ${point.monto_restante} restante</span>`;
+            span_restante = `<span class="badge badge-info ms-2">${formatoMoneda(point.monto_restante)} restante</span>`;
         }
 
         let btn_estatus = '';

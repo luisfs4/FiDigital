@@ -30,7 +30,7 @@ $(document).ready(async () => {
             dataSrc: ""
         },
         order: [
-            [3, 'desc']
+            [1, 'desc']
         ],
         language: {
             "url": "https://cdn.datatables.net/plug-ins/1.12.1/i18n/es-ES.json",

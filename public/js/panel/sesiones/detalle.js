@@ -128,7 +128,7 @@ const card_expediente = async (id_expediente) => {
                         <i class="fas fa-hand-holding-usd text-xs me-1" aria-hidden="true"></i> Monto total pagado
                     </p>
                     <p>
-                        ${expediente.monto_pagado ?? 'No disponible'}
+                        ${expediente.monto_pagado ? formatoMoneda(expediente.monto_pagado) ? 'No disponible'}
                     </p>
                 </div>
                 <div class="col-lg-6">
@@ -136,7 +136,7 @@ const card_expediente = async (id_expediente) => {
                         <i class="fas fa-money-check-alt text-xs me-1" aria-hidden="true"></i> Monto total autorizado
                     </p>
                     <span class="badge badge-success text-xs mt-1">
-                        $ ${Number(expediente.monto_autorizado).toFixed(2) ?? 'No disponible'}
+                        ${expediente.monto_autorizado ? formatoMoneda(expediente.monto_autorizado) : 'No disponible'}
                     </span>
                 </div>
             </div>

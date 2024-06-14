@@ -11,8 +11,8 @@ class SesionModel extends Model
 
 	public function __construct()
 	{
-		$this->db       = \Config\Database::connect();
-		$this->session  =  \Config\Services::session();
+		$this->db = \Config\Database::connect();
+		$this->session = \Config\Services::session();
 	}
 
 	public function get_expedientes($data_filtros)
@@ -95,10 +95,9 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
-        $consulta->select("p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
-		FROM expedientes e 
-		WHERE e.id_punto = p.id_punto), 0) AS monto_restante", false);
-
+		$consulta->select("p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+			FROM expedientes e 
+			WHERE e.id_punto = p.id_punto), 0) AS monto_restante", false);
 		$consulta->select("ce.estatus");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((
@@ -109,25 +108,32 @@ class SesionModel extends Model
 								WHERE
 									c.padre_id = p.id_punto AND LEFT(c.jerarquia, LENGTH(p.jerarquia)) = p.jerarquia
 							), 1) AS siguiente_disponible");
+
+		// Subconsultas para obtener los IDs de los niveles
+		$consulta->select("IF(p.padre_id IS NULL, p.id_punto, (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)) AS id_nivel_1");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))) AS id_nivel_2");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)))) AS id_nivel_3");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))))) AS id_nivel_4");
+
 		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
 		$consulta->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
 
-		//Búsqueda
+		// Búsqueda
 		if (!empty($data_filtros['id_punto'])) {
 			$consulta->where('p.id_punto', $data_filtros['id_punto']);
 		}
 
-		//Búsqueda
+		// Búsqueda
 		if (!empty($data_filtros['padre_id'])) {
 			$consulta->where('p.padre_id', $data_filtros['padre_id']);
 		}
 
-		//Búsqueda
+		// Búsqueda
 		if (!empty($data_filtros['id_expediente'])) {
 			$consulta->where('p.id_expediente', $data_filtros['id_expediente']);
 		}
 
-		//Búsqueda
+		// Búsqueda
 		if (!empty($data_filtros['id_sesion'])) {
 			$consulta->where('p.id_sesion', $data_filtros['id_sesion']);
 			$consulta->where("LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 1");
@@ -137,42 +143,41 @@ class SesionModel extends Model
 		return $consulta->get()->getResultObject();
 	}
 
+	/**
+	 * --------------------------------- Inicio Sección Seguimiento ----------------------------------------
+	 */
 
-    /**
-     * --------------------------------- Inicio Sección Seguimiento ----------------------------------------
-     */
+	public function post_seguimiento($data_seguimiento)
+	{
+		$data_seguimiento += [
+			"created_by" => $this->session->id_usuario,
+			"created_at" => date('Y-m-d H:i:s'),
+		];
 
-	 public function post_seguimiento($data_seguimiento)
-	 {
-		 $data_seguimiento += [
-			 "created_by" => $this->session->id_usuario,
-			 "created_at" => date('Y-m-d H:i:s'),
-		 ];
- 
-		 $seguimientos = $this->db->table("seguimientos");
-		 $seguimientos->set($data_seguimiento);
-		 return $seguimientos->insert();
-	 }
- 
-	 public function get_seguimiento($filtros)
-	 {
-		 $seguimientos = $this->db->table("seguimientos as s");
-		 $seguimientos->select("s.*");
-		 $seguimientos->select("s.created_by as id_usuario_msg");
-		 $seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
-		 $seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
-		 $seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'left');
- 
-		 if (!empty($filtros['id_expediente'])) {
-			 $seguimientos->where('s.id_expediente', $filtros['id_expediente']);
-		 }
- 
-		 $seguimientos->orderBy('s.id_seguimiento');
- 
-		 $datos = $seguimientos->get()->getResultObject();
- 
-		 return $datos;
-	 }
+		$seguimientos = $this->db->table("seguimientos");
+		$seguimientos->set($data_seguimiento);
+		return $seguimientos->insert();
+	}
+
+	public function get_seguimiento($filtros)
+	{
+		$seguimientos = $this->db->table("seguimientos as s");
+		$seguimientos->select("s.*");
+		$seguimientos->select("s.created_by as id_usuario_msg");
+		$seguimientos->select('DATE_FORMAT(s.created_at,"%d/%m/%Y %h:%i %p") as created_at');
+		$seguimientos->select("concat_ws(' ', u.nombres, u.ape_paterno) as creador");
+		$seguimientos->join('usuarios as u', 'ON u.id_usuario = s.created_by', 'left');
+
+		if (!empty($filtros['id_expediente'])) {
+			$seguimientos->where('s.id_expediente', $filtros['id_expediente']);
+		}
+
+		$seguimientos->orderBy('s.id_seguimiento');
+
+		$datos = $seguimientos->get()->getResultObject();
+
+		return $datos;
+	}
 
 	public function get_direcciones($data_filtros)
 	{
@@ -234,102 +239,79 @@ class SesionModel extends Model
 		$consulta->set($data_update);
 		return $consulta->update();
 	}
-
 	public function post_proveedor($data)
 	{
 		$proveedores = $this->db->table("proveedores");
 
-		if (isset($data['id_proveedor'])) {
-			$id_proveedor = $data['id_proveedor'];
-			unset($data['id_proveedor']);
-		}
+		$id_proveedor = isset($data['id_proveedor']) ? $data['id_proveedor'] : null;
 
-		if (empty($id_proveedor)) {
+		$datos = [
+			'tipo_persona' => $data['tipo_persona'],
+			'nombre' => $data['nombre'],
+			'correo' => $data['correo'],
+			'telefono' => $data['telefono'],
+			'nombre_fiscal' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal'] : null,
+			'nombre_comercial' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial'] : null,
+			'created_by' => $this->session->id_usuario,
+			'created_at' => date('Y-m-d H:i:s'),
+		];
 
-			$datos = [
-				'tipo_persona' => $data['tipo_persona'],
-				'nombre' => $data['nombre'],
-				'correo' => $data['correo'],
-				'telefono' => $data['telefono'],
-				'nombre_fiscal' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal'] : null,
-				'nombre_comercial' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial'] : null,
-				// Los campos de archivos se asumen que serán actualizados después, aquí los inicializamos
-				'acta_constitutiva' => null,
-				'boleta_registro' => null,
-				'poder_representante_legal' => null,
-				'solicitud_registro' => null,
-				'curriculum_empresarial' => null,
-				'identificacion_oficial' => null,
-				'comprobante_domicilio' => null,
-				'constancia_situacion_fiscal' => null,
-				'opinion_cumplimiento' => null,
-				'estado_cuenta_bancario' => null,
-				'documento_datos_contacto' => null,
-				'created_by' => $this->session->id_usuario,
-				'created_at' => date('Y-m-d H:i:s'),
-				// Puedes agregar más campos según sean necesarios para tu formulario y base de datos
-			];
+		try {
+			$this->db->transStart(); // Inicia la transacción
 
-			try {
-
-				$this->db->transStart(); // Inicia la transacción
-
+			if (empty($id_proveedor)) {
 				$id_proveedor = $proveedores->insert($datos, true);
 				if ($id_proveedor === false) {
 					throw new \Exception('No se pudieron insertar los datos básicos del proveedor.');
 				}
-
-				// Ruta base para guardar archivos, asegúrate de que exista y tenga permisos adecuados
-				$rutaBase = WRITEPATH . 'documentos/proveedores/' . $id_proveedor;
-				if (!is_dir($rutaBase)) {
-					mkdir($rutaBase, 0777, true);
+			} else {
+				$datos['updated_by'] = $this->session->id_usuario;
+				$datos['updated_at'] = date('Y-m-d H:i:s');
+				$proveedores->where('id_proveedor', $id_proveedor);
+				if (!$proveedores->update($datos)) {
+					throw new \Exception('No se pudieron actualizar los datos del proveedor.');
 				}
-
-				// Procesar cada archivo esperado
-				foreach ($data['archivos'] as $nombre_archivo => $archivo) {
-
-					var_dump($archivo);
-					if ($archivo->isValid() && !$archivo->hasMoved()) {
-						$nuevoNombre = $archivo->getRandomName();
-						$archivo->move($rutaBase, $nuevoNombre);
-						// Actualizar la base de datos con la ruta del archivo
-						$proveedores->update($id_proveedor, [$archivo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
-					} else {
-						throw new \RuntimeException('Error al mover el archivo: ' . $archivo);
-					}
-				}
-
-				$this->db->transComplete(); // Completa la transacción
-
-				if ($this->db->transStatus() === false) {
-					throw new \RuntimeException('La transacción falló.');
-				}
-
-				return $id_proveedor; // Ajusta esto a tu ruta de éxito
-			} catch (\Exception $e) {
-				$this->db->transRollback(); // Revertir todos los cambios si algo falla
-				return redirect()->back()->withInput()->with('error', 'Hubo un problema al guardar la información: ' . $e->getMessage());
 			}
 
-			$bandera = $proveedores->insert($data);
-		} else {
-
-			$data += [
-				"updated_at" => date('Y-m-d H:i:s'),
-				"updated_by" => $this->session->id_usuario
+			// Procesar archivos
+			$campos_archivos = [
+				'acta_constitutiva',
+				'boleta_registro',
+				'poder_representante_legal',
+				'solicitud_registro',
+				'curriculum_empresarial',
+				'identificacion_oficial',
+				'comprobante_domicilio',
+				'constancia_situacion_fiscal',
+				'opinion_cumplimiento',
+				'estado_cuenta_bancario',
+				'documento_datos_contacto'
 			];
 
-			unset($data['archivos']);
+			$rutaBase = WRITEPATH . 'documentos/proveedores/' . $id_proveedor;
+			if (!is_dir($rutaBase)) {
+				mkdir($rutaBase, 0777, true);
+			}
 
-			$proveedores->where('id_proveedor', $id_proveedor);
-			$proveedores->set($data);
-			$bandera = $proveedores->update();
-		}
+			foreach ($campos_archivos as $campo) {
+				if (isset($data[$campo]) && is_object($data[$campo]) && $data[$campo]->isValid() && !$data[$campo]->hasMoved()) {
+					$nuevoNombre = $data[$campo]->getRandomName();
+					$data[$campo]->move($rutaBase, $nuevoNombre);
+					// Actualizar la base de datos con la ruta del archivo
+					$proveedores->update($id_proveedor, [$campo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
+				}
+			}
 
-		if ($bandera) {
-			return true;
-		} else {
-			return false;
+			$this->db->transComplete(); // Completa la transacción
+
+			if ($this->db->transStatus() === false) {
+				throw new \RuntimeException('La transacción falló.');
+			}
+
+			return $id_proveedor; // Retorna el ID del proveedor o puedes ajustar esto según tu necesidad
+		} catch (\Exception $e) {
+			$this->db->transRollback(); // Revertir todos los cambios si algo falla
+			return redirect()->back()->withInput()->with('error', 'Hubo un problema al guardar la información: ' . $e->getMessage());
 		}
 	}
 
@@ -465,9 +447,10 @@ class SesionModel extends Model
 	public function check_jerarquia($data_filtros)
 	{
 		$jerarquia = $data_filtros['jerarquia'];
+		$id_sesion = $data_filtros['id_sesion'];
 		$puntos = $this->db->table("puntos");
 
-		$check_jerarquia = $puntos->where('jerarquia', $jerarquia)->countAllResults();
+		$check_jerarquia = $puntos->where('jerarquia', $jerarquia)->where('id_sesion', $id_sesion)->countAllResults();
 
 		if ($check_jerarquia > 0) {
 			// Ya existe un registro con la misma jerarquía

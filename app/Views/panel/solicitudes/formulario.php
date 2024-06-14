@@ -215,7 +215,6 @@
 		// Inicializa FilePond en todos los elementos input de tipo file
 		FilePond.parse(document.body);
 
-
 		$('[name="id_punto"], [name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').on('change', function() {
 			let siguienteDisponible = $(this).find('option:selected').attr('siguiente_disponible');
 			let jerarquia = $(this).find('option:selected').attr('jerarquia');
