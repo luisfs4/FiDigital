@@ -150,9 +150,8 @@ async function gestionar_jerarquia(json_editar = []) {
 
             // Verificar si estamos en modo de edición y la jerarquía ha cambiado
             let necesita_validacion_jerarquia = true;
-            console.log(id_punto);
-            if (id_punto) { // Si estamos editando un punto
-                console.log(jerarquia, editar_jerarquia);
+
+            if (id_punto_editar) { // Si estamos editando un punto
                 if (jerarquia === editar_jerarquia) {
                     necesita_validacion_jerarquia = false; // No necesita validación si la jerarquía no ha cambiado
                 }
@@ -172,7 +171,6 @@ async function gestionar_jerarquia(json_editar = []) {
                     return false;
                 }
             }
-
 
             let padre_id = id_punto
             let id_seccion = $('.input_punto[name="id_seccion"]').val().trim()
@@ -213,12 +211,19 @@ async function gestionar_jerarquia(json_editar = []) {
             }).fail(function (error) {
                 Swal.showValidationMessage(`Request failed: ${error.statusText}`);
             });
+            
         }, willOpen: async () => {
             // Inicialización de Select2 o cualquier otro plugin para mejorar los selectores
             $('.select2_swal').select2({
                 placeholder: "Selecciona una opción",
                 allowClear: true,
                 width: '100%',
+            });
+
+            $('[name="id_sesion"]').on('change', (e) => {
+                const id_sesion = $(e.currentTarget).val();
+                cargar_opciones_puntos('[name="id_punto"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: id_sesion, excluir: id_punto_editar });
+                $('[name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
             });
 
             $('[name="id_punto"], [name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').on('change', function () {
@@ -229,12 +234,6 @@ async function gestionar_jerarquia(json_editar = []) {
                     let nuevaJerarquia = jerarquia ? `${jerarquia}.${siguienteDisponible}` : siguienteDisponible;
                     $('[name="jerarquia"]').val(nuevaJerarquia);
                 }
-            });
-
-            $('[name="id_sesion"]').on('change', (e) => {
-                const id_sesion = $(e.currentTarget).val();
-                cargar_opciones_puntos('[name="id_punto"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: id_sesion });
-                $('[name="id_seccion"], [name="id_carpeta"], [name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
             });
 
             $('[name="id_punto"]').on('change', (e) => {
