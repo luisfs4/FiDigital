@@ -71,6 +71,21 @@ class Usuario extends BaseController
         }
     }
 
+    public function post_usuario()
+    {
+        if ($this->request->isAJAX()) {
+            $data_filtros = $this->request->getPost();
+            if ($response = $this->UsuarioModel->post_usuarios($data_filtros)) {
+                $this->response->setStatusCode(200);
+                return $this->response->setJSON($response);
+            } else {
+                $this->response->setStatusCode(204);
+            }
+        } else {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+    }
+
     public function get_direcciones()
     {
         if ($this->request->isAJAX()) {

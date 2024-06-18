@@ -24,6 +24,9 @@ class UsuarioModel extends Model
         ];
 
         if ($usuarios->insert($data)) {
+            $id_usuario = $this->db->insertID();
+            $this->db->table("permisos")->insert(['id_usuario' => $id_usuario]);
+
             return true;
         } else {
             return false;

@@ -364,6 +364,11 @@ $(document).ready(async () => {
         tabla_usuarios.search($(this).val()).draw();
     })
 
+    $('.btn_crear_usuario').off('click')
+    $('.btn_crear_usuario').click(() => {
+        crear_usuario();
+    })
+
     $('.btn_guardar_usuario').off('click')
     $('.btn_guardar_usuario').click(() => {
 
@@ -545,3 +550,139 @@ $(document).ready(async () => {
 
 
 })
+
+const crear_usuario = async (json_editar = []) => {
+
+    disableBtn('.btn_nuevo_usuario');
+
+    let titulo = 'Nuevo usuario';
+    let btn_confirmar = `Crear usuario<i class="fas fa-arrow-right ms-2"></i>`;
+    let titulo_success = '¡Creado!';
+    let texto_success = 'El usuario se añadió con éxito';
+
+    if (json_editar.length != 0) {
+        titulo = 'Editar usuario';
+        btn_confirmar = `Guardar usuario<i class="fas fa-arrow-right ms-2"></i>`;
+        titulo_success = 'Guardado!';
+        texto_success = 'El usuario se guardó con éxito';
+    }
+
+    Swal.fire({
+        title: titulo,
+        buttonsStyling: false,
+        reverseButtons: true,
+        showCancelButton: true,
+        confirmButtonText: btn_confirmar,
+        cancelButtonText: `Cancelar`,
+        customClass: {
+            confirmButton: 'btn bg-gradient-danger btn-md mx-2 move-icon-left',
+            cancelButton: 'btn btn-gradient-danger btn-md mx-2 move-icon-left',
+            loader: 'custom-loader'
+        },
+        html: `
+        <form class="w-100 m-auto row p-2 text-start form_usuario" data-validate="parsley">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="form-control-label">Nombres:</label>
+                    <input required class="input_usuario form-control" name="nombres" placeholder="Escribe los nombres...">
+                    <input type="hidden" class="input_usuario form-control" name="id_usuario">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="form-control-label">Apellido Paterno:</label>
+                    <input required class="input_usuario form-control" name="ape_paterno" placeholder="Escribe el apellido paterno...">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="form-control-label">Apellido Materno:</label>
+                    <input required class="input_usuario form-control" name="ape_materno" placeholder="Escribe el apellido materno...">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="form-control-label">Correo:</label>
+                    <input required type="email" class="input_usuario form-control" name="correo" placeholder="Escribe el correo...">
+                </div>
+            </div>
+        </form>
+        `,
+        focusConfirm: false,
+        loaderHtml: '<div class="spinner-border text-info text-gradient"></div>',
+        preConfirm: function () {
+            Swal.showLoading();
+
+            if (!$(Swal.getPopup().querySelector('.form_usuario')).parsley().isValid()) {
+                $(Swal.getPopup().querySelector('.form_usuario')).parsley().validate();
+                Swal.showValidationMessage(`Por favor llena correctamente los campos`);
+            }
+
+            return {
+                id_usuario: Swal.getPopup().querySelector('.input_usuario[name="id_usuario"]').value.trim(),
+                nombres: Swal.getPopup().querySelector('.input_usuario[name="nombres"]').value.trim(),
+                ape_paterno: Swal.getPopup().querySelector('.input_usuario[name="ape_paterno"]').value.trim(),
+                ape_materno: Swal.getPopup().querySelector('.input_usuario[name="ape_materno"]').value.trim(),
+                correo: Swal.getPopup().querySelector('.input_usuario[name="correo"]').value.trim()
+            };
+        },
+        willOpen: (e, ee) => {
+            if (json_editar) {
+                for (const key of Object.keys(json_editar)) {
+                    const input = e.querySelector(`[name="${key}"]`);
+                    if (input) {
+                        input.value = json_editar[key];
+                    }
+                }
+            }
+        },
+        didOpen: () => {
+            $('.select2_swal').select2({
+                placeholder: "Selecciona una opción",
+            });
+        },
+        onDismiss: () => { }
+    }).then(async (result) => {
+
+        if (result.isConfirmed) {
+            await $.ajax({
+                url: '/FiDigital/panel/usuarios/post_usuario',
+                data: {
+                    id_usuario: result.value.id_usuario,
+                    nombres: result.value.nombres,
+                    ape_paterno: result.value.ape_paterno,
+                    ape_materno: result.value.ape_materno,
+                    correo: result.value.correo
+                },
+                dataType: 'JSON',
+                type: 'POST',
+                success: function (respuesta, text, xhr) {
+
+                    if (xhr.status == 200) {
+                        Swal.fire({
+                            title: titulo_success,
+                            text: texto_success,
+                            icon: 'success',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: "btn bg-gradient-danger me-3",
+                                cancelButton: "btn bg-gradient-secondary"
+                            }
+                        });
+
+                        if (tabla_usuarios) {
+                            tabla_usuarios.ajax.reload();
+                        }
+
+                        return true;
+                    }
+                },
+                error: (err, texto) => {
+                    error_ajax(JSON.parse(err.responseText)['message']);
+                }
+            });
+        }
+    });
+
+    enableBtn('.btn_nuevo_usuario');
+};
