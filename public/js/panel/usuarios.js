@@ -218,10 +218,10 @@ $(document).ready(async () => {
                 return `
                 <div class="ms-auto text-center">
                     <button class="btn bg-gradient-info text-gradient px-3 mb-0 btn_editar_usuario" id_usuario="${data}">
-                        <i class="far fa-edit me-2" aria-hidden="true"></i>
+                        <i class="far fa-edit" aria-hidden="true"></i>
                     </button>
                     <button class="btn bg-gradient-warning text-gradient px-3 mb-0 btn_editar_permisos" nombre="${row.nombre_usuario}" id_usuario="${data}">
-                        <i class="fas fa-user-shield me-2" aria-hidden="true"></i>Permisos
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
                     </button>
                     ${btn_desactivar}
                 </div>
