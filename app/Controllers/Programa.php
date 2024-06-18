@@ -12,7 +12,7 @@ class Programa extends BaseController
 
 	public function __construct()
 	{
-		$this->session =  \Config\Services::session();
+		$this->session = \Config\Services::session();
 		$this->ProgramaModel = new ProgramaModel();
 	}
 
@@ -58,7 +58,7 @@ class Programa extends BaseController
 		$data_view = [
 			"ruta" => 'Listado de programas',
 			'scripts' => [
-				['src' => base_url('public/js/panel/programas/listado.js')]
+				['src' => base_url("public/js/panel/programas/listado.js?v=" . time())]
 			]
 		];
 

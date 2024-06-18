@@ -58,9 +58,9 @@ class Sesiones extends BaseController
 		$data_view = [
 			"ruta" => "Listado de sesiones",
 			"scripts" => [
-				["src" => base_url("public/js/panel/sesiones/listado.js")],
-				["src" => base_url("public/js/panel/sesiones/sesiones.js")],
-				["src" => base_url("public/js/panel/sesiones/puntos.js")]
+				["src" => base_url("public/js/panel/sesiones/listado.js?v=" . time())],
+				["src" => base_url("public/js/panel/sesiones/sesiones.js?v=" . time())],
+				["src" => base_url("public/js/panel/sesiones/puntos.js?v=" . time())]
 			]
 		];
 
@@ -74,7 +74,7 @@ class Sesiones extends BaseController
 		$data_view = [
 			"ruta" => "Listado de expedientes",
 			"scripts" => [
-				["src" => base_url("public/js/panel/sesiones/listado_expedientes.js")],
+				["src" => base_url("public/js/panel/sesiones/listado_expedientes.js?v=" . time())],
 			]
 		];
 
@@ -88,7 +88,7 @@ class Sesiones extends BaseController
 		$data_view = [
 			"ruta" => "Proveedores",
 			"scripts" => [
-				["src" => base_url("public/js/panel/proveedores/listado.js")],
+				["src" => base_url("public/js/panel/proveedores/listado.js?v=" . time())],
 			]
 		];
 
@@ -108,10 +108,10 @@ class Sesiones extends BaseController
 			"puntos" => $this->get_puntos([]),
 			"scripts" => [
 				0 => [
-					"src" => base_url("public/js/panel/sesiones/formulario.js")
+					"src" => base_url("public/js/panel/sesiones/formulario.js?v=" . time())
 				],
 				1 => [
-					"src" => base_url("public/js/librerias/multi_step.js")
+					"src" => base_url("public/js/librerias/multi_step.js?v=" . time())
 				]
 			]
 		];
@@ -131,7 +131,7 @@ class Sesiones extends BaseController
 		$data_view = [
 			"ruta" => "Listado de expedientes",
 			"scripts" => [
-				["src" => base_url("public/js/panel/sesiones/detalle.js")]
+				["src" => base_url("public/js/panel/sesiones/detalle.js?v=" . time())]
 			]
 		];
 
