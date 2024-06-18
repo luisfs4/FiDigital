@@ -531,7 +531,7 @@
 
 		const actualizar_max_monto = (monto) => {
 			$('#monto_autorizado').attr('max', monto);
-			$('#monto_autorizado').val(monto.toFixed(2)).prop('readonly', true);
+			$('#monto_autorizado').val(Number(monto).toFixed(2)).prop('readonly', true);
 		}
 	});
 </script>
