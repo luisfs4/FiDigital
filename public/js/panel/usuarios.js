@@ -217,8 +217,8 @@ $(document).ready(async () => {
 
                 return `
                 <div class="ms-auto text-center">
-                    <button hidden class="btn bg-gradient-info text-gradient px-3 mb-0 btn_editar_usuario" id_usuario="${data}">
-                        <i class="far fa-edit me-2" aria-hidden="true"></i>Editar
+                    <button class="btn bg-gradient-info text-gradient px-3 mb-0 btn_editar_usuario" id_usuario="${data}">
+                        <i class="far fa-edit me-2" aria-hidden="true"></i>
                     </button>
                     <button class="btn bg-gradient-warning text-gradient px-3 mb-0 btn_editar_permisos" nombre="${row.nombre_usuario}" id_usuario="${data}">
                         <i class="fas fa-user-shield me-2" aria-hidden="true"></i>Permisos
@@ -246,22 +246,16 @@ $(document).ready(async () => {
             $('.btn_editar_usuario').click(function (e) {
                 let id_usuario = $(this).attr('id_usuario');
 
-                $.ajax({
-                    url: '/FiDigital/panel/usuarios/get_by_id_ajax',
-                    data: {
-                        id_usuario
-                    },
-                    dataType: 'JSON',
+                let usuario_json = $.ajax({
+                    url: '/FiDigital/panel/usuarios/get_by_ajax',
+                    data: { id_usuario },
                     type: 'POST',
-                    success: function (respuesta) {
-                        for (const entry of Object.entries(respuesta)) {
-                            if (entry[0] != 'ruta_documento') { //Input File
-                                $(`[name=${entry[0]}]`).val(entry[1]).trigger('change'); //Asignar valor y disparar evento de cambio para select2
-                            }
-                        }
+                    async: false
+                }).responseJSON;
 
-                    }
-                });
+                console.log(usuario_json);
+
+                crear_usuario(usuario_json);
             });
 
             $('.btn_editar_permisos').off('click');
@@ -577,30 +571,31 @@ const crear_usuario = async (json_editar = []) => {
         customClass: {
             confirmButton: 'btn bg-gradient-danger btn-md mx-2 move-icon-left',
             cancelButton: 'btn btn-gradient-danger btn-md mx-2 move-icon-left',
-            loader: 'custom-loader'
+            loader: 'custom-loader',
+            popup: 'col-sm-12 col-md-8 col-xl-6'
         },
         html: `
-        <form class="w-100 m-auto row p-2 text-start form_usuario" data-validate="parsley">
-            <div class="col-lg-6">
+        <form class="w-100 m-auto row p-4 text-start form_usuario" data-validate="parsley">
+            <div class="col-lg-4">
                 <div class="form-group">
                     <label class="form-control-label">Nombres:</label>
                     <input required class="input_usuario form-control" name="nombres" placeholder="Escribe los nombres...">
                     <input type="hidden" class="input_usuario form-control" name="id_usuario">
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="form-group">
                     <label class="form-control-label">Apellido Paterno:</label>
                     <input required class="input_usuario form-control" name="ape_paterno" placeholder="Escribe el apellido paterno...">
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="form-group">
                     <label class="form-control-label">Apellido Materno:</label>
                     <input required class="input_usuario form-control" name="ape_materno" placeholder="Escribe el apellido materno...">
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="form-group">
                     <label class="form-control-label">Correo:</label>
                     <input required type="email" class="input_usuario form-control" name="correo" placeholder="Escribe el correo...">

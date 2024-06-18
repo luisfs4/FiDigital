@@ -50,6 +50,11 @@ class UsuarioModel extends Model
             $usuarios->orLike('u.ape_materno', $data_filtros['search']);
         }
 
+        if (!empty($data_filtros['id_usuario'])) {
+            $usuarios->where('u.id_usuario', $data_filtros['id_usuario']);
+            return $usuarios->get()->getRowObject();
+        }
+
         $datos = $usuarios->get()->getResultArray();
 
         foreach ($datos as $key => $usuario) {
