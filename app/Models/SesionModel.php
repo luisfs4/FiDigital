@@ -136,10 +136,14 @@ class SesionModel extends Model
 		// Búsqueda
 		if (!empty($data_filtros['id_sesion'])) {
 			$consulta->where('p.id_sesion', $data_filtros['id_sesion']);
-			$consulta->where("LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 1");
+			$consulta->where("(
+				LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 0 OR
+				LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 1
+			)");
 		}
 
-		//echo $consulta->getCompiledSelect();exit();
+		$consulta->orderBy('p.jerarquia');
+
 		return $consulta->get()->getResultObject();
 	}
 

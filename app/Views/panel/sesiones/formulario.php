@@ -135,14 +135,14 @@
 
 										<div class="col-xxl-2 col-lg-4 col-sm-12">
 											<div class="form-group">
-												<label for="monto_autorizado" class="form-label">Monto autorizado*</label>
-												<input type="number" id="monto_autorizado" class="form-control input_expediente" placeholder="0" name="monto_autorizado" min="0" max="999999999" required>
+												<label for="monto_autorizado" class="form-label">Monto autorizado *</label>
+												<input type="number" id="monto_autorizado" class="form-control input_expediente" placeholder="0" name="monto_autorizado" min="0" max="999999999" oninput="$(this).parsley().validate()" required>
 											</div>
 										</div>
 
 										<div class="col-xxl-2 col-lg-4 col-sm-12">
 											<div class="form-group">
-												<label for="monto_pagado" class="form-label">Monto pagado*</label>
+												<label for="monto_pagado" class="form-label">Monto pagado *</label>
 												<input type="number" id="monto_pagado" class="form-control input_expediente" placeholder="0" name="monto_pagado" min="0" max="999999999" required>
 											</div>
 										</div>
@@ -470,6 +470,7 @@
 
 		const actualizar_max_monto = (monto) => {
 			$('#monto_autorizado').attr('max', monto);
+			$('#monto_autorizado').val(monto).prop('readonly', true);
 		}
 	});
 </script>

@@ -39,7 +39,7 @@ async function cargar_opciones(url, parametro = {}) {
 async function gestionar_jerarquia(json_editar = []) {
     let editar_jerarquia = '';
 
-    if(json_editar != []){
+    if (json_editar != []) {
         console.log(json_editar);
         editar_jerarquia = json_editar.jerarquia
         id_punto_editar = json_editar.id_punto
@@ -49,10 +49,10 @@ async function gestionar_jerarquia(json_editar = []) {
 
     console.log(json_editar, typeof json_editar);
 
-    let titulo = json_editar != [] ? 'Editar punto' : 'Nuevo punto';
-    let btn_confirmar = json_editar != [] ? 'Guardar punto<i class="fas fa-arrow-right ms-2"></i>' : 'Crear punto<i class="fas fa-arrow-right ms-2"></i>';
-    let titulo_success = json_editar != [] ? 'Guardado!' : '¡Creado!';
-    let texto_success = json_editar != [] ? 'El punto se guardó con éxito' : 'El punto se añadió con éxito';
+    let titulo = id_punto_editar ? 'Editar punto' : 'Nuevo punto';
+    let btn_confirmar = id_punto_editar ? 'Guardar punto<i class="fas fa-arrow-right ms-2"></i>' : 'Crear punto<i class="fas fa-arrow-right ms-2"></i>';
+    let titulo_success = id_punto_editar ? 'Guardado!' : '¡Creado!';
+    let texto_success = id_punto_editar ? 'El punto se guardó con éxito' : 'El punto se añadió con éxito';
 
     let opciones_sesion = await cargar_opciones('/FiDigital/panel/sesiones/get_by_ajax');
 
@@ -199,7 +199,7 @@ async function gestionar_jerarquia(json_editar = []) {
                 observaciones: $('.input_punto[name="observaciones"]').val().trim()
             }
 
-            if(id_punto_editar){
+            if (id_punto_editar) {
                 datos.id_punto = id_punto_editar;
             }
 
@@ -211,7 +211,7 @@ async function gestionar_jerarquia(json_editar = []) {
             }).fail(function (error) {
                 Swal.showValidationMessage(`Request failed: ${error.statusText}`);
             });
-            
+
         }, willOpen: async () => {
             // Inicialización de Select2 o cualquier otro plugin para mejorar los selectores
             $('.select2_swal').select2({
@@ -258,7 +258,7 @@ async function gestionar_jerarquia(json_editar = []) {
             if (Object.keys(json_editar).length > 0) {
 
                 $('[name="id_sesion"]').val(json_editar.id_sesion).trigger('change');
-                
+
                 $('[name="id_punto"]').val(json_editar.id_nivel_1)
                 $('[name="id_seccion"]').val(json_editar.id_seccion).trigger('change');
                 $('[name="id_carpeta"]').val(json_editar.id_nivel_3).trigger('change');
@@ -287,7 +287,7 @@ async function gestionar_jerarquia(json_editar = []) {
 
     enableBtn('.btn_nuevo_punto');
 
-    if(typeof tabla_sesiones != 'undefined'){
+    if (typeof tabla_sesiones != 'undefined') {
         tabla_sesiones.ajax.reload();
     }
 }
