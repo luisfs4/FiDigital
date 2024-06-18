@@ -23,48 +23,38 @@ class Usuario extends BaseController
     public function perfil()
     {
         $data_view = [
-            "ruta" => 'Perfil'
+            "ruta" => "Perfil"
         ];
 
         $data_tramites = [
-            ''
+            ""
         ];
 
         //Incluir scripts custom para esa unica vista sin afectar el include general
         $scripts_view = [
-            'scripts' => [
-                0 => [
-                    'src' => base_url('public/js/panel/usuarios.js')
-                ]
+            "scripts" => [
+                ["src" => base_url("public/js/panel/usuarios.js?v=" . time())]
             ]
         ];
 
-        echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/usuarios/perfil', $data_tramites) . view('panel/base/footer', $scripts_view);
+        echo view("panel/base/head", $data_view) . view("panel/base/menu", $this->session->get()) . view("panel/usuarios/perfil", $data_tramites) . view("panel/base/footer", $scripts_view);
     }
 
     public function usuarios()
     {
         $data_view = [
-            "ruta" => 'Usuarios'
+            "ruta" => "Usuarios"
         ];
 
         //Incluir scripts custom para esa unica vista sin afectar el include general
         $scripts_view = [
-            'scripts' => [
-                0 => [
-                    'src' => base_url('public/js/panel/usuarios.js')
-                ]
+            "scripts" => [
+                ["src" => base_url("public/js/panel/usuarios.js?v=" . time())]
             ]
         ];
 
-        echo view('panel/base/head', $data_view) . view('panel/base/menu', $this->session->get()) . view('panel/usuarios/usuarios') . view('panel/base/footer', $scripts_view);
+        echo view("panel/base/head", $data_view) . view("panel/base/menu", $this->session->get()) . view("panel/usuarios/usuarios") . view("panel/base/footer", $scripts_view);
     }
-
-    /**
-     * Obtiene todas las regulaciones basado en los filtros
-     *
-     * @param data[]: search
-     */
 
     public function get_by_ajax()
     {
