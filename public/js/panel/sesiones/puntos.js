@@ -124,7 +124,7 @@ async function gestionar_jerarquia(json_editar = []) {
             <div class="col-lg-4">
                 <div class="form-group">
                     <label class="form-control-label"><i class="fas fa-money"></i> Presupuesto autorizado:</label>
-                    <input required type="number" class="input_punto form-control" name="presupuesto_autorizado" placeholder="Ingresa el presupuesto...">
+                    <input required type="number" class="input_punto form-control" name="presupuesto_autorizado" placeholder="Ingresa el presupuesto..." step="0.01">
                 </div>
             </div>
             <div class="col-lg-12">
@@ -140,6 +140,7 @@ async function gestionar_jerarquia(json_editar = []) {
         preConfirm: async () => {
             // Validación inicial del formulario
             if (!$('.form_sesion').parsley().isValid()) {
+                $('.form_sesion').parsley().validate()
                 Swal.showValidationMessage("Por favor llena correctamente los campos");
                 return false;
             }
