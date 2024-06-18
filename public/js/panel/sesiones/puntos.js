@@ -231,7 +231,7 @@ async function gestionar_jerarquia(json_editar = []) {
                 let siguienteDisponible = $(this).find('option:selected').attr('siguiente_disponible');
                 let jerarquia = $(this).find('option:selected').attr('jerarquia');
 
-                if (siguienteDisponible) {
+                if (siguienteDisponible && !id_punto_editar) {
                     let nuevaJerarquia = jerarquia ? `${jerarquia}.${siguienteDisponible}` : siguienteDisponible;
                     $('[name="jerarquia"]').val(nuevaJerarquia);
                 }
