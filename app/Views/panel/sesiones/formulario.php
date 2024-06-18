@@ -406,7 +406,7 @@
 								<div class="row flex-row justify-content-end mt-4">
 									<div class="w-auto">
 										<button class="btn bg-gradient-dark ms-2 mb-0 crear_expediente" type="button"
-											title="Crear">Crear expediente</button>
+											title="Crear">Guardar formulario</button>
 									</div>
 								</div>
 							</div>
@@ -477,6 +477,38 @@
 			if (siguienteDisponible) {
 				let nuevaJerarquia = jerarquia ? `${jerarquia}.${siguienteDisponible}` : siguienteDisponible;
 				$('[name="jerarquia"]').val(nuevaJerarquia);
+			}
+		});
+
+		$('[name="id_direccion"]').on('change', async (e) => {
+			console.log(e);
+			const id_direccion = $(e.currentTarget).val();
+			let $campo = $('[name="id_programa"]');
+			let url = '/FiDigital/panel/programas/get_programas';
+			let parametros = {
+				id_direccion: id_direccion
+			};
+
+			$campo.empty().append('<option value="">Cargando...</option>');
+
+			try {
+				const respuesta = await $.ajax({
+					url,
+					type: 'POST',
+					data: parametros,
+				});
+
+				if (respuesta && respuesta.length > 0) {
+					$campo.empty().append('<option value="">Selecciona una opción</option>');
+					respuesta.forEach(({ id_programa, programa }) => {
+						$campo.append(`<option value="${id_programa}">${programa}</option>`);
+					});
+				} else {
+					$campo.empty().append('<option value="">No hay opciones disponibles</option>');
+				}
+			} catch (error) {
+				console.error("Error al cargar opciones: ", error);
+				$campo.empty().append('<option value="">Error al cargar</option>');
 			}
 		});
 

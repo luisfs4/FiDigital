@@ -11,8 +11,8 @@ class ProgramaModel extends Model
 
 	public function __construct()
 	{
-		$this->db       = \Config\Database::connect();
-		$this->session  =  \Config\Services::session();
+		$this->db = \Config\Database::connect();
+		$this->session = \Config\Services::session();
 	}
 
 	public function get_programas($data_filtros)
@@ -22,16 +22,21 @@ class ProgramaModel extends Model
 		$consulta->join("cat_direcciones cd", "cp.id_direccion = cd.id_direccion", "inner");
 		$consulta->join("expedientes e", "cp.id_programa = e.id_programa", "left");
 		$consulta->groupBy("cp.id_programa");
-	
+
 		//Búsqueda
 		if (!empty($data_filtros['id_programa'])) {
 			$consulta->where('cp.id_programa', $data_filtros['id_programa']);
 			return $consulta->get()->getRowObject();
 		}
-	
+
+		//Búsqueda
+		if (!empty($data_filtros['id_direccion'])) {
+			$consulta->where('cp.id_direccion', $data_filtros['id_direccion']);
+		}
+
 		return $consulta->get()->getResultObject();
 	}
-	
+
 	public function post_programa($data)
 	{
 		$query = $this->db->table("cat_programas");

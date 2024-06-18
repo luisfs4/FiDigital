@@ -177,7 +177,7 @@ $(document).ready(() => {
             }
         });
     }
-    
+
     $(document).on('click', '.btn_crear_proveedor', () => {
         evento_btn_proveedor();
     });
@@ -622,8 +622,8 @@ const evento_btn_proveedor = (proveedor_id = null) => {
             Object.keys(campos_relacionados).forEach(clave => {
                 formulario_datos.append(clave, campos_relacionados[clave]);
             });
-            
-            if(proveedor_id){
+
+            if (proveedor_id) {
                 formulario_datos.append('id_proveedor', proveedor_id);
             }
 
@@ -700,7 +700,7 @@ const cargarDatosProveedor = (proveedor_id) => {
         },
         success: function (response) {
             const proveedor = response[0];
-            
+
             // Completa los campos con los datos del proveedor
             $('#tipo_persona').val(proveedor.tipo_persona).trigger('change');
             if (proveedor.tipo_persona === 'fisica') {
@@ -713,7 +713,7 @@ const cargarDatosProveedor = (proveedor_id) => {
                 $('#correo_enlace').val(proveedor.correo_enlace);
                 $('#nombre_fiscal_empresa').val(proveedor.nombre_fiscal_empresa);
                 $('#nombre_comercial_empresa').val(proveedor.nombre_comercial_empresa);
-                
+
                 // Cargar archivos existentes en FilePond
                 if (proveedor.acta_constitutiva) {
                     FilePond.find(document.querySelector('#acta_constitutiva')).addFile(proveedor.acta_constitutiva);
