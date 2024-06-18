@@ -303,7 +303,7 @@ function render_puntos(hierarchy, level = 0) {
     for (const point of hierarchy) {
         let btn_detalle = '';
         let btn_editar = `
-            <div id_punto="${point.id_punto}" class="editar_punto cursor-pointer px-3 py-2  my-auto mx-1 btn btn-xs bg-gradient-warning shadow text-white rounded">
+            <div id_punto="${point.id_punto}" class="editar_punto cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-warning shadow text-white rounded">
                 <i class="fas fa-edit text-white" aria-hidden="true"></i>
             </div> 
         `;
@@ -322,7 +322,7 @@ function render_puntos(hierarchy, level = 0) {
         }
         let span_restante = ``;
         if (point.monto_restante) {
-            span_restante = `<span class="badge badge-info ms-2">${formatoMoneda(point.monto_restante)} restante</span>`;
+            span_restante = `<span class="badge badge-info me-2">${formatoMoneda(point.monto_restante)} restante</span>`;
         }
 
         let btn_estatus = '';
@@ -355,29 +355,29 @@ function render_puntos(hierarchy, level = 0) {
                             </select>`;
         }
 
-        //Contenedor de lista
+        // Contenedor de lista
         html += `
             <li class="list-group-item">
                 <div class="d-flex flex-wrap justify-content-between align-items-center w-100 my-2">
-                    <div class="text-start">
+                    <div class="col-12 col-md-7 text-start text-wrap">
                         ${"&nbsp;".repeat(level * 2)}
-                        <span>${point.jerarquia} - ${point.nombre_punto}</span>
-                        ${span_restante}
+                        <span class="text-wrap">${point.jerarquia} - ${point.nombre_punto}</span>
                     </div>
-                    <div>
+                    <div class="col-12 col-md-5 mt-sm-3 d-flex justify-content-end">
+                        ${span_restante}
                         ${btn_estatus}
                         ${btn_detalle}
                         ${btn_editar}               
                         ${(point.tiene_hijos == "0" && permisos.permiso_eliminar_puntos == "1") ? btn_eliminar : ''}
-                    </div >   
+                    </div>   
                 </div >
         `;
-        //Imprimir hijo
+        // Imprimir hijo
         if (point.children) {
             html += render_puntos(point.children, level + 1);
         }
 
-        //Cerrar lista
+        // Cerrar lista
         html += '</li>';
     }
     html += '</ul>';
