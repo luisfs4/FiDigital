@@ -20,7 +20,8 @@ class UsuarioModel extends Model
         $usuarios = $this->db->table("usuarios");
         $data += [
             "created_at" => date('Y-m-d H:i:s'),
-            "created_by" => $this->session->id_usuario ?? ''
+            "created_by" => $this->session->id_usuario ?? '',
+            "estatus" => 'activo'
         ];
 
         if ($usuarios->insert($data)) {
