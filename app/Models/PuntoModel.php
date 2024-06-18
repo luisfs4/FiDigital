@@ -22,32 +22,34 @@ class PuntoModel extends Model
     private function getChildren($padre_id, $data_filtros)
     {
         $this->select("puntos.*");
-		$this->select("ce.estatus");
+        $this->select("ce.estatus");
         $this->select("puntos.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
         FROM expedientes e 
         WHERE e.id_punto = puntos.id_punto), 0) AS monto_restante", false);
 
-        
-        //Búsqueda
+        // Búsqueda por filtros
         if (!empty($data_filtros['id_punto'])) {
             $this->where('puntos.id_punto', $data_filtros['id_punto']);
         }
-        
-        //Búsqueda
+
         if (!empty($data_filtros['id_expediente'])) {
             $this->where('puntos.id_expediente', $data_filtros['id_expediente']);
         }
-        
-        //Búsqueda
+
         if (!empty($data_filtros['id_sesion'])) {
             $this->where('puntos.id_sesion', $data_filtros['id_sesion']);
         }
-        
+
+        // Especifica la jerarquía del padre
         $this->where('padre_id', $padre_id);
+
+        // Ordena por jerarquía para garantizar que la estructura esté correctamente alineada
+        $this->orderBy('jerarquia', 'ASC');
+
         $this->join("expedientes as e", 'e.id_expediente = puntos.id_expediente', 'left');
         $this->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
-        $result = $this->findAll();
 
+        $result = $this->findAll();
 
         $hierarchy = [];
         foreach ($result as $row) {

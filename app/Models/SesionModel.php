@@ -133,6 +133,11 @@ class SesionModel extends Model
 			$consulta->where('p.id_expediente', $data_filtros['id_expediente']);
 		}
 
+		// Excluir
+		if (!empty($data_filtros['excluir'])) {
+			$consulta->where('p.id_punto !=', $data_filtros['excluir']);
+		}
+
 		// Búsqueda
 		if (!empty($data_filtros['id_sesion'])) {
 			$consulta->where('p.id_sesion', $data_filtros['id_sesion']);
