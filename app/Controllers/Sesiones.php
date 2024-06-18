@@ -12,7 +12,7 @@ class Sesiones extends BaseController
 
 	public function __construct()
 	{
-		$this->session =  \Config\Services::session();
+		$this->session = \Config\Services::session();
 		$this->SesionModel = new SesionModel();
 	}
 
@@ -158,6 +158,12 @@ class Sesiones extends BaseController
 		}
 	}
 
+	public function eliminar_punto()
+	{
+		$response = $this->SesionModel->eliminar_punto($this->request->getPost('id_punto'));
+		return $this->response->setStatusCode(200)->setJSON($response);
+	}
+
 	public function get_sesiones()
 	{
 		return $this->sendResponse($this->request->getPost(), "get_sesiones");
@@ -204,7 +210,7 @@ class Sesiones extends BaseController
 
 		// Asumiendo que tienes campos de archivo en tu formulario
 		$nombresArchivos = ["acta_constitutiva", "boleta_registro", "poder_representante_legal", "solicitud_registro", "curriculum_empresarial", "identificacion_oficial", "comprobante_domicilio", "constancia_situacion_fiscal", "opinion_cumplimiento", "estado_cuenta_bancario", "documento_datos_contacto"];
-	
+
 		foreach ($nombresArchivos as $nombreArchivo) {
 			$archivo = $this->request->getFile($nombreArchivo);
 			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
@@ -213,7 +219,7 @@ class Sesiones extends BaseController
 				// Asegúrate de tener definida la ruta base y que tenga los permisos adecuados
 				$rutaBase = FCPATH . "documentos/proveedores/";
 				$archivo->move($rutaBase, $nuevoNombre);
-	
+
 				// Guardar la ruta del archivo para pasarla al modelo
 				$archivos[$nombreArchivo] = $rutaBase . $nuevoNombre;
 			}
@@ -226,15 +232,15 @@ class Sesiones extends BaseController
 	 * ----------------------------- Inicio Sección Seguimiento ------------------------------------
 	 */
 
-	 public function post_seguimiento()
-	 {
-		 return $this->sendAjaxResponse($this->request->getPost(), "post_seguimiento");
-	 }
- 
-	 /**
-	  * ------------------------------ Fin Sección Seguimiento ------------------------------------
-	  */
- 
+	public function post_seguimiento()
+	{
+		return $this->sendAjaxResponse($this->request->getPost(), "post_seguimiento");
+	}
+
+	/**
+	 * ------------------------------ Fin Sección Seguimiento ------------------------------------
+	 */
+
 	public function post_sesion()
 	{
 		return $this->sendAjaxResponse($this->request->getPost(), "post_sesion");

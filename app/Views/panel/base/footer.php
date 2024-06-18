@@ -5,12 +5,15 @@
 				<img class="w-100 opacity-9 px-6" src="<?= base_url('public/imagenes/logo.png'); ?>" alt="logo">
 			</div>
 			<div class="col-lg-3 col-md-4 col-6 mb-3">
-				<img class="w-100 opacity-9" src="https://servicios.zapopan.gob.mx:8000/wwwportal/publicfiles/inline-images/iniciozapopan2019-1915x215_3_3.png" alt="logo">
+				<img class="w-100 opacity-9"
+					src="https://servicios.zapopan.gob.mx:8000/wwwportal/publicfiles/inline-images/iniciozapopan2019-1915x215_3_3.png"
+					alt="logo">
 			</div>
 		</div>
 		<div class="row align-items-center justify-content-center">
 			<div class="copyright text-center text-sm text-muted mb-5">
-				© Zapopan <script>
+				© Zapopan
+				<script>
 					document.write(new Date().getFullYear())
 				</script>
 			</div>
@@ -75,7 +78,7 @@ echo script_tag('public/js/app.js');
 
 if (!empty($scripts)) {
 	foreach ($scripts as $key => $script) {
-		echo script_tag($script['src'] . "?=v".time());
+		echo script_tag($script['src'] . "?=v" . time());
 	}
 }
 
@@ -84,7 +87,8 @@ if (!empty($scripts)) {
 
 <script>
 	const id_direccion = '<?= $id_direccion ?? '' ?>';
-	const id_usuario = '<?= $id_usuario ?? '' ?>';
+	const permisos = <?= json_encode($_SESSION['permisos'] ?? '[]') ?>;
+	const id_usuario = '<?= $_SESSION['id_usuario'] ?? null ?>';
 </script>
 
 <script>

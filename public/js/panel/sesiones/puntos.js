@@ -255,7 +255,7 @@ async function gestionar_jerarquia(json_editar = []) {
 
 
             // Configuración inicial en caso de edición
-            if (Object.keys(json_editar).length > 0) {
+            if (id_punto_editar) {
 
                 $('[name="id_sesion"]').val(json_editar.id_sesion).trigger('change');
 
@@ -304,6 +304,11 @@ function render_puntos(hierarchy, level = 0) {
         let btn_editar = `
             <div id_punto="${point.id_punto}" class="editar_punto cursor-pointer px-3 py-2  my-auto mx-1 btn btn-xs bg-gradient-warning shadow text-white rounded">
                 <i class="fas fa-edit text-white" aria-hidden="true"></i>
+            </div> 
+        `;
+        let btn_eliminar = `
+            <div id_punto="${point.id_punto}" class="eliminar_punto cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded">
+                <i class="fas fa-trash text-white" aria-hidden="true"></i>
             </div> 
         `;
 
@@ -362,8 +367,9 @@ function render_puntos(hierarchy, level = 0) {
                         ${btn_estatus}
                         ${btn_detalle}
                         ${btn_editar}               
-                    </div>   
-                </div>
+                        ${(point.tiene_hijos == "0" && permisos.permiso_eliminar_puntos == "1") ? btn_eliminar : ''}
+                    </div >   
+                </div >
         `;
         //Imprimir hijo
         if (point.children) {
@@ -403,6 +409,11 @@ const get_puntos = (id_sesion) => {
                     $('.editar_punto').off("click")
                     $('.editar_punto').click((e) => {
                         editar_punto($(e.currentTarget).attr('id_punto'));
+                    });
+
+                    $('.eliminar_punto').off("click")
+                    $('.eliminar_punto').click((e) => {
+                        eliminar_punto($(e.currentTarget).attr('id_punto'));
                     });
 
                     $('.cambiar_estatus').off('change');
@@ -484,6 +495,55 @@ const editar_punto = async (id_punto) => {
         }
     }); // Fin ajax
 }
+
+const eliminar_punto = async (id_punto) => {
+    await $.ajax({
+        url: '/FiDigital/panel/puntos/eliminar_punto',
+        data: { id_punto },
+        dataType: 'JSON',
+        type: 'POST',
+        success: function (respuesta) {
+            if (respuesta.success) {
+                Swal.fire({
+                    title: 'Eliminado!',
+                    text: 'El punto ha sido eliminado correctamente.',
+                    icon: 'success',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn bg-gradient-success me-3",
+                        cancelButton: "btn bg-gradient-secondary"
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: respuesta.message || 'No se pudo eliminar el punto.',
+                    icon: 'error',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: "btn bg-gradient-danger me-3",
+                        cancelButton: "btn bg-gradient-secondary"
+                    }
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Ha ocurrido un error al intentar eliminar el punto.',
+                icon: 'error',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: "btn bg-gradient-danger me-3",
+                    cancelButton: "btn bg-gradient-secondary"
+                }
+            });
+        }
+    }); // Fin ajax
+
+    if (tabla_sesiones) tabla_sesiones.ajax.reload();
+}
+
 
 $(() => {
 

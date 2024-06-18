@@ -61,8 +61,9 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 	$routes->get('/', 'Cuenta::redirect');
 
 	//Seccion Perfil
-	$routes->get('Perfil', 'Usuario::perfil');
-	$routes->add('Puntos', 'Punto::get_jerarquia');
+	$routes->get('perfil', 'Usuario::perfil');
+	$routes->add('puntos', 'Punto::get_jerarquia');
+	$routes->post('puntos/eliminar_punto', 'Sesiones::eliminar_punto');
 
 	//Sección de seguimiento
 	$routes->group('seguimiento', static function ($routes) {
@@ -112,21 +113,21 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		//Listado de sesiones
 		$routes->get('/', 'Direccion::listado');
 		$routes->post('post_direccion', 'Direccion::post_direccion');
-		$routes->post('get_direcciones',  'Direccion::get_direcciones');
+		$routes->post('get_direcciones', 'Direccion::get_direcciones');
 	});
 
 	//Sección de programas
 	$routes->group('programas', ['filter' => 'Permiso_programas'], static function ($routes) {
 		$routes->get('/', 'Programa::listado');
-		$routes->post('post_programa', 	 'Programa::post_programa');
-		$routes->post('get_programas',   'Programa::get_programas');
+		$routes->post('post_programa', 'Programa::post_programa');
+		$routes->post('get_programas', 'Programa::get_programas');
 	});
 
 	$routes->group('solicitudes', ['filter' => 'Permiso_programas'], static function ($routes) {
 		$routes->get('/', 'Solicitud::listado');
-		$routes->post('post_solicitud', 	 'Solicitud::post_solicitud');
-		$routes->post('get_solicitudes',   'Solicitud::get_solicitudes');
-		$routes->get('formulario', 		'Solicitud::formulario');
+		$routes->post('post_solicitud', 'Solicitud::post_solicitud');
+		$routes->post('get_solicitudes', 'Solicitud::get_solicitudes');
+		$routes->get('formulario', 'Solicitud::formulario');
 	});
 });
 

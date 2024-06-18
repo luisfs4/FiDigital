@@ -19,13 +19,15 @@ class PuntoModel extends Model
         return $this->getChildren($padre_id, $filtros);
     }
 
+
     private function getChildren($padre_id, $data_filtros)
     {
-        $this->select("puntos.*");
-        $this->select("ce.estatus");
+        $this->select("puntos.*, ce.estatus");
         $this->select("puntos.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
         FROM expedientes e 
         WHERE e.id_punto = puntos.id_punto), 0) AS monto_restante", false);
+        // Agrega un campo que indica si un punto tiene hijos
+        $this->select("(SELECT COUNT(*) FROM puntos as child WHERE child.padre_id = puntos.id_punto) AS tiene_hijos");
 
         // Búsqueda por filtros
         if (!empty($data_filtros['id_punto'])) {
@@ -40,12 +42,8 @@ class PuntoModel extends Model
             $this->where('puntos.id_sesion', $data_filtros['id_sesion']);
         }
 
-        // Especifica la jerarquía del padre
         $this->where('padre_id', $padre_id);
-
-        // Ordena por jerarquía para garantizar que la estructura esté correctamente alineada
         $this->orderBy('jerarquia', 'ASC');
-
         $this->join("expedientes as e", 'e.id_expediente = puntos.id_expediente', 'left');
         $this->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
 
@@ -53,8 +51,9 @@ class PuntoModel extends Model
 
         $hierarchy = [];
         foreach ($result as $row) {
+            // Recursivamente obtiene hijos si los hay
             $children = $this->getChildren($row['id_punto'], $data_filtros);
-            if (count($children) > 0) {
+            if (!empty($children)) {
                 $row['children'] = $children;
             }
             $hierarchy[] = $row;

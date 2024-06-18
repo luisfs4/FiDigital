@@ -453,6 +453,36 @@ class SesionModel extends Model
 		}
 	}
 
+	public function eliminar_punto($id_punto)
+	{
+		// Verifica que el usuario tiene el permiso para eliminar puntos
+		if (!$this->session->permisos->permiso_eliminar_puntos) {
+			return ['success' => false, 'message' => 'No tienes permiso para eliminar puntos.'];
+		}
+
+		$puntos = $this->db->table("puntos");
+
+		// Verifica si el punto tiene puntos hijos
+		$puntos->where('padre_id', $id_punto);
+		if ($puntos->countAllResults() > 0) {
+			return ['success' => false, 'message' => 'No se puede eliminar un punto que tiene sub-puntos.'];
+		}
+
+		// Intenta eliminar el punto
+		$puntos->where('id_punto', $id_punto);
+		if ($puntos->delete()) {
+			// Verifica que la fila fue realmente eliminada
+			if ($this->db->affectedRows() > 0) {
+				return ['success' => true, 'message' => 'El punto ha sido eliminado correctamente.'];
+			} else {
+				return ['success' => false, 'message' => 'No se encontró el punto especificado o ya fue eliminado.'];
+			}
+		} else {
+			// Manejo de errores de base de datos o fallos en la eliminación
+			return ['success' => false, 'message' => 'Error al intentar eliminar el punto.'];
+		}
+	}
+
 	public function check_jerarquia($data_filtros)
 	{
 		$jerarquia = $data_filtros['jerarquia'];
