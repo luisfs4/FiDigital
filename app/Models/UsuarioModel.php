@@ -11,8 +11,8 @@ class UsuarioModel extends Model
 
     public function __construct()
     {
-        $this->db       = \Config\Database::connect();
-        $this->session  =  \Config\Services::session();
+        $this->db = \Config\Database::connect();
+        $this->session = \Config\Services::session();
     }
 
     public function post_usuarios($data)
@@ -20,7 +20,7 @@ class UsuarioModel extends Model
         $usuarios = $this->db->table("usuarios");
         $data += [
             "created_at" => date('Y-m-d H:i:s'),
-            "created_by" => $this->session->id_usuario
+            "created_by" => $this->session->id_usuario ?? ''
         ];
 
         if ($usuarios->insert($data)) {
@@ -33,13 +33,11 @@ class UsuarioModel extends Model
     public function get_by_ajax($data_filtros)
     {
         $usuarios = $this->db->table("usuarios as u");
-        $usuarios->select("u.*");
-        $usuarios->select("DATE_FORMAT(u.created_at, '%d/%m/%Y %h:%i %p') as created_at");
-        $usuarios->select("DATE_FORMAT(u.updated_at, '%d/%m/%Y %h:%i %p') as updated_at");
-        $usuarios->select("DATE_FORMAT(u.logged_at, '%d/%m/%Y %h:%i %p') as logged_at");
-        $usuarios->select('CONCAT_WS(" ", u.nombres, u.ape_paterno,  u.ape_materno) as usuario');
-        $usuarios->select('cd.direccion');
-        $usuarios->join('cat_direcciones as cd', 'ON cd.id_direccion = u.id_direccion', 'left');
+        $usuarios->select("u.*")
+            ->select("DATE_FORMAT(u.created_at, '%d/%m/%Y %h:%i %p') as created_at")
+            ->select("DATE_FORMAT(u.updated_at, '%d/%m/%Y %h:%i %p') as updated_at")
+            ->select("DATE_FORMAT(u.logged_at, '%d/%m/%Y %h:%i %p') as logged_at")
+            ->select('CONCAT_WS(" ", u.nombres, u.ape_paterno,  u.ape_materno) as nombre_usuario');
 
         //Búsqueda
         if (!empty($data_filtros['search'])) {
@@ -48,7 +46,11 @@ class UsuarioModel extends Model
             $usuarios->orLike('u.ape_materno', $data_filtros['search']);
         }
 
-        $datos = $usuarios->get()->getResultObject();
+        $datos = $usuarios->get()->getResultArray();
+
+        foreach ($datos as $key => $usuario) {
+            $datos[$key]['permisos'] = $this->get_permisos(['id_usuario' => $usuario['id_usuario']]);
+        }
 
         return $datos;
     }
@@ -68,7 +70,6 @@ class UsuarioModel extends Model
         return $consulta->get()->getResultObject();
     }
 
-
     public function get_unidades($data_filtros, $orden = array())
     {
         $consulta = $this->db->table("cat_unidades as cu");
@@ -80,5 +81,84 @@ class UsuarioModel extends Model
         //echo $consulta->getCompiledSelect(false);
 
         return $consulta->get()->getResultObject();
+    }
+
+    public function get_permisos($data)
+    {
+        $consulta = $this->db->table("permisos as up");
+
+        if (!empty($data['id_usuario'])) {
+            $consulta->where('up.id_usuario', $data['id_usuario']);
+            $permisos = $consulta->get()->getRowArray();
+
+            unset($permisos['id_permiso']);
+            unset($permisos['id_usuario']);
+
+            return (object) $permisos;
+        }
+
+        if (!empty($data['id_usuario'])) {
+            $consulta->where('up.id_usuario', $data['id_usuario']);
+
+            $permisos = $consulta->get()->getRowArray();
+
+            unset($permisos['id_permiso']);
+            unset($permisos['id_usuario']);
+
+            return (object) $permisos;
+        } else {
+            return [];
+        }
+
+        return $consulta->get()->getResultObject();
+    }
+
+    public function update_permisos($data)
+    {
+        if (empty($data['id_usuario'])) {
+            return false; // No se puede actualizar sin un id_usuario
+        }
+
+        // Asumiendo que todos los datos excepto 'id_usuario' son permisos
+        $permisos = $data['permisos'];
+        unset($permisos['id_usuario']); // Eliminar 'id_usuario' de los datos de permisos
+
+        $consulta = $this->db->table("permisos");
+
+        // Actualizar la tabla permisos
+        $consulta->where('id_usuario', $data['id_usuario']);
+        $consulta->set($permisos);
+
+        return $consulta->update();
+    }
+
+    public function post_disable_by_ajax($data)
+    {
+        if (empty($data['id_usuario'])) {
+            return false; // No actualizar sin un id_usuario
+        }
+
+        $consulta = $this->db->table("usuarios");
+
+        // Actualizar
+        $consulta->where('id_usuario', $data['id_usuario']);
+        $consulta->set(['estatus' => 'inactivo']);
+
+        return $consulta->update();
+    }
+
+    public function post_enable_by_ajax($data)
+    {
+        if (empty($data['id_usuario'])) {
+            return false; // No actualizar sin un id_usuario
+        }
+
+        $consulta = $this->db->table("usuarios");
+
+        // Actualizar la tabla permisos
+        $consulta->where('id_usuario', $data['id_usuario']);
+        $consulta->set(['estatus' => 'activo']);
+
+        return $consulta->update();
     }
 }

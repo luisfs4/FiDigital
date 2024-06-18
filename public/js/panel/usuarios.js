@@ -1,5 +1,103 @@
+let tabla_usuarios;
+const mostrar_modal_editar_permisos = async (id_usuario, nombre) => {
+    try {
+        // Realizar petición AJAX para obtener los permisos actuales
+        const respuesta = await $.ajax({
+            url: '/FiDigital/panel/usuarios/get_permisos',
+            type: 'POST',
+            dataType: 'JSON',
+            data: { id_usuario }
+        });
+
+        if (respuesta) {
+            const { value: permisos } = await Swal.fire({
+                title: nombre,
+                html: construir_html_permisos(respuesta),
+                focusConfirm: false,
+                preConfirm: () => recoger_permisos(),
+                buttonsStyling: false,
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonText: 'Actualizar',
+                cancelButtonText: 'Salir',
+                customClass: {
+                    confirmButton: "btn bg-gradient-info",
+                    cancelButton: "btn bg-gradient-secondary me-3",
+                    popup: 'col-lg-4'
+                }
+            });
+
+            if (permisos) {
+                actualizar_permisos(id_usuario, permisos);
+            }
+        } else {
+            console.error('No se pudieron obtener los permisos');
+        }
+    } catch (error) {
+        console.error('Error al obtener permisos:', error);
+    }
+};
+
+const construir_html_permisos = (permisos) => {
+    let html = '<form id="form_permisos" class="form_permisos_estilo py-3">';
+
+    Object.entries(permisos).forEach(([permiso, valor]) => {
+        const is_checked = valor === '1';
+        if (permiso.indexOf('_json') < 0) {
+            const permiso_nombre = permiso.replace('_', ' ').replace('_', ' ').toUpperCase();
+            const icono = 'fas fa-lock';
+
+            html += `
+            <div class="form-check ps-2 form-switch d-flex justify-content-between align-items-center mb-3">
+                <label class="form-check-label d-flex align-items-center" for="${permiso}">
+                    <i class="${icono} me-2"></i>${permiso_nombre}
+                </label>
+                <input class="form-check-input" type="checkbox" id="${permiso}" ${is_checked ? 'checked' : ''}>
+            </div>`;
+
+        }
+    });
+
+    html += '</form>';
+    return html;
+};
+
+
+const recoger_permisos = () => {
+    const permisos = {};
+    $('#form_permisos input').each(function () {
+        permisos[this.id] = $(this).is(':checked') ? 1 : 0;
+    });
+    return permisos;
+};
+
+const actualizar_permisos = (id_usuario, permisos) => {
+    // Aquí, realiza una petición AJAX para actualizar los permisos en el servidor
+    $.ajax({
+        url: '/FiDigital/panel/usuarios/update_permisos',
+        method: 'POST',
+        data: { id_usuario, permisos },
+        success: function (response) {
+            // Manejar la respuesta del servidor
+            Swal.fire('Exito', 'Permisos actualizados', 'success');
+            tabla_usuarios.ajax.reload();
+        }
+    });
+};
+
+const son_todos_ceros = (objeto) => {
+    for (let clave in objeto) {
+        if (objeto.hasOwnProperty(clave)) {
+            if (objeto[clave] !== "0") {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 $(document).ready(async () => {
-    let tabla_usuarios = await $('.tabla_usuarios').DataTable({
+    tabla_usuarios = await $('.tabla_usuarios').DataTable({
         dom: 'Blrtip',
         buttons: [
             'excelHtml5',
@@ -34,14 +132,6 @@ $(document).ready(async () => {
             //Agregar panel de filtros
             $('#DataTables_Table_0_length').after(`
             <div class="contenedor_filtros">
-                <div class="form-group">
-                    <label class="form-control-label" for="filtro_dependencia">Dependencia:</label>
-                    <div class="input-group">
-                        <select class="form-select form-select-sm" id="filtro_dependencia">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                </div>
             </div>
             `);
 
@@ -56,7 +146,7 @@ $(document).ready(async () => {
 
         },
         ajax: {
-            url: '/FiDigital/usuarios/get_by_ajax',
+            url: '/FiDigital/panel/usuarios/get_by_ajax',
             type: 'POST',
             data: function (data) {
                 // Append formdata
@@ -66,63 +156,90 @@ $(document).ready(async () => {
             },
             dataSrc: ""
         },
+        order: [2, 'desc'],
         columns: [{
-                "mData": "usuario",
-                "mRender": function (data, type, row) {
-                    return `
+            "mData": "nombre_usuario",
+            "mRender": function (data, type, row) {
+                let tiene_permisos = son_todos_ceros(row.permisos);
+                console.log(row.nombre_usuario, row.permisos);
+                return `
                     <div class="d-flex px-4">
                         <div class="my-auto">
-                            <h6 class="mb-0 text-sm">${data}</h6>
+                            <h6 class="mb-0 text-sm ${tiene_permisos ? 'text-danger' : ''}">${data} ${tiene_permisos ? '<span class="badge badge-danger ms-2">Sin permisos</span>' : ''}</h6>
                         </div>
                     </div>`;
-                }
-            },
-            {
-                "mData": "direccion",
-                "mRender": function (data, type, row) {
-                    return `<span class="text-xs font-weight-bold">${data}</span>`;
-                }
-            },
-            {
-                "mData": "logged_at",
-                "mRender": function (data, type, row) {
-                    return `<span class="text-xs font-weight-bold">${data ?? 'Nunca'}</span>`;
-                }
-            },
-            {
-                "mData": "estatus",
-                "mRender": function (data, type, row) {
-                    return `<span class="text-xs font-weight-bold text-capitalize">${data}</span>`;
-                }
-            },
-            {
-                "mData": "id_usuario",
-                "mRender": function (data, type, row) {
-                    return `Sin permisos`;
-                    return `
-                    <div class="ms-auto text-center">
-                        <button class="btn btn-link text-info text-gradient px-3 mb-0 btn_editar_usuario" id_usuario="${data}">
-                            <i class="far fa-edit me-2" aria-hidden="true"></i>Editar
-                        </button>
-                        <button class="btn btn-link text-danger px-3 mb-0 btn_desactivar_usuario" id_usuario="${data}">
-                            <i class="fas fa-ban me-2" aria-hidden="true"></i>Desactivar
-                        </button>
-                    </div>
-                    `;
+            }
+        },
+        {
+            "mData": "created_at",
+            "mRender": function (data, type, row) {
+                if (type === 'display') {
+                    return `<span class="text-xs font-weight-bold">${data ?? 'Sin datos'}</span>`;
+                } else {
+                    return row.id_usuario;
                 }
             }
+        },
+        {
+            "mData": "logged_at",
+            "mRender": function (data, type, row) {
+                if (type === 'display') {
+                    return `<span class="text-xs font-weight-bold">${data ?? 'Sin datos'}</span>`;
+                } else {
+                    return data;
+                }
+            }
+        },
+        {
+            "mData": "estatus",
+            "mRender": function (data, type, row) {
+                let tiene_permisos = son_todos_ceros(row.permisos);
+                return `<span class="text-sm font-weight-bold text-capitalize ${tiene_permisos ? 'text-danger' : ''}">${tiene_permisos ? '<span class="badge badge-danger ms-2">Sin permisos</span>' : `<span class="badge badge-info ms-2">${data}</span>`}</span>`;
+            }
+        },
+        {
+            "mData": "id_usuario",
+            "mRender": function (data, type, row) {
+                let btn_desactivar = '';
+                if (row.estatus == 'activo') {
+                    btn_desactivar = `
+                    <button class="btn bg-gradient-danger px-3 mb-0 btn_desactivar_usuario" id_usuario="${data}">
+                        <i class="fas fa-ban me-2" aria-hidden="true"></i>Desactivar
+                    </button>
+                    `;
+                } else {
+                    btn_desactivar = `
+                    <button class="btn bg-gradient-success px-3 mb-0 btn_activar_usuario" id_usuario="${data}">
+                        <i class="fas fa-check me-2" aria-hidden="true"></i>Activar
+                    </button>
+                    `;
+                }
+
+                return `
+                <div class="ms-auto text-center">
+                    <button hidden class="btn bg-gradient-info text-gradient px-3 mb-0 btn_editar_usuario" id_usuario="${data}">
+                        <i class="far fa-edit me-2" aria-hidden="true"></i>Editar
+                    </button>
+                    <button class="btn bg-gradient-warning text-gradient px-3 mb-0 btn_editar_permisos" nombre="${row.nombre_usuario}" id_usuario="${data}">
+                        <i class="fas fa-user-shield me-2" aria-hidden="true"></i>Permisos
+                    </button>
+                    ${btn_desactivar}
+                </div>
+                `;
+            }
+        }
         ],
     });
 
     tabla_usuarios.on('preDraw', function () {
-            startTime = new Date().getTime();
-        })
+        startTime = new Date().getTime();
+    })
         .on('draw.dt', function () {
             console.log('La tabla tardó: ' + (new Date().getTime() - startTime) + 'ms en cargar');
             $('.tabla_usuarios').removeClass('is-loading');
 
             //Cambiar color paginacion
-            $('#DataTables_Table_0_paginate .pagination').addClass('pagination-danger');
+            $('#DataTables_Table_0_paginate .pagination').addClass('pagination-info');
 
             //Crear listener de los botones
             $('.btn_editar_usuario').off('click')
@@ -130,7 +247,7 @@ $(document).ready(async () => {
                 let id_usuario = $(this).attr('id_usuario');
 
                 $.ajax({
-                    url: '/FiDigital/usuarios/get_by_id_ajax',
+                    url: '/FiDigital/panel/usuarios/get_by_id_ajax',
                     data: {
                         id_usuario
                     },
@@ -147,12 +264,19 @@ $(document).ready(async () => {
                 });
             });
 
-            $('.btn_desactivar_ususario').off('click')
-            $('.btn_desactivar_ususario').click(async function (e) {
+            $('.btn_editar_permisos').off('click');
+            $('.btn_editar_permisos').on('click', function () {
+                const id_usuario = $(this).attr('id_usuario');
+                const nombre = $(this).attr('nombre');
+                mostrar_modal_editar_permisos(id_usuario, nombre);
+            });
+
+            $('.btn_desactivar_usuario').off('click')
+            $('.btn_desactivar_usuario').click(async function (e) {
                 let id_usuario = $(this).attr('id_usuario');
 
                 await $.ajax({
-                    url: '/FiDigital/usuarios/post_disable_by_ajax',
+                    url: '/FiDigital/panel/usuarios/post_disable_by_ajax',
                     data: {
                         id_usuario
                     },
@@ -167,7 +291,7 @@ $(document).ready(async () => {
                                 icon: 'error',
                                 buttonsStyling: false,
                                 customClass: {
-                                    confirmButton: "btn bg-gradient-danger me-3",
+                                    confirmButton: "btn bg-gradient-info me-3",
                                     cancelButton: "btn bg-gradient-secondary"
                                 }
                             });
@@ -175,14 +299,56 @@ $(document).ready(async () => {
                             Swal.fire({
                                 title: '¡Desactivado!',
                                 text: 'El usuario se desactivó con exito',
-                                icon: 'error',
+                                icon: 'success',
                                 buttonsStyling: false,
                                 customClass: {
-                                    confirmButton: "btn bg-gradient-danger me-3",
+                                    confirmButton: "btn bg-gradient-info me-3",
                                     cancelButton: "btn bg-gradient-secondary"
                                 }
                             });
-                            tabla_modificaciones.draw();
+                        }
+                        tabla_usuarios.ajax.reload();
+                    }
+                }); // Fin ajax
+
+            })
+
+            $('.btn_activar_usuario').off('click')
+            $('.btn_activar_usuario').click(async function (e) {
+                let id_usuario = $(this).attr('id_usuario');
+
+                await $.ajax({
+                    url: '/FiDigital/panel/usuarios/post_enable_by_ajax',
+                    data: {
+                        id_usuario
+                    },
+                    dataType: 'JSON',
+                    type: 'POST',
+                    success: function (respuesta, text, xhr) {
+
+                        if (xhr.status == 204) {
+                            Swal.fire({
+                                title: '¡Hay un problema!',
+                                text: 'No se pudo activar el usuario',
+                                icon: 'error',
+                                buttonsStyling: false,
+                                customClass: {
+                                    confirmButton: "btn bg-gradient-info me-3",
+                                    cancelButton: "btn bg-gradient-secondary"
+                                }
+                            });
+                        } else if (xhr.status == 200) {
+                            Swal.fire({
+                                title: '¡Activado!',
+                                text: 'El usuario se activó con exito',
+                                icon: 'success',
+                                buttonsStyling: false,
+                                customClass: {
+                                    confirmButton: "btn bg-gradient-info me-3",
+                                    cancelButton: "btn bg-gradient-secondary"
+                                }
+                            });
+                            tabla_usuarios.ajax.reload();
                         }
                     }
                 }); // Fin ajax
@@ -232,7 +398,7 @@ $(document).ready(async () => {
                     icon: 'error',
                     buttonsStyling: false,
                     customClass: {
-                        confirmButton: "btn bg-gradient-danger me-3",
+                        confirmButton: "btn bg-gradient-info me-3",
                         cancelButton: "btn bg-gradient-secondary"
                     }
                 });
@@ -261,7 +427,7 @@ $(document).ready(async () => {
                 cancelButtonText: 'No, cancelar',
                 buttonsStyling: false,
                 customClass: {
-                    confirmButton: "btn bg-gradient-danger me-3",
+                    confirmButton: "btn bg-gradient-info me-3",
                     cancelButton: "btn bg-gradient-secondary"
                 }
             }).then(function (respuesta) {
@@ -281,7 +447,7 @@ $(document).ready(async () => {
                                     icon: 'success',
                                     buttonsStyling: false,
                                     customClass: {
-                                        confirmButton: "btn bg-gradient-danger me-3"
+                                        confirmButton: "btn bg-gradient-info me-3"
                                     }
                                 }).then(() => {
                                     window.location.reload();
@@ -293,42 +459,6 @@ $(document).ready(async () => {
             }) // Fin Then SweetAlert
 
         }
-    })
-
-    $('[name="id_direccion"]').change(async function (e) {
-        let id_direccion = $(this).attr('id_direccion');
-
-        await $.ajax({
-            url: '/FiDigital/usuarios/get_unidad_by_ajax',
-            data: {
-                id_direccion
-            },
-            dataType: 'JSON',
-            type: 'POST',
-            success: function (respuesta, text, xhr) {
-
-                if (xhr.status == 204) {
-                    Swal.fire({
-                        title: '¡Hay un problema!',
-                        text: 'Esta dirección no tiene unidades asignadas',
-                        icon: 'error',
-                        buttonsStyling: false,
-                        customClass: {
-                            confirmButton: "btn bg-gradient-danger me-3",
-                            cancelButton: "btn bg-gradient-secondary"
-                        }
-                    });
-                } else if (xhr.status == 200) {
-                    $('[name="id_unidad"]').empty();
-                    $('[name="id_unidad"]').append(`<option selected>Selecciona una opción</option>`);
-                    respuesta.forEach(unidad => {
-                        $('[name="id_unidad"]').append(`<option value="${unidad.id_unidad}">${unidad.unidad}</option>`);
-                    });
-
-                }
-            }
-        }); // Fin ajax
-
     })
 
 
@@ -346,15 +476,10 @@ $(document).ready(async () => {
             Swal.fire({
                 title: 'Error',
                 text: 'Tu contraseña no cumple los requerimientos',
-                icon: 'error',
-                buttonsStyling: false,
-                customClass: {
-                    confirmButton: "btn bg-gradient-danger me-3",
-                    cancelButton: "btn bg-gradient-secondary"
-                }
+                icon: 'error'
             })
             return false;
-        } 
+        }
 
         $.ajax({
             url: '/FiDigital/cuenta/cambiar_contrasena',
@@ -371,7 +496,7 @@ $(document).ready(async () => {
                         icon: 'error',
                         buttonsStyling: false,
                         customClass: {
-                            confirmButton: "btn bg-gradient-danger me-3",
+                            confirmButton: "btn bg-gradient-info me-3",
                             cancelButton: "btn bg-gradient-secondary"
                         }
                     });
@@ -382,10 +507,10 @@ $(document).ready(async () => {
                         icon: 'success',
                         buttonsStyling: false,
                         customClass: {
-                            confirmButton: "btn bg-gradient-danger me-3",
+                            confirmButton: "btn bg-gradient-info me-3",
                             cancelButton: "btn bg-gradient-secondary"
                         }
-                    }).then(()=>{
+                    }).then(() => {
                         window.location.reload()
                     })
 

@@ -129,6 +129,21 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('get_solicitudes', 'Solicitud::get_solicitudes');
 		$routes->get('formulario', 'Solicitud::formulario');
 	});
+
+	//Seccion Usuarios
+	$routes->group('usuarios', ['filter' => 'Permiso_usuarios'], static function ($routes) {
+		$routes->get('/', 'Usuario::listado');
+		$routes->post('crear', 'Usuario::post_usuario');
+		$routes->post('editar', 'Usuario::editar');
+		$routes->post('get_by_ajax', 'Usuario::get_by_ajax', ['filter' => 'Session_exist']);
+		$routes->post('get_permisos', 'Usuario::get_permisos');
+		$routes->post('get_permisos_transparencia', 'Usuario::get_permisos_transparencia');
+		$routes->post('update_permisos', 'Usuario::update_permisos');
+		$routes->post('update_permisos_transparencia', 'Usuario::update_permisos_transparencia');
+		$routes->post('lista_permisos_transparencia_disponibles', 'Usuario::lista_permisos_transparencia_disponibles');
+		$routes->post('post_disable_by_ajax', 'Usuario::post_disable_by_ajax');
+		$routes->post('post_enable_by_ajax', 'Usuario::post_enable_by_ajax');
+	});
 });
 
 //Usuarios

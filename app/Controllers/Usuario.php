@@ -13,11 +13,11 @@ class Usuario extends BaseController
 
     public function __construct()
     {
-        $this->session =  \Config\Services::session();
-        $this->db      = \Config\Database::connect();
+        $this->session = \Config\Services::session();
+        $this->db = \Config\Database::connect();
 
         //Cargar modelos
-        $this->UsuarioModel    = new UsuarioModel();
+        $this->UsuarioModel = new UsuarioModel();
     }
 
     public function perfil()
@@ -106,5 +106,45 @@ class Usuario extends BaseController
             return json_encode([]);
         }
     }
-    
+
+    function get_permisos()
+    {
+        if ($response = $this->UsuarioModel->get_permisos($this->request->getPost())) {
+            return json_encode($response);
+        } else {
+            return json_encode([]);
+        }
+    }
+
+    function update_permisos()
+    {
+        if ($response = $this->UsuarioModel->update_permisos($this->request->getPost())) {
+            return json_encode($response);
+        } else {
+            return json_encode([]);
+        }
+    }
+
+    function post_disable_by_ajax()
+    {
+        $UsuarioModel = new UsuarioModel();
+        $data_filtros = $this->request->getPost();
+        if ($response = $UsuarioModel->post_disable_by_ajax($data_filtros)) {
+            return json_encode($response);
+        } else {
+            return json_encode([]);
+        }
+    }
+
+    function post_enable_by_ajax()
+    {
+        $UsuarioModel = new UsuarioModel();
+        $data_filtros = $this->request->getPost();
+        if ($response = $UsuarioModel->post_enable_by_ajax($data_filtros)) {
+            return json_encode($response);
+        } else {
+            return json_encode([]);
+        }
+    }
+
 }
