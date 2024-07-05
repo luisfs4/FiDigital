@@ -95,10 +95,15 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
-		$consulta->select("p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
 			FROM expedientes e 
-			WHERE e.id_punto = p.id_punto), 0) AS monto_restante", false);
+			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS monto_restante", false);
+		$consulta->select("CAST(IFNULL((SELECT SUM(e.monto_autorizado) 
+			FROM expedientes e 
+			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS pagado", false);
 		$consulta->select("ce.estatus");
+		$consulta->select("cd.direccion");
+		$consulta->select("cp.programa");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((
 								SELECT
@@ -117,6 +122,15 @@ class SesionModel extends Model
 
 		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
 		$consulta->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
+
+		$consulta->join("cat_direcciones as cd", 'cd.id_direccion = p.id_direccion', 'left');
+		$consulta->join("cat_programas as cp", 'cp.id_programa = p.id_programa', 'left');
+
+		if(!empty($data_filtros["datos_sesion"]) && $data_filtros["datos_sesion"]){
+			$consulta->select("s.nombre_sesion");
+			$consulta->select("s.numero_sesion");
+			$consulta->join("sesiones as s", 's.id_sesion = p.id_sesion', 'left');
+		}
 
 		// Búsqueda
 		if (!empty($data_filtros['id_punto'])) {

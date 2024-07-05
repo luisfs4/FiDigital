@@ -6,15 +6,62 @@ use App\Models\PuntoModel;
 class Punto extends BaseController
 {
     protected $PuntoModel;
+	protected $session;
 
     public function __construct()
     {
+		$this->session = \Config\Services::session();
         $this->PuntoModel = new PuntoModel();
     }
+
+	private function renderView($views, $data = [])
+	{
+		$output = view("panel/base/head", $data);
+		$output .= view("panel/base/menu", $this->session->get());
+
+		foreach ($views as $view) {
+			$output .= view($view, $data);
+		}
+
+		$output .= view("panel/base/footer", $data);
+		echo $output;
+	}
+
+	/**
+	 * Obtiene todos los resultados basado en los filtros
+	 *
+	 * @param array  array de valores para filtrar
+     * @param string metodo del modelo
+     * @param string nombre del modelo
+	 */
+	private function sendAjaxResponse($data_filtros, $method, $model="PuntoModel")
+	{
+		if (!$this->request->isAJAX()) {
+			throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+		}
+
+		$response = $this->$model->$method($data_filtros);
+		return $this->response->setStatusCode($response ? 200 : 204)->setJSON($response);
+	}
 
     public function get_jerarquia()
     {
         $hierarchy = $this->PuntoModel->getHierarchy($this->request->getPost('id_punto'), $this->request->getPost());
         return $this->response->setJSON($hierarchy);
     }
+
+	public function listado()
+	{
+		// Title de la pagina
+		$data_view = [
+			"ruta" => "Listado de puntos",
+            "seccion" => "Puntos",
+			"scripts" => [
+				["src" => base_url("public/js/panel/puntos/listado.js?v=" . time())],
+			],
+		];
+
+		// Imprimir vista
+		$this->renderView(["panel/puntos/listado"], $data_view);
+	}
 }

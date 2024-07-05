@@ -123,8 +123,35 @@ async function gestionar_jerarquia(json_editar = []) {
             </div>
             <div class="col-lg-4">
                 <div class="form-group">
-                    <label class="form-control-label"><i class="fas fa-money"></i> Presupuesto autorizado:</label>
+                    <label class="form-control-label">
+                        <i class="fas fa-credit-card"></i>
+                        Presupuesto autorizado:
+                    </label>
                     <input required type="number" class="input_punto form-control" name="presupuesto_autorizado" placeholder="Ingresa el presupuesto..." step="0.01">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label class="form-control-label">
+                        <i class="fas fa-users"></i>
+                        Direccion:
+                    </label>
+                    <select required class="input_punto form-select" id="id_direccion" name="id_direccion">
+                        <option value="">Selecciona una opción</option>
+                        ${ direcciones.map(d => `<option value="${d.id_direccion}">${d.direccion}</option>`).join("\n") }
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label class="form-control-label">
+                        <i class="fas fa-shapes"></i>
+                        Programa:
+                    </label>
+                    <select required class="input_punto form-select" id="id_programa" name="id_programa">
+                        <option value="">Selecciona una opción</option>
+                        ${ programas.map(p => `<option value="${p.id_programa}">${p.programa}</option>`).join("\n") }
+                    </select>
                 </div>
             </div>
             <div class="col-lg-12">
@@ -197,7 +224,9 @@ async function gestionar_jerarquia(json_editar = []) {
                 presupuesto_autorizado: presupuesto_autorizado,
                 nombre_punto: $('.input_punto[name="nombre_punto"]').val(),
                 padre_id,
-                observaciones: $('.input_punto[name="observaciones"]').val().trim()
+                observaciones: $('.input_punto[name="observaciones"]').val().trim(),
+                id_programa: $('.input_punto[name="id_programa"]').val().trim(),
+                id_direccion: $('.input_punto[name="id_direccion"]').val().trim(),
             }
 
             if (id_punto_editar) {
@@ -552,5 +581,14 @@ $(() => {
     $('.btn_nuevo_punto').click((e) => {
         gestionar_jerarquia();
     })
+
+    $(document).on("change", "#id_direccion", (ev)=>{
+        console.log(ev);
+        const id_direccion = $(ev.currentTarget).val();
+        const opciones = programas.filter(p => p.id_direccion == id_direccion)
+                .map(p => `<option value="${p.id_programa}">${p.programa}</option>`);
+
+        $("#id_programa").html(`<option value="">Selecciona una opción</option>`).append(opciones);
+    });
 
 })

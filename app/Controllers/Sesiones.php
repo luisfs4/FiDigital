@@ -61,9 +61,11 @@ class Sesiones extends BaseController
 				["src" => base_url("public/js/panel/sesiones/listado.js?v=" . time())],
 				["src" => base_url("public/js/panel/sesiones/sesiones.js?v=" . time())],
 				["src" => base_url("public/js/panel/sesiones/puntos.js?v=" . time())]
-			]
+			],
+			
+			"programas" 	=> $this->get_programas([]),
+			"direcciones" => $this->get_direcciones([]),
 		];
-
 		// Imprimir vista
 		$this->renderView(["panel/sesiones/listado"], $data_view);
 	}
