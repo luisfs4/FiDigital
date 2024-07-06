@@ -35,7 +35,7 @@
 					<li class="nav-item">
 						<a class="nav-link <?= ($ruta == 'Puntos' || ($seccion ?? '') == "Puntos" ) ? 'active' : '' ?>" href="<?= base_url('/panel/sesiones/puntos/listado'); ?>">
 							<div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-								<i class="fas fa-user-plus mb-1" style="font-size: 0.85rem;"></i>
+								<i class="fas fa-folder-open mb-1" style="font-size: 0.85rem;"></i>
 							</div>
 							<span class="nav-link-text ms-1">Puntos</span>
 						</a>

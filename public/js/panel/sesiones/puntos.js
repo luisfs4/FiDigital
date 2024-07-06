@@ -322,12 +322,23 @@ async function gestionar_jerarquia(json_editar = []) {
     }
 }
 
+const ordenar_puntos = (puntos) => {
+    const parsear_jerarquia = (jerarquia) => jerarquia.split('.').map(n => parseInt(n || 0));
+
+    return puntos.sort((a, b) => {
+        const niveles_a = parsear_jerarquia(a.jerarquia);
+        const niveles_b = parsear_jerarquia(b.jerarquia);
+
+        return niveles_a.reduce((resultado, nivelA, index) => resultado || (nivelA - (niveles_b[index] || 0)), 0);
+    });
+}
 
 function render_puntos(hierarchy, level = 0) {
     if (hierarchy.length === 0) {
         return '<div class="alert border-danger text-gradient text-danger my-3">No existen puntos registrados.</div>';
     }
 
+    hierarchy = ordenar_puntos(hierarchy);
     let html = '<ul class="list-group">';
     for (const point of hierarchy) {
         let btn_detalle = '';

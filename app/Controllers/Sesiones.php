@@ -282,4 +282,9 @@ class Sesiones extends BaseController
 	{
 		return $this->sendResponse($data_filtros, "get_programas");
 	}
+
+	public function get_numero_sesiones($data_filtros)
+	{
+		return $this->sendResponse($data_filtros, "get_numero_sesiones");
+	}
 }

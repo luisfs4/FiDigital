@@ -52,6 +52,7 @@ class Punto extends BaseController
 
 	public function listado()
 	{
+		$sesiones_controller = new Sesiones();
 		// Title de la pagina
 		$data_view = [
 			"ruta" => "Listado de puntos",
@@ -59,9 +60,17 @@ class Punto extends BaseController
 			"scripts" => [
 				["src" => base_url("public/js/panel/puntos/listado.js?v=" . time())],
 			],
+
+			"programas" 		=> $sesiones_controller->get_programas([]),
+			"direcciones"		=> $sesiones_controller->get_direcciones([]),
+			"sesiones"			=> $sesiones_controller->get_numero_sesiones([]),
 		];
 
 		// Imprimir vista
 		$this->renderView(["panel/puntos/listado"], $data_view);
+	}
+
+	public function cambiar_estatus(){
+		return $this->sendAjaxResponse($this->request->getPost(), "cambiar_estatus");
 	}
 }
