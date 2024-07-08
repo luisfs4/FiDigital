@@ -153,7 +153,16 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-2 col-lg-4 col-sm-12">
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
+											<div class="form-group">
+												<label for="monto_inicial" class="form-label">Presupuesto inicial
+													*</label>
+												<input disabled type="number" id="monto_inicial" class="form-control"
+														placeholder="0" min="0" max="999999999" step="0.01">
+											</div>
+										</div>
+
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
 											<div class="form-group">
 												<label for="monto_autorizado" class="form-label">Monto autorizado
 													*</label>
@@ -164,12 +173,20 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-2 col-lg-4 col-sm-12">
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
 											<div class="form-group">
 												<label for="monto_pagado" class="form-label">Monto pagado *</label>
 												<input type="number" id="monto_pagado"
 													class="form-control input_expediente" placeholder="0"
 													name="monto_pagado" min="0" max="999999999" step="0.01" required>
+											</div>
+										</div>
+
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
+											<div class="form-group">
+												<label for="monto_restante" class="form-label">Presupuesto restante</label>
+												<input type="number" id="monto_restante" class="form-control" 
+														placeholder="0" min="0" max="999999999" disabled>
 											</div>
 										</div>
 
@@ -505,7 +522,10 @@
 		$('#monto_autorizado').on('change', function () {
 			var valorAutorizado = $(this).val();
 			$('#monto_pagado').attr('max', valorAutorizado);
+			actualizar_monto_restante();
 		});
+
+		$('#monto_pagado').on('change', function(){actualizar_monto_restante();});
 
 		const actualizar_max_monto = (monto) => {
 			$('#monto_autorizado').attr('max', monto);
@@ -517,8 +537,20 @@
 			$('#id_programa').val(punto.programa);
 		}
 
+		const actualizar_monto_restante = () => {
+			let monto_autorizado = $('#monto_autorizado').val();
+			let monto_pagado = $('#monto_pagado').val();
+
+			monto_autorizado = Number(monto_autorizado).toFixed(2);
+			monto_pagado = Number(monto_pagado).toFixed(2);
+			$('#monto_restante').val(Number(monto_autorizado - monto_pagado).toFixed(2) );
+		}
+
 		const actualizar_datos_punto = (e) => {
 			var punto = $(e.currentTarget).children('option:selected');
+
+			let monto_inicial = punto.attr('monto_inicial');
+			$("#monto_inicial").val(Number(monto_inicial).toFixed(2)).prop('readonly', true);
 
 			monto_autorizado_punto = punto.attr('monto_restante');
 			actualizar_max_monto(monto_autorizado_punto);

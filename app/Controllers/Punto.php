@@ -73,4 +73,14 @@ class Punto extends BaseController
 	public function cambiar_estatus(){
 		return $this->sendAjaxResponse($this->request->getPost(), "cambiar_estatus");
 	}
+
+	public function get_observaciones()
+	{
+		return $this->sendAjaxResponse($this->request->getGet(), "get_observaciones");
+	}
+
+	public function post_observaciones()
+	{
+		return $this->sendAjaxResponse($this->request->getPost(), "post_observaciones");
+	}
 }

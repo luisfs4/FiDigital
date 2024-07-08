@@ -35,7 +35,7 @@ $(document).ready(async () => {
     // });
 
     tabla_puntos = await $('.tabla_puntos').DataTable({
-        dom: 'Blr<"overflow-auto"t>ip',
+        dom: 'Blr<"w-100 overflow-auto"t>ip',
         buttons: [
             {//Excel
                 extend: 'excelHtml5',
@@ -91,8 +91,11 @@ $(document).ready(async () => {
             }
         },
         initComplete: function () {
-            $(document).on("click", ".btn_buscar", ()=>{ tabla_puntos.ajax.reload(); });
-            $(document).on("click", ".btn_borrar", ()=>{ $(".input_filtro").val("").change(); });
+            $(document).on("click", ".btn_buscar",      () => { tabla_puntos.ajax.reload(); });
+            $(document).on("click", ".btn_borrar",      () => { $(".input_filtro, .busqueda_nav").val("").change(); });
+            $(document).on("keyup", ".busqueda_nav",    (ev) => { 
+                ev.key == "Enter" && ev.currentTarget.value.length >= 3 && tabla_puntos.ajax.reload(); 
+            });
 
             //Modificar select de longitud
             //$('#DataTables_Table_0_length label').html(`Mostrar: <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class="form-select form-select-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>`);
@@ -122,16 +125,8 @@ $(document).ready(async () => {
                 targets: 0,
             },
             {
-                className: "text-center", 
-                targets: [1,2,6],
-            },
-            {
                 className: "text-end", 
-                targets: [3,4,5],
-            },
-            {
-                targets: 7,
-                width: '200px',
+                targets: [1,2,3,4,5],
             }
         ],
         columns: [
@@ -139,7 +134,7 @@ $(document).ready(async () => {
                 "mData": "nombre_punto",
                 "mRender": function (data, type, row) {
                     return `
-                        <div class="d-flex px-2 detalle_sesion cursor-pointer" 
+                        <div class="d-flex px-2 detalle_punto cursor-pointer" 
                                 id_punto="${row.id_punto}">
                             <div>
                                 <button class="btn btn-link text-gradient p-0 m-0 text-dark">
@@ -172,48 +167,6 @@ $(document).ready(async () => {
                     `;
                 }
             },
-            {//Autorizado
-                "mData": "presupuesto_autorizado",
-                "mRender": function (data, type, row) {
-                    return `
-                        <div class="align-middle cursor-pointer btn_historial_borrador" 
-                                id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
-                            <span class="badge bg-gradient-danger font-weight-bold text-xs">
-                                <i class="fas fa-receipt me-2"></i>
-                                ${data ?? '---'}
-                            </span>
-                        </div>
-                    `;
-                }
-            },
-            {//Pagado
-                "mData": "pagado",
-                "mRender": function (data, type, row) {
-                    return `
-                        <div class="align-middle cursor-pointer btn_historial_borrador" 
-                                id_punto="${row.id_punto}" nombre="${row.id_punto}">
-                            <span class="badge bg-gradient-success font-weight-bold text-xs">
-                                <i class="fas fa-receipt me-2"></i>
-                                ${data ?? '---'}
-                            </span>
-                        </div>
-                    `;
-                }
-            },
-            {//Remanente
-                "mData": "monto_restante",
-                "mRender": function (data, type, row) {
-                    return `
-                        <div class="align-middle cursor-pointer btn_historial_borrador" 
-                                id_punto="${row.id_punto}" nombre="${row.id_punto}">
-                            <span class="badge bg-gradient-primary font-weight-bold text-xs">
-                                <i class="fas fa-receipt me-2"></i>
-                                ${data ?? '---'}
-                            </span>
-                        </div>
-                    `;
-                }
-            },
             {//direccion
                 "mData": "direccion",
                 "mRender": function (data, type, row) {
@@ -234,28 +187,79 @@ $(document).ready(async () => {
                     `;
                 }
             },
+            {//Cantidades
+                "mData": "presupuesto_autorizado",
+                "mRender": function (data, type, row) {
+                    return `
+                        <div class="row align-items-center flex-nowrap">
+                            <span class="col">
+                                ${data ?? '---'}
+                            </span>
+                            <span class="font-weight-bold text-xs col-auto">
+                                <b class="text-success">
+                                    <i class="fas fa-money-bill mx-2"></i>
+                                </b>
+                                AUT
+                            </span>
+                        </div>
+                        <div class="row align-items-center flex-nowrap">
+                            <span class="col">
+                                ${row.pagado ?? '---'}
+                            </span>
+                            <span class="font-weight-bold text-xs col-auto">
+                                <b class="text-danger">
+                                    <i class="fas fa-sort-amount-down mx-2"></i>
+                                </b>
+                                PAG
+                            </span>
+                        </div>
+                        <div class="row align-items-center flex-nowrap">
+                            <span class="col">
+                                ${row.monto_restante ?? '---'}
+                            </span>
+                            <span class="font-weight-bold text-xs col-auto">
+                                <b class="text-primary">
+                                    <i class="fas fa-equals mx-2"></i>
+                                </b>
+                                REM 
+                            </span>
+                        </div>
+                    `;
+                }
+            },
             {//Estatus
                 "mData": "estatus",
                 "mRender": function (data, type, row) {
                     const padre_id = row.padre_id ?? '';
                     return `
-                        <div class="text-center ms-auto form-group">
-                            <select class="form-select form-control cambiar_estatus" 
-                                    data-id_punto="${row.id_punto}" data-padre_id="${padre_id}"
-                                    data-estatus="${data}">
-                                <option value="creado" ${ (data ?? "creado") == "creado" ? 'selected' : '' }>
-                                    Creado
-                                </option>
-                                <option value="procesado" ${ data == "procesado" ? 'selected' : '' }>
-                                    Procesado
-                                </option>
-                                <option value="pagado" ${ data == "pagado" ? 'selected' : '' }>
-                                    Pagado
-                                </option>
-                                <option value="completado" ${ data == "completado" ? 'selected' : '' }>
-                                    Completado
-                                </option>
-                            </select>
+                        <div class="row flex-nowrap">
+                            <div class="col-auto">
+                                <select class="form-select form-control cambiar_estatus" 
+                                        data-id_punto="${row.id_punto}" data-padre_id="${padre_id}"
+                                        data-estatus="${data}">
+                                    <option value="creado" ${ (data ?? "creado") == "creado" ? 'selected' : '' }>
+                                        Creado
+                                    </option>
+                                    <option value="procesado" ${ data == "procesado" ? 'selected' : '' }>
+                                        Procesado
+                                    </option>
+                                    <option value="pagado" ${ data == "pagado" ? 'selected' : '' }>
+                                        Pagado
+                                    </option>
+                                    <option value="completo" ${ data == "completo" ? 'selected' : '' }>
+                                        Completo
+                                    </option>
+                                    <option value="completo con errores" ${ data == "completo con errores" ? 'selected' : '' }>
+                                        Completo con errores
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-sm bg-gradient-primary agregar_observacion 
+                                        py-2 px-3 fs-6" id_punto="${row.id_punto}">
+                                    <i class="fas fa-comment-dots fs-6"></i>
+                                </button>
+                            </div>
                         </div>
                     `;
                 }
@@ -280,7 +284,10 @@ const obtener_filtros = (data = {}) => {
     data["id_programa"]     = $("#filtro_programas").val();
     data["id_direccion"]    = $("#filtro_direcciones").val();
     data["numero_sesion"]   = $("#filtro_sesiones").val();
-    
+
+	if ($(".busqueda_nav").val().length >= 3)
+        data["search"] = { "value": $(".busqueda_nav").val() };
+
     //otros filtros
     return data;
 }
@@ -311,6 +318,96 @@ const mensaje_filtro = () => {
 	return partes_mensaje.length > 0 ? `Estás filtrando donde ${partes_mensaje.join(', ')}` : "Filtrando todos los registros";
 }
 
+const ordenar_puntos = (puntos) => {
+    const parsear_jerarquia = (jerarquia) => jerarquia.split('.').map(n => parseInt(n || 0));
+
+    return puntos.sort((a, b) => {
+        const niveles_a = parsear_jerarquia(a.jerarquia);
+        const niveles_b = parsear_jerarquia(b.jerarquia);
+
+        return niveles_a.reduce((resultado, nivelA, index) => resultado || (nivelA - (niveles_b[index] || 0)), 0);
+    });
+}
+
+const render_puntos = (hierarchy, level = 0) => {
+    if (hierarchy.length === 0) {
+        return '<div class="alert border-danger text-gradient text-danger my-3">No existen puntos registrados.</div>';
+    }
+
+    hierarchy = ordenar_puntos(hierarchy);
+    let html = '<ul class="list-group">';
+    for (const point of hierarchy) {
+        let btn_detalle = '';
+
+        if (point.id_expediente) {
+            btn_detalle = `
+                <a href="/FiDigital/panel/sesiones/expedientes/${point.id_expediente}/detalle" class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded">
+                    <i class="fas fa-folder text-white" aria-hidden="true"></i>
+                </a>             
+            `;
+        }
+        let span_restante = ``;
+        if (point.monto_restante) {
+            span_restante = `<span class="badge badge-info me-2">${formatoMoneda(point.monto_restante)} restante</span>`;
+        }
+
+        let btn_estatus = '';
+        let badge = '';
+        let selected_1 = '';
+        let selected_2 = '';
+        let selected_3 = '';
+        let selected_4 = '';
+
+        if (point.estatus) {
+            if (point.estatus == 'Completo') {
+                selected_1 = 'selected';
+                badge = 'bg-gradient-success'
+            } else if (point.estatus == 'Completo con errores') {
+                selected_2 = 'selected';
+                badge = 'bg-gradient-success'
+            } else if (point.estatus == 'Incompleto') {
+                selected_3 = 'selected';
+                badge = 'bg-gradient-danger'
+            } else if (point.estatus == 'Completo sin errores') {
+                selected_4 = 'selected';
+                badge = 'bg-gradient-success'
+            }
+
+            btn_estatus = `<select class="px-3 py-2 mx-1 rounded cambiar_estatus ${badge} border-0 my-1 shadow text-xs text-white rounded" id_expediente="${point.id_expediente}" id_sesion="${point.id_sesion}">
+                                <option ${selected_1 ?? ''} class="bg-light text-dark">Completo</li>
+                                <option ${selected_2 ?? ''} class="bg-light text-dark">Completo con errores</li>
+                                <option ${selected_4 ?? ''} class="bg-light text-dark">Completo sin errores</li>
+                                <option ${selected_3 ?? ''} class="bg-light text-dark">Incompleto</li>
+                            </select>`;
+        }
+
+        // Contenedor de lista
+        html += `
+            <li class="list-group-item">
+                <div class="d-flex flex-wrap justify-content-between align-items-center w-100 my-2">
+                    <div class="col-12 col-md-7 text-start text-wrap">
+                        ${"&nbsp;".repeat(level * 2)}
+                        <span class="text-wrap">${point.jerarquia} - ${point.nombre_punto}</span>
+                    </div>
+                    <div class="col-12 col-md-5 mt-sm-3 d-flex justify-content-end">
+                        ${span_restante}
+                        ${btn_estatus}
+                        ${btn_detalle}
+                    </div>   
+                </div >
+        `;
+        // Imprimir hijo
+        if (point.children) {
+            html += render_puntos(point.children, level + 1);
+        }
+
+        // Cerrar lista
+        html += '</li>';
+    }
+    html += '</ul>';
+    return html;
+}
+
 $(document).on("change", ".cambiar_estatus", function() {
     const id_punto = $(this).data("id_punto");
     const padre_id = $(this).data("padre_id");
@@ -337,5 +434,56 @@ $(document).on("change", ".cambiar_estatus", function() {
             html: "Error al cambiar el estatus",
             icon: 'error'
         })
+    });
+});
+
+$(document).on("click", ".detalle_punto", function(){
+    id_punto = $(this).attr("id_punto");
+    $.post('/FiDigital/panel/sesiones/puntos/get_by_ajax', {padre_id: id_punto})
+        .then((puntos)=>{
+            Swal.fire({ //Crar una punto nueva
+                title: 'Puntos asignados',
+                buttonsStyling: false,
+                reverseButtons: true,
+                confirmButtonText: 'Cerrar',
+                customClass: {
+                    confirmButton: 'btn bg-gradient-danger btn-md mx-2 move-icon-left',
+                    loader: 'custom-loader',
+                    popup: 'swal-wide'
+                },
+                autofocus: false,
+                html: render_puntos(puntos),
+                focusConfirm: false,
+            })
+        })
+        .catch(()=>{});
+});
+
+$(document).on("click", ".agregar_observacion", function(){
+    const id_punto = $(this).attr("id_punto");
+    $.get("/FiDigital/panel/Sesiones/puntos/get_observaciones", {id_punto}).then((punto)=>{
+        Swal.fire({
+            icon: "info",
+            title: `<i class="fas fa-comment-dots mx-2"></i> Observaciones`,
+            input: "textarea",
+            inputValue: punto.observaciones,
+            inputAttributes: { autocapitalize: "off" },
+            preConfirm: async (observaciones) => {
+                await $.post(`/FiDigital/panel/Sesiones/puntos/post_observaciones`, {observaciones, id_punto})
+                .then((resultado)=>{
+                    if(!resultado.success){ throw new Error(resultado.message); }
+
+                    Toast.fire({
+                        title: 'Exito',
+                        position: 'top-right',
+                        html: 'Se guardaron las observaciones correctamente',
+                        icon: 'success'
+                    });
+                })
+                .catch((error)=>{
+                    Swal.showValidationMessage(`Ocurrio un error al guardar las observaciones: ${error}`);
+                });
+              },
+        });
     });
 });

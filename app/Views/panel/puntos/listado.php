@@ -24,19 +24,13 @@
                                     Sesion
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Autorizado
-                                </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Pagado
-                                </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Remanente
-                                </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                     Dirección
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                     Programas
+                                </th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    Remanente
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                     Estatus
@@ -53,19 +47,13 @@
                                     Sesion
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Autorizado
-                                </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Pagado
-                                </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                    Remanente
-                                </th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                     Dirección
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                     Programas
+                                </th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    Remanente
                                 </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                     Estatus
@@ -102,7 +90,8 @@
                                 <option value="creado">Creado</option>
                                 <option value="procesado">Procesado</option>
                                 <option value="pagado">Pagado</option>
-                                <option value="completado">Completado</option>
+                                <option value="completo">Completo</option>
+                                <option value="completo con errores">Completo con errores</option>
                             </select>
                         </div>
                         

@@ -102,11 +102,15 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		});
 
 		$routes->group('puntos', static function ($routes) {
-			$routes->get('listado', 					'Punto::listado', ['filter' => 'Permiso_sesiones']);
-			$routes->post('post_punto', 			'Sesiones::post_punto');
-			$routes->post('check_jerarquia',	'Sesiones::check_jerarquia');
-			$routes->post('get_by_ajax', 			'Sesiones::get_puntos_by_ajax');
-			$routes->post('cambiar_estatus', 	'Punto::cambiar_estatus');
+			$routes->get('listado', 						'Punto::listado', ['filter' => 'Permiso_sesiones']);
+
+			$routes->post('post_punto', 				'Sesiones::post_punto');
+			$routes->post('check_jerarquia',		'Sesiones::check_jerarquia');
+			$routes->post('get_by_ajax', 				'Sesiones::get_puntos_by_ajax');
+			$routes->post('cambiar_estatus', 		'Punto::cambiar_estatus');
+
+			$routes->get('get_observaciones', 	'Punto::get_observaciones');
+			$routes->post('post_observaciones', 'Punto::post_observaciones');
 		});
 	});
 

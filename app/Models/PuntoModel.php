@@ -12,7 +12,15 @@ class PuntoModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
 
+	private $session;
+
     protected $allowedFields = ['jerarquia', 'nombre_punto', 'observaciones', 'padre_id', 'id_expediente', 'id_sesion', 'created_at', 'created_by', 'updated_at', 'updated_by'];
+
+	public function __construct()
+	{
+        parent::__construct();
+		$this->session = \Config\Services::session();
+	}
 
     public function getHierarchy($padre_id = null, $filtros = [])
     {
@@ -60,5 +68,59 @@ class PuntoModel extends Model
         }
 
         return $hierarchy;
+    }
+
+    public function get_observaciones($data_filters)
+    {
+        if(empty($data_filters["id_punto"])) return false;
+        $puntos = $this->db->table("puntos");
+
+        $puntos->select("id_punto");
+        $puntos->select("observaciones");
+        $puntos->where('id_punto', $data_filters["id_punto"]);
+        return $puntos->get()->getRowObject();
+    }
+
+    public function post_observaciones($data_filters)
+    {
+        try {
+            $this->db->transBegin();
+            if(empty($data_filters["id_punto"]) || empty($data_filters["observaciones"])) {
+                throw new \Exception("Faltan campos");
+            }
+
+            $data = $data_filters + [
+                "updated_at" => date("Y-m-d H:i:s"), 
+                "updated_by" => $this->session->get("id_usuario")
+            ];
+
+            $puntos = $this->db->table("puntos");
+            $puntos->where('id_punto', $data_filters["id_punto"]);
+            if(!$puntos->update($data)){
+                throw new \Exception("Error al actualizar el punto");
+            }
+            $this->db->transCommit();
+
+            return json_encode([
+                "success"   => true,
+                "message"   => "Observaciones actualizadas correctamente"
+            ]);
+        } catch (\Throwable $th) {
+            $this->db->transRollback();
+
+            if(env("CI_ENVIRONMENT") == "development") {
+                return json_encode([
+                    "success"   => false, 
+                    "message"   => $th->getMessage(),
+                    "trace"     => $th->getTrace(),
+                    "query"     => $this->db->showLastQuery(),
+                ]);
+            }else{
+                return json_encode([
+                    "success"   => false,
+                    "message"   => "Error al actualizar el punto"
+                ]);
+            }
+        }
     }
 }
