@@ -283,7 +283,7 @@
 											<div class="form-group">
 												<label class="form-label">Contrato</label>
 												<input type="hidden" class="input_expediente" name="ruta_contrato">
-												<input type="file" class="form-control input_expediente filepond"
+												<input type="file" id="ruta_contrato" class="form-control input_expediente_ruta filepond"
 													data-max-file-size="5MB" data-max-files="1"
 													required>
 											</div>
@@ -293,7 +293,7 @@
 											<div class="form-group">
 												<label class="form-label">Recepción</label>
 												<input type="hidden" class="input_expediente" name="ruta_recepcion">
-												<input type="file" class="form-control input_expediente filepond"
+												<input type="file" id="ruta_recepcion" class="form-control input_expediente_ruta filepond"
 													data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
@@ -302,7 +302,7 @@
 											<div class="form-group">
 												<label class="form-label">Testigo</label>
 												<input type="hidden" class="input_expediente" name="ruta_testigo">
-												<input type="file" class="form-control input_expediente filepond"
+												<input type="file" id="ruta_testigo" class="form-control input_expediente_ruta filepond"
 													data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
@@ -310,10 +310,9 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Caratula</label>
-												<input type="hidden" class="input_expediente" name="ruta_opinion_cumplimiento">
-
-												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_caratula" data-max-file-size="5MB" data-max-files="1">
+												<input type="hidden" class="input_expediente" name="ruta_caratula">
+												<input type="file" id="ruta_caratula"  class="form-control input_expediente_ruta filepond"
+													data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
@@ -361,8 +360,9 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Opinión de cumplimiento</label>
-												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
+												<input type="hidden" class="input_expediente" name="ruta_opinion_cumplimiento">
+												<input type="file" class="form-control input_expediente_ruta filepond"
+													id="ruta_opinion_cumplimiento" data-max-file-size="5MB" data-max-files="1">
 											</div>
 
 										</div>
@@ -370,8 +370,9 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Estado de Cuenta</label>
-												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
+												<input type="hidden" class="input_expediente" name="ruta_estado_cuenta">
+												<input type="file" class="form-control input_expediente_ruta filepond"
+													id="ruta_estado_cuenta" data-max-file-size="5MB" data-max-files="1">
 											</div>
 
 										</div>

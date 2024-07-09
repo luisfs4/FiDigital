@@ -388,6 +388,29 @@ class SesionModel extends Model
 			unset($data['id_expediente']);
 		}
 
+		$data_proveedor = [
+			'id_proveedor' => $data['id_proveedor'],
+			'updated_at' => date('Y-m-d H:i:s'),
+			'updated_by' => $this->session->id_usuario
+		];
+
+		if (isset($data['ruta_opinion_cumplimiento'])) {
+			$data_proveedor["opinion_cumplimiento"] = $data['ruta_opinion_cumplimiento'];
+			unset($data['ruta_opinion_cumplimiento']);
+		}
+
+		if (isset($data['ruta_estado_cuenta'])) {
+			$data_proveedor["estado_cuenta_bancario"] = $data['ruta_estado_cuenta'];
+			unset($data['ruta_estado_cuenta']);
+		}
+
+		if($data_proveedor) {
+			$proveedor = $this->db->table("proveedores");
+			$proveedor->where("id_proveedor", $data_proveedor["id_proveedor"]);
+			$proveedor->set($data_proveedor);
+			$proveedor->update();
+		}
+
 		$id_seccion = $data['id_seccion'];
 		unset($data['id_seccion']);
 
