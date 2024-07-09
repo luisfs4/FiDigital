@@ -81,6 +81,7 @@ class SesionModel extends Model
 			$consulta->where('id_sesion', $data_filtros['id_sesion']);
 		}
 
+		$consulta->orderBy("numero_sesion", "DESC");
 		$sesiones = $consulta->get()->getResultObject();
 
 		foreach ($sesiones as $key => $sesion) {
@@ -91,14 +92,34 @@ class SesionModel extends Model
 		return $sesiones;
 	}
 
+	public function get_numero_sesiones($data_filtros){
+			$sesion = $this->db->table("sesiones");
+			$sesion->select("id_sesion");
+			$sesion->select("nombre_sesion");
+			$sesion->select("numero_sesion");
+
+			$sesion->orderBy("numero_sesion", "DESC");
+
+			if(!empty($data_filtros['id_sesion'])){
+				$sesion->where('id_sesion', $data_filtros['id_sesion']);
+				return $sesion->get()->getRowObject();
+			}
+			return $sesion->get()->getResultObject();
+	}
+
 	public function get_puntos($data_filtros)
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
-		$consulta->select("p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+		$consulta->select("CAST(IFNULL(p.presupuesto_autorizado,0) AS DECIMAL(10,2)) as presupuesto_autorizado", false);
+		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
 			FROM expedientes e 
-			WHERE e.id_punto = p.id_punto), 0) AS monto_restante", false);
-		$consulta->select("ce.estatus");
+			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS monto_restante", false);
+		$consulta->select("CAST(IFNULL((SELECT SUM(e.monto_autorizado) 
+			FROM expedientes e 
+			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS pagado", false);
+		$consulta->select("cd.direccion");
+		$consulta->select("cp.programa");
 		$consulta->select("(SELECT COUNT(*) FROM puntos as c WHERE c.padre_id = p.id_punto) as contador_hijos");
 		$consulta->select("COALESCE((
 								SELECT
@@ -116,7 +137,14 @@ class SesionModel extends Model
 		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))))) AS id_nivel_4");
 
 		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
-		$consulta->join("cat_estatus as ce", 'ce.id_estatus = e.id_estatus', 'left');
+		$consulta->join("cat_direcciones as cd", 'cd.id_direccion = p.id_direccion', 'left');
+		$consulta->join("cat_programas as cp", 'cp.id_programa = p.id_programa', 'left');
+
+		if(!empty($data_filtros["datos_sesion"]) && $data_filtros["datos_sesion"]){
+			$consulta->select("s.nombre_sesion");
+			$consulta->select("s.numero_sesion");
+			$consulta->join("sesiones as s", 's.id_sesion = p.id_sesion', 'left');
+		}
 
 		// Búsqueda
 		if (!empty($data_filtros['id_punto'])) {
@@ -145,6 +173,33 @@ class SesionModel extends Model
 				LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 0 OR
 				LENGTH(jerarquia) - LENGTH(REPLACE(jerarquia, '.', '')) = 1
 			)");
+		}
+
+		if(!empty($data_filtros["numero_sesion"])){
+			$consulta->where('s.numero_sesion', $data_filtros["numero_sesion"]);
+		}
+
+		if(!empty($data_filtros["estatus"])){
+			$consulta->where('IFNULL(p.estatus, "CREADO")', $data_filtros["estatus"]);
+		}
+
+		if(!empty($data_filtros["id_direccion"])){
+			$consulta->where('p.id_direccion', $data_filtros["id_direccion"]);
+		}
+
+		if(!empty($data_filtros["id_programa"])){
+			$consulta->where('p.id_programa', $data_filtros["id_programa"]);
+		}
+
+		if(!empty($data_filtros["search"])){
+			if(is_array($data_filtros["search"])){
+				if(!empty($data_filtros["search"]["value"])){
+					$consulta->like('p.nombre_punto', $data_filtros["search"]["value"]);
+				}
+			}
+			else{
+				$consulta->like('p.nombre_punto', $data_filtros["search"]);
+			}
 		}
 
 		$consulta->orderBy('p.jerarquia');

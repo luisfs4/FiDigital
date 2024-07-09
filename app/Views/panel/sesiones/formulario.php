@@ -153,7 +153,16 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-2 col-lg-4 col-sm-12">
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
+											<div class="form-group">
+												<label for="monto_inicial" class="form-label">Presupuesto inicial
+													*</label>
+												<input disabled type="number" id="monto_inicial" class="form-control"
+														placeholder="0" min="0" max="999999999" step="0.01">
+											</div>
+										</div>
+
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
 											<div class="form-group">
 												<label for="monto_autorizado" class="form-label">Monto autorizado
 													*</label>
@@ -164,12 +173,20 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-2 col-lg-4 col-sm-12">
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
 											<div class="form-group">
 												<label for="monto_pagado" class="form-label">Monto pagado *</label>
 												<input type="number" id="monto_pagado"
 													class="form-control input_expediente" placeholder="0"
 													name="monto_pagado" min="0" max="999999999" step="0.01" required>
+											</div>
+										</div>
+
+										<div class="col-xxl-3 col-lg-4 col-sm-12">
+											<div class="form-group">
+												<label for="monto_restante" class="form-label">Presupuesto restante</label>
+												<input type="number" id="monto_restante" class="form-control" 
+														placeholder="0" min="0" max="999999999" disabled>
 											</div>
 										</div>
 
@@ -181,37 +198,19 @@
 											</div>
 										</div>
 
-										<div class="col-xxl-2 col-lg-6 col-sm-12">
+										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="visitador_correo" class="form-label">Dirección</label>
-												<select name="id_direccion" class="form-control input_expediente"
-													required>
-													<option value="">Seleccona una opción</option>
-													<?php
-
-													foreach ($direcciones as $key => $value) {
-														echo '<option value="' . $value->id_direccion . '">' . $value->direccion . '</option>';
-													}
-
-													?>
-												</select>
+												<label for="id_direccion" class="form-label">Dirección</label>
+												<input disabled class="form-control input_expediente" type="text" 
+														id="id_direccion">
 											</div>
 										</div>
 
-										<div class="col-xxl-3 col-lg-6 col-sm-12">
+										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="visitador_correo" class="form-label">Programa</label>
-												<select name="id_programa" class="form-control input_expediente"
-													required>
-													<option value="">Seleccona una opción</option>
-													<?php
-
-													foreach ($programas as $key => $value) {
-														echo '<option value="' . $value->id_programa . '">' . $value->programa . '</option>';
-													}
-
-													?>
-												</select>
+												<input disabled type="text"class="form-control input_expediente" 
+														name="id_programa" id="id_programa" >
 											</div>
 										</div>
 
@@ -480,38 +479,6 @@
 			}
 		});
 
-		$('[name="id_direccion"]').on('change', async (e) => {
-			console.log(e);
-			const id_direccion = $(e.currentTarget).val();
-			let $campo = $('[name="id_programa"]');
-			let url = '/FiDigital/panel/programas/get_programas';
-			let parametros = {
-				id_direccion: id_direccion
-			};
-
-			$campo.empty().append('<option value="">Cargando...</option>');
-
-			try {
-				const respuesta = await $.ajax({
-					url,
-					type: 'POST',
-					data: parametros,
-				});
-
-				if (respuesta && respuesta.length > 0) {
-					$campo.empty().append('<option value="">Selecciona una opción</option>');
-					respuesta.forEach(({ id_programa, programa }) => {
-						$campo.append(`<option value="${id_programa}">${programa}</option>`);
-					});
-				} else {
-					$campo.empty().append('<option value="">No hay opciones disponibles</option>');
-				}
-			} catch (error) {
-				console.error("Error al cargar opciones: ", error);
-				$campo.empty().append('<option value="">Error al cargar</option>');
-			}
-		});
-
 		$('[name="id_sesion"]').on('change', (e) => {
 			const id_sesion = $(e.currentTarget).val();
 			cargar_opciones_puntos('[name="id_punto"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
@@ -523,8 +490,7 @@
 		$('[name="id_punto"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
 			if (id_punto) {
-				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('monto_restante')
-				actualizar_max_monto(monto_autorizado_punto)
+				actualizar_datos_punto(e);
 				cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
 					padre_id: id_punto
 				});
@@ -535,8 +501,7 @@
 		$('[name="id_seccion"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
 			if (id_punto) {
-				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('monto_restante')
-				actualizar_max_monto(monto_autorizado_punto)
+				actualizar_datos_punto(e);
 				cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
 					padre_id: id_punto
 				});
@@ -547,8 +512,7 @@
 		$('[name="id_carpeta"]').on('change', (e) => {
 			const id_punto = $(e.currentTarget).val();
 			if (id_punto) {
-				monto_autorizado_punto = $(e.currentTarget).children('option:selected').attr('monto_restante')
-				actualizar_max_monto(monto_autorizado_punto)
+				actualizar_datos_punto(e);
 				cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', {
 					padre_id: id_punto
 				});
@@ -558,12 +522,39 @@
 		$('#monto_autorizado').on('change', function () {
 			var valorAutorizado = $(this).val();
 			$('#monto_pagado').attr('max', valorAutorizado);
-			$('#monto_pagado').parsley().validate();
+			actualizar_monto_restante();
 		});
+
+		$('#monto_pagado').on('change', function(){actualizar_monto_restante();});
 
 		const actualizar_max_monto = (monto) => {
 			$('#monto_autorizado').attr('max', monto);
-			$('#monto_autorizado').val(Number(monto).toFixed(2)).prop('readonly', true);
+			$('#monto_autorizado').val(Number(monto).toFixed(2)).prop('readonly', true).change();
+		}
+
+		const actualizar_direccion_programa = (punto) => {
+			$('#id_direccion').val(punto.direccion);
+			$('#id_programa').val(punto.programa);
+		}
+
+		const actualizar_monto_restante = () => {
+			let monto_autorizado = $('#monto_autorizado').val();
+			let monto_pagado = $('#monto_pagado').val();
+
+			monto_autorizado = Number(monto_autorizado).toFixed(2);
+			monto_pagado = Number(monto_pagado).toFixed(2);
+			$('#monto_restante').val(Number(monto_autorizado - monto_pagado).toFixed(2) );
+		}
+
+		const actualizar_datos_punto = (e) => {
+			var punto = $(e.currentTarget).children('option:selected');
+
+			let monto_inicial = punto.attr('monto_inicial');
+			$("#monto_inicial").val(Number(monto_inicial).toFixed(2)).prop('readonly', true);
+
+			monto_autorizado_punto = punto.attr('monto_restante');
+			actualizar_max_monto(monto_autorizado_punto);
+			actualizar_direccion_programa(punto.data());
 		}
 	});
 </script>
