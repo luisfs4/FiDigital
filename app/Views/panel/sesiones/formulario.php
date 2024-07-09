@@ -155,15 +155,6 @@
 
 										<div class="col-xxl-3 col-lg-4 col-sm-12">
 											<div class="form-group">
-												<label for="monto_inicial" class="form-label">Presupuesto inicial
-													*</label>
-												<input disabled type="number" id="monto_inicial" class="form-control"
-														placeholder="0" min="0" max="999999999" step="0.01">
-											</div>
-										</div>
-
-										<div class="col-xxl-3 col-lg-4 col-sm-12">
-											<div class="form-group">
 												<label for="monto_autorizado" class="form-label">Monto autorizado
 													*</label>
 												<input type="number" id="monto_autorizado"
@@ -201,16 +192,14 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="id_direccion" class="form-label">Dirección</label>
-												<input disabled class="form-control input_expediente" type="text" 
-														id="id_direccion">
+												<input disabled class="form-control" type="text" id="id_direccion">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="visitador_correo" class="form-label">Programa</label>
-												<input disabled type="text"class="form-control input_expediente" 
-														name="id_programa" id="id_programa" >
+												<input disabled type="text"class="form-control" id="id_programa">
 											</div>
 										</div>
 
@@ -254,45 +243,48 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="ruta_cfdi" class="form-label">CFDI</label>
-												<input id="ruta_cfdi" type="file"
-													class="form-control input_expediente_ruta filepond" name="ruta_cfdi"
-													data-max-file-size="5MB" data-max-files="1">
+												<input type="hidden" class="input_expediente" name="ruta_cfdi">
+												<input id="ruta_cfdi" type="file" 
+														class="form-control input_expediente_ruta filepond"
+														data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="ruta_verificacion" class="form-label">Verificación</label>
+												<input type="hidden" class="input_expediente" name="ruta_verificacion">
 												<input id="ruta_verificacion" type="file"
-													class="form-control input_expediente_ruta filepond"
-													name="ruta_verificacion" data-max-file-size="5MB"
-													data-max-files="1">
+														class="form-control input_expediente_ruta filepond" 
+														data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label for="ruta_edo_cuenta" class="form-label">Estado de cuenta</label>
+												<input type="hidden" class="input_expediente" name="ruta_edo_cuenta">
 												<input id="ruta_edo_cuenta" type="file"
 													class="form-control input_expediente_ruta filepond"
-													name="ruta_edo_cuenta" data-max-file-size="5MB" data-max-files="1">
+													data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Opinion de cumplimiento</label>
-												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_opinion_cumplimiento" data-max-file-size="5MB"
-													data-max-files="1">
+												<label class="form-label" for="ruta_opinion_cumplimiento">Opinion de cumplimiento</label>
+												<input type="hidden" class="input_expediente" name="ruta_opinion_cumplimiento">
+												<input id="ruta_opinion_cumplimiento" type="file" class="form-control input_expediente_ruta filepond"
+														data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Contrato</label>
+												<input type="hidden" class="input_expediente" name="ruta_contrato">
 												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_contrato" data-max-file-size="5MB" data-max-files="1"
+													data-max-file-size="5MB" data-max-files="1"
 													required>
 											</div>
 										</div>
@@ -300,22 +292,26 @@
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Recepción</label>
+												<input type="hidden" class="input_expediente" name="ruta_recepcion">
 												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_recepcion" data-max-file-size="5MB" data-max-files="1">
+													data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Testigo</label>
+												<input type="hidden" class="input_expediente" name="ruta_testigo">
 												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_testigo" data-max-file-size="5MB" data-max-files="1">
+													data-max-file-size="5MB" data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
 												<label class="form-label">Caratula</label>
+												<input type="hidden" class="input_expediente" name="ruta_opinion_cumplimiento">
+
 												<input type="file" class="form-control input_expediente filepond"
 													name="ruta_caratula" data-max-file-size="5MB" data-max-files="1">
 											</div>
@@ -360,25 +356,6 @@
 													?>
 												</select>
 											</div>
-										</div>
-
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
-												<label for="ruta_cfdi" class="form-label">Identificación oficial</label>
-												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_cfdi" data-max-file-size="5MB" data-max-files="1">
-											</div>
-										</div>
-
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
-												<label for="ruta_verificacion" class="form-label">Comprobante de
-													domicilio</label>
-												<input type="file" class="form-control input_expediente filepond"
-													name="ruta_verificacion" data-max-file-size="5MB"
-													data-max-files="1">
-											</div>
-
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
@@ -548,9 +525,6 @@
 
 		const actualizar_datos_punto = (e) => {
 			var punto = $(e.currentTarget).children('option:selected');
-
-			let monto_inicial = punto.attr('monto_inicial');
-			$("#monto_inicial").val(Number(monto_inicial).toFixed(2)).prop('readonly', true);
 
 			monto_autorizado_punto = punto.attr('monto_restante');
 			actualizar_max_monto(monto_autorizado_punto);

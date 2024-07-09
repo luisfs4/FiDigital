@@ -148,7 +148,7 @@ async function gestionar_jerarquia(json_editar = []) {
                         <i class="fas fa-shapes"></i>
                         Programa:
                     </label>
-                    <select required class="input_punto form-select" id="id_programa" name="id_programa">
+                    <select class="input_punto form-select" id="id_programa" name="id_programa">
                         <option value="">Selecciona una opción</option>
                         ${ programas.map(p => `<option value="${p.id_programa}">${p.programa}</option>`).join("\n") }
                     </select>

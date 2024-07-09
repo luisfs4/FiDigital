@@ -204,33 +204,36 @@ const crear_expediente = () => {
 
 $(document).ready(async () => {
 
-    $('.input_expediente_ruta').change(async (e) => {
-        let input = `[name=${$(e.currentTarget).attr('target-input')}]`
-        let target = $(e.currentTarget).attr('target');
+    $(document).on("FilePond:addfile", async (e) => {
+        const pond = FilePond.find(e.target);
 
-        let guardar_pdf = new FormData(); // Inicializar form data
-        guardar_pdf.append('documento', $(e.currentTarget)[0].files[0]);
+        if(pond){
+            const input = e.target.id;
+            const target = `.contenedor_ver_${input}`;
+            let guardar_pdf = new FormData(); // Inicializar form data
+            guardar_pdf.append('documento', pond.getFile().file);
 
-        await $.ajax({
-            url: '/FiDigital/panel/sesiones/guardar_documento',
-            data: guardar_pdf,
-            processData: false,
-            contentType: false,
-            type: 'POST',
-            success: function (respuesta) {
-                respuesta = "/FiDigital/" + respuesta
-                $(input).val(respuesta).trigger('change');
-            },
-            error: (err, texto) => {
-                //error_ajax(JSON.parse(err.responseText)['message']);
+            await $.ajax({
+                url: '/FiDigital/panel/sesiones/guardar_documento',
+                data: guardar_pdf,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (respuesta) {
+                    respuesta = "/FiDigital/" + respuesta
+                    $(`[name="${input}"`).val(respuesta).trigger('change');
+                },
+                error: (err, texto) => {
+                    //error_ajax(JSON.parse(err.responseText)['message']);
+                }
+            });
+
+            if ($(input).val()) {
+                $(target).addClass('d-flex').show(200);
+                $(target).children('a').attr('href', "/" + $(input).val());
+            } else {
+                $(target).removeClass('d-flex').hide(200);
             }
-        });
-
-        if ($(input).val()) {
-            $(target).addClass('d-flex').show(200);
-            $(target).children('a').attr('href', "/" + $(input).val());
-        } else {
-            $(target).removeClass('d-flex').hide(200);
         }
     });
 
