@@ -111,6 +111,7 @@ class SesionModel extends Model
 	{
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
+		$consulta->select("CAST(IFNULL(p.presupuesto_autorizado,0) AS DECIMAL(10,2)) as presupuesto_autorizado", false);
 		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
 			FROM expedientes e 
 			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS monto_restante", false);
@@ -188,6 +189,17 @@ class SesionModel extends Model
 
 		if(!empty($data_filtros["id_programa"])){
 			$consulta->where('p.id_programa', $data_filtros["id_programa"]);
+		}
+
+		if(!empty($data_filtros["search"])){
+			if(is_array($data_filtros["search"])){
+				if(!empty($data_filtros["search"]["value"])){
+					$consulta->like('p.nombre_punto', $data_filtros["search"]["value"]);
+				}
+			}
+			else{
+				$consulta->like('p.nombre_punto', $data_filtros["search"]);
+			}
 		}
 
 		$consulta->orderBy('p.jerarquia');
