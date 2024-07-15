@@ -53,6 +53,7 @@ $(document).ready(async () => {
         columns: [{
             "mData": "nombre_sesion",
             "mRender": function (data, type, row) {
+                const nombre_comercial = row.nombre_comercial ? `<span class="text-xs text-muted">${row.nombre_comercial}</span><br>` : '';
 
                 return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_proveedor="${row.id_proveedor}">
                                 <div>
@@ -61,7 +62,8 @@ $(document).ready(async () => {
                                     </button>
                                 </div>
                                 <div class="my-auto">
-                                    <h6 class="mb-0 text-sm text-wrap">${row.nombre}</h6>
+                                    <h6 class="mb-0 text-sm text-wrap">${row.nombre_fiscal ?? row.nombre}</h6>
+                                    ${ nombre_comercial ?? ''}
                                     <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.total_expedientes == null ? 'Sin' : row.total_expedientes} expedientes asignados</span>
                                 </div>
                             </div>`;
@@ -111,12 +113,12 @@ $(document).ready(async () => {
                 if (row.activo == 0) {
                     btn_archivado = `
                         <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-success shadow text-white rounded btn_archivar cursor-pointer" activo="1" id_proveedor="${row.id_proveedor}">
-                            <i class="fas fa-check text-white" aria-hidden="true"></i>
+                            <i class="fas fa-box-open text-white" aria-hidden="true"></i>
                         </div>`;
                 } else {
                     btn_archivado = `
                         <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded btn_archivar cursor-pointer" activo="0" id_proveedor="${row.id_proveedor}">
-                            <i class="fas fa-archive text-white" aria-hidden="true"></i>
+                            <i class="fas fa-box text-white" aria-hidden="true"></i>
                         </div>`;
                 }
 
@@ -274,15 +276,31 @@ const guardar_proveedor = async ({ proveedor, id_direccion, id_proveedor }) => {
 const archivar_proveedor = async (id_proveedor, activo) => {
     try {
         const response = await $.ajax({
-            url: 'proveedores/post_proveedor',
+            url: 'proveedores/archivar_proveedor',
             type: 'POST',
             dataType: 'json',
             data: { id_proveedor, activo }
+        })
+        .then(async (respuesta) => {
+            if(!respuesta.success){ throw new Error(respuesta.mensaje); }
+
+            await Swal.fire({
+                title: '¡Éxito!',
+                text: respuesta.mensaje ?? 'El proveedor ha sido actualizado correctamente',
+                icon: 'success'
+            });
+        })
+        .catch(async (error) => {
+            await Swal.fire({
+                title: 'Error',
+                text: error.mensaje ?? 'Ocurrio un error al actualizar el estatus',
+                icon: 'error'
+            });
         });
 
         tabla_proveedores.ajax.reload();
     } catch (error) {
         Swal.showValidationMessage(`Error: ${error.responseText}`);
-        return false; ñ
+        return false;
     }
 };

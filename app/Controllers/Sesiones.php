@@ -105,7 +105,7 @@ class Sesiones extends BaseController
 			"ruta" => "Listado de sesiones",
 			"direcciones" => $this->get_direcciones([]),
 			"programas" => $this->get_programas([]),
-			"proveedores" => $this->get_proveedores([]),
+			"proveedores" => $this->get_proveedores(["activo" => 1]),
 			"sesiones" => $this->get_sesiones([]),
 			"puntos" => $this->get_puntos([]),
 			"scripts" => [
@@ -206,6 +206,10 @@ class Sesiones extends BaseController
 		return $this->sendAjaxResponse($this->request->getPost(), "get_seguimiento");
 	}
 
+	public function cambiar_estatus_proveedor(){
+		return $this->sendAjaxResponse($this->request->getPost(), "cambiar_estatus_proveedor");
+	}
+
 	public function post_proveedor()
 	{
 		$archivos = []; // Para almacenar información de archivos
@@ -216,14 +220,7 @@ class Sesiones extends BaseController
 		foreach ($nombresArchivos as $nombreArchivo) {
 			$archivo = $this->request->getFile($nombreArchivo);
 			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
-				// Aquí podrías mover el archivo y guardar la ruta en $archivos
-				$nuevoNombre = $archivo->getRandomName();
-				// Asegúrate de tener definida la ruta base y que tenga los permisos adecuados
-				$rutaBase = FCPATH . "documentos/proveedores/";
-				$archivo->move($rutaBase, $nuevoNombre);
-
-				// Guardar la ruta del archivo para pasarla al modelo
-				$archivos[$nombreArchivo] = $rutaBase . $nuevoNombre;
+				$archivos[$nombreArchivo] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores");
 			}
 		}
 

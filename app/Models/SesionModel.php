@@ -112,10 +112,10 @@ class SesionModel extends Model
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
 		$consulta->select("CAST(IFNULL(p.presupuesto_autorizado,0) AS DECIMAL(10,2)) as presupuesto_autorizado", false);
-		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_pagado) 
 			FROM expedientes e 
 			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS monto_restante", false);
-		$consulta->select("CAST(IFNULL((SELECT SUM(e.monto_autorizado) 
+		$consulta->select("CAST(IFNULL((SELECT SUM(e.monto_pagado) 
 			FROM expedientes e 
 			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS pagado", false);
 		$consulta->select("cd.direccion");
@@ -267,6 +267,10 @@ class SesionModel extends Model
 			->join("cat_estatus ce", "p.id_estatus = ce.id_estatus", "inner")
 			->join($subconsultaSQL, "p.id_proveedor = exp.id_proveedor", "left"); // Unir con la subconsulta
 
+		if(!empty($data_filtros["activo"])){
+			$consulta->where('p.activo', $data_filtros["activo"]);
+		}
+
 		// Aplicar filtros de búsqueda si existen
 		if (!empty($data_filtros['id_proveedor'])) {
 			$consulta->where('p.id_proveedor', $data_filtros['id_proveedor']);
@@ -303,11 +307,48 @@ class SesionModel extends Model
 		$consulta->set($data_update);
 		return $consulta->update();
 	}
+
+	public function cambiar_estatus_proveedor($data){
+		try {
+			if(empty($data["id_proveedor"]) || !isset($data["activo"])){ 
+				throw new \Exception("Faltan datos para la actualización del estatus del proveedor.");
+			}
+
+			$proveedor = $this->db->table("proveedores");
+			$proveedor->where("id_proveedor", $data["id_proveedor"]);
+			$proveedor->set("activo", $data["activo"] == "0" ? false : true);
+
+			if(!$proveedor->update()){
+				throw new \Exception("No se pudo actualizar el estatus del proveedor.");
+			}
+
+			$estatus = $data["activo"] == "0" ? "archivo" : "desarchivo";
+			return json_encode([
+				"success" => true,
+				"mensaje" => "El proveedor se $estatus correctamente."
+			]);
+
+		} catch (\Throwable $th) {
+			return match (ENVIRONMENT){
+				'development'=> json_encode([
+					"success"	=> false,
+					"mensaje"	=> $th->getMessage(),
+					"trace" 	=> $th->getTraceAsString(),
+					"sql" 		=> $this->db->showLastQuery(),
+				]),
+				default => json_encode([
+					"success" => false,
+					"mensaje" => "Error al cambiar el estatus."
+				])
+			};
+		}
+	}
+
 	public function post_proveedor($data)
 	{
 		$proveedores = $this->db->table("proveedores");
 
-		$id_proveedor = isset($data['id_proveedor']) ? $data['id_proveedor'] : null;
+		$id_proveedor = $data['id_proveedor'] ?? null;
 
 		$datos = [
 			'tipo_persona' => $data['tipo_persona'],
@@ -316,14 +357,16 @@ class SesionModel extends Model
 			'telefono' => $data['telefono'],
 			'nombre_fiscal' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal'] : null,
 			'nombre_comercial' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial'] : null,
-			'created_by' => $this->session->id_usuario,
-			'created_at' => date('Y-m-d H:i:s'),
+			'es_agente_capacitador' => $data['es_agente_capacitador'] ?? false,
 		];
 
 		try {
 			$this->db->transStart(); // Inicia la transacción
 
 			if (empty($id_proveedor)) {
+				$datos['created_by'] = $this->session->id_usuario;
+				$datos['created_at'] = date('Y-m-d H:i:s');
+				
 				$id_proveedor = $proveedores->insert($datos, true);
 				if ($id_proveedor === false) {
 					throw new \Exception('No se pudieron insertar los datos básicos del proveedor.');
@@ -352,18 +395,29 @@ class SesionModel extends Model
 				'documento_datos_contacto'
 			];
 
-			$rutaBase = WRITEPATH . 'documentos/proveedores/' . $id_proveedor;
-			if (!is_dir($rutaBase)) {
-				mkdir($rutaBase, 0777, true);
+			$proveedores->where('id_proveedor', $id_proveedor);
+			$proveedor = $proveedores->get()->getRowObject();
+			$datos_archivos = [];
+
+			foreach ($campos_archivos as $key) {
+				if(!empty($data["archivos"][$key])){
+					$datos_archivos[$key] = $data["archivos"][$key];
+
+					if(!is_null($proveedor->$key)){
+						$ruta_archivo = FCPATH . $proveedor->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
 			}
 
-			foreach ($campos_archivos as $campo) {
-				if (isset($data[$campo]) && is_object($data[$campo]) && $data[$campo]->isValid() && !$data[$campo]->hasMoved()) {
-					$nuevoNombre = $data[$campo]->getRandomName();
-					$data[$campo]->move($rutaBase, $nuevoNombre);
-					// Actualizar la base de datos con la ruta del archivo
-					$proveedores->update($id_proveedor, [$campo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
-				}
+			if(!empty($datos_archivos)){
+				$proveedores->where('id_proveedor', $id_proveedor)->set($datos_archivos);	
+				if(!$proveedores->update()){
+					throw new \Exception('No se pudieron insertar los archivos del proveedor.');
+				} 
 			}
 
 			$this->db->transComplete(); // Completa la transacción
@@ -375,6 +429,13 @@ class SesionModel extends Model
 			return $id_proveedor; // Retorna el ID del proveedor o puedes ajustar esto según tu necesidad
 		} catch (\Exception $e) {
 			$this->db->transRollback(); // Revertir todos los cambios si algo falla
+
+			foreach($campos_archivos as $key){
+				if(!empty($data["archivos"][$key]) && file_exists($data["archivos"][$key])){
+					unlink($data["archivos"][$key]);
+				}
+			}
+
 			return redirect()->back()->withInput()->with('error', 'Hubo un problema al guardar la información: ' . $e->getMessage());
 		}
 	}

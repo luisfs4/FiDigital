@@ -80,6 +80,7 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('get_proveedores_by_ajax', 'Sesiones::get_proveedores_by_ajax');
 		$routes->post('agregar', 'Sesiones::agregar_proveedor');
 		$routes->post('post_proveedor', 'Sesiones::post_proveedor');
+		$routes->post('archivar_proveedor', 'Sesiones::cambiar_estatus_proveedor');
 	});
 
 	//Sección de sesiones

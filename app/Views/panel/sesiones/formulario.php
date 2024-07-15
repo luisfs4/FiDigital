@@ -177,7 +177,7 @@
 											<div class="form-group">
 												<label for="monto_restante" class="form-label">Presupuesto restante</label>
 												<input type="number" id="monto_restante" class="form-control" 
-														placeholder="0" min="0" max="999999999" disabled>
+														placeholder="0" min="0" max="999999999" step="0.01" disabled>
 											</div>
 										</div>
 
@@ -348,11 +348,11 @@
 												<select name="id_proveedor" id="id_proveedor"
 													class="form-control input_expediente" required>
 													<option value="">Selecciona una opción</option>
-													<?php
-													foreach ($proveedores as $key => $value) {
-														echo '<option value="' . $value->id_proveedor . '">' . $value->nombre . '</option>';
-													}
-													?>
+													<?php foreach($proveedores as $key => $value): ?>
+														<option value="<?=$value->id_proveedor?>">
+															<?=$value->nombre?>
+														</option>
+													<?php endforeach ?>
 												</select>
 											</div>
 										</div>
@@ -399,15 +399,12 @@
 
 <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
 <!-- Plugin: File Validate Type -->
-<script
-	src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
 <!-- Plugin: File Validate Size -->
-<script
-	src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js"></script>
 <!-- Plugin: Image Preview (opcional si deseas previsualizaciones de imágenes) -->
 <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
-<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
-	rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css" rel="stylesheet">
 
 <script>
 	let monto_autorizado_punto = 0;
