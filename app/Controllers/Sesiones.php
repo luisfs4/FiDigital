@@ -247,7 +247,34 @@ class Sesiones extends BaseController
 
 	public function post_expediente()
 	{
-		return $this->sendAjaxResponse($this->request->getPost(), "post_expediente");
+		// return json_encode($this->request->getPost());
+
+		$archivos = []; // Para almacenar información de archivos
+
+		// Asumiendo que tienes campos de archivo en tu formulario
+		$nombres_expediente = [
+			"ruta_cfdi", "ruta_verificacion", "ruta_contrato", "ruta_recepcion", "ruta_testigo", 
+			"ruta_caratula", "ruta_carta_instruccion",
+		];
+		foreach ($nombres_expediente as $nombre) {
+			$archivo = $this->request->getFile($nombre);
+			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "expedientes");
+			}
+		}
+
+		$nombres_proveedor = [
+			"opinion_cumplimiento",
+			"estado_cuenta_bancario",
+		];
+		foreach ($nombres_proveedor as $nombre) {
+			$archivo = $this->request->getFile($nombre);
+			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores");
+			}
+		}
+
+		return $this->sendAjaxResponse(array_merge($this->request->getPost(), ["archivos" => $archivos]), "post_expediente");
 	}
 
 	public function post_punto()

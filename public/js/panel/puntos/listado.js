@@ -161,7 +161,7 @@ $(document).ready(async () => {
                     return `
                         <td class="align-middle text-start">
                             <span class="text-xs w-100 text-start font-weight-bold">
-                                ${data}
+                                ${data} - ${row.tipo}
                             </span>
                         </td>
                     `;
@@ -284,6 +284,7 @@ const obtener_filtros = (data = {}) => {
     data["id_programa"]     = $("#filtro_programas").val();
     data["id_direccion"]    = $("#filtro_direcciones").val();
     data["numero_sesion"]   = $("#filtro_sesiones").val();
+    data["tipo_sesion"]     = $("#filtro_tipo_sesion").val();
 
 	if ($(".busqueda_nav").val().length >= 3)
         data["search"] = { "value": $(".busqueda_nav").val() };
@@ -313,6 +314,11 @@ const mensaje_filtro = () => {
 	const sesion = $('#filtro_sesiones').val();
 	if (sesion.length) {
 		partes_mensaje.push(`Sesión sea: ${$('#filtro_sesiones option:selected').text()}`);
+	}
+
+	const tipo_sesion = $('#filtro_tipo_sesion').val();
+	if (tipo_sesion.length) {
+		partes_mensaje.push(`Tipo sea: ${$('#filtro_tipo_sesion option:selected').text()}`);
 	}
 
 	return partes_mensaje.length > 0 ? `Estás filtrando donde ${partes_mensaje.join(', ')}` : "Filtrando todos los registros";

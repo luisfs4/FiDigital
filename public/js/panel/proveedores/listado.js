@@ -50,86 +50,92 @@ $(document).ready(async () => {
             "width": "40%",
             "targets": 0
         },],
-        columns: [{
-            "mData": "nombre_sesion",
-            "mRender": function (data, type, row) {
-                const nombre_comercial = row.nombre_comercial ? `<span class="text-xs text-muted">${row.nombre_comercial}</span><br>` : '';
+        columns: [
+            {//nombre
+                "mData": "nombre_sesion",
+                "mRender": function (data, type, row) {
+                    const nombre_comercial = row.nombre_comercial ? `<span class="text-xs text-muted">${row.nombre_comercial}</span><br>` : '';
 
-                return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_proveedor="${row.id_proveedor}">
-                                <div>
-                                    <button class="btn btn-link text-gradient p-0 m-0 text-dark">
-                                        <i class="fa fa-address-card text-lg avatar avatar-sm rounded-circle me-2 text-dark"></i>
-                                    </button>
-                                </div>
-                                <div class="my-auto">
-                                    <h6 class="mb-0 text-sm text-wrap">${row.nombre_fiscal ?? row.nombre}</h6>
-                                    ${ nombre_comercial ?? ''}
-                                    <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.total_expedientes == null ? 'Sin' : row.total_expedientes} expedientes asignados</span>
-                                </div>
-                            </div>`;
-            }
-        },
-        {
-            "mData": "telefono",
-            "mRender": function (data, type, row) {
-                return `<div class="align-middle cursor-pointer">
-                                <span class="fas fa-building text-xs"></span>
-                                <span class="font-weight-bold text-xs">${data ?? '---'}</span>
-                            </div>`;
-            }
-        },
-        {
-            "mData": "correo",
-            "mRender": function (data, type, row) {
-                return `<div class="align-middle cursor-pointer btn_historial_borrador" id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
-                                <span class="fas fa-clock text-xs"></span>
-                                <span class="font-weight-bold text-xs">${data ?? '---'}</span>
-                            </div>`;
-            }
-        },
-        {
-            "mData": "estatus",
-            "mRender": function (data, type, row) {
-                return `<div class="align-middle cursor-pointer">
-                            <span class="badge badge-${row.color ?? 'secondary'} font-weight-bold text-xs"><i class="${row.icono ?? ''} text-xs me-2"></i>${data ?? '---'}</span>
-                        </div>`;
-            }
-        },
-        {
-            "mData": "created_at",
-            "mRender": function (data, type, row) {
-                return `<div class="align-middle cursor-pointer">
-                                <span class="fas fa-clock text-xs"></span>
-                                <span class="font-weight-bold text-xs">${data ?? '---'}</span>
-                            </div>`;
-            }
-        },
-        {
-            "mData": "id_proveedor",
-            "mRender": function (data, type, row) {
-
-                let btn_archivado = '';
-
-                if (row.activo == 0) {
-                    btn_archivado = `
-                        <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-success shadow text-white rounded btn_archivar cursor-pointer" activo="1" id_proveedor="${row.id_proveedor}">
-                            <i class="fas fa-box-open text-white" aria-hidden="true"></i>
-                        </div>`;
-                } else {
-                    btn_archivado = `
-                        <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded btn_archivar cursor-pointer" activo="0" id_proveedor="${row.id_proveedor}">
-                            <i class="fas fa-box text-white" aria-hidden="true"></i>
-                        </div>`;
+                    return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_proveedor="${row.id_proveedor}">
+                                    <div>
+                                        <button class="btn btn-link text-gradient p-0 m-0 text-dark">
+                                            <i class="fa fa-address-card text-lg avatar avatar-sm rounded-circle me-2 text-dark"></i>
+                                        </button>
+                                    </div>
+                                    <div class="my-auto">
+                                        <h6 class="mb-0 text-sm text-wrap">${row.nombre_fiscal ?? row.nombre}</h6>
+                                        ${ nombre_comercial ?? ''}
+                                        <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.total_expedientes == null ? 'Sin' : row.total_expedientes} expedientes asignados</span>
+                                    </div>
+                                </div>`;
                 }
+            },
+            {//telefono
+                "mData": "telefono",
+                "mRender": function (data, type, row) {
+                    return `<div class="align-middle cursor-pointer">
+                                    <span class="fas fa-building text-xs"></span>
+                                    <span class="font-weight-bold text-xs">${data ?? '---'}</span>
+                                </div>`;
+                }
+            },
+            {//correo
+                "mData": "correo",
+                "mRender": function (data, type, row) {
 
-                return `<div class="text-center ms-auto">
-                            <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded btn_editar_proveedor cursor-pointer" id_proveedor="${row.id_proveedor}">
-                                <i class="fas fa-edit text-white" aria-hidden="true"></i>
-                            </div>
-                            ${btn_archivado}
-                        </div>`;
+                    const representante = row.nombre ? `<br><span class="text-xxs text-muted">${row.nombre}</span>` : '';
+                    return `
+                        <div class="align-middle cursor-pointer btn_historial_borrador" id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
+                            <span class="fas fa-clock text-xs"></span>
+                            <span class="font-weight-bold text-xs">${data ?? '---'}</span>
+                            ${representante}
+                        </div>
+                    `;
+                }
+            },
+            {//estatus
+                "mData": "estatus",
+                "mRender": function (data, type, row) {
+                    return `<div class="align-middle cursor-pointer">
+                                <span class="badge badge-${row.color ?? 'secondary'} font-weight-bold text-xs"><i class="${row.icono ?? ''} text-xs me-2"></i>${data ?? '---'}</span>
+                            </div>`;
+                }
+            },
+            {//created_at
+                "mData": "created_at",
+                "mRender": function (data, type, row) {
+                    return `<div class="align-middle cursor-pointer">
+                                    <span class="fas fa-clock text-xs"></span>
+                                    <span class="font-weight-bold text-xs">${data ?? '---'}</span>
+                                </div>`;
+                }
+            },
+            {//Botones
+                "mData": "id_proveedor",
+                "mRender": function (data, type, row) {
+
+                    let btn_archivado = '';
+
+                    if (row.activo == 0) {
+                        btn_archivado = `
+                            <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-success shadow text-white rounded btn_archivar cursor-pointer" activo="1" id_proveedor="${row.id_proveedor}">
+                                <i class="fas fa-box-open text-white" aria-hidden="true"></i>
+                            </div>`;
+                    } else {
+                        btn_archivado = `
+                            <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded btn_archivar cursor-pointer" activo="0" id_proveedor="${row.id_proveedor}">
+                                <i class="fas fa-box text-white" aria-hidden="true"></i>
+                            </div>`;
+                    }
+
+                    return `<div class="text-center ms-auto">
+                                <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded btn_editar_proveedor cursor-pointer" id_proveedor="${row.id_proveedor}">
+                                    <i class="fas fa-edit text-white" aria-hidden="true"></i>
+                                </div>
+                                ${btn_archivado}
+                            </div>`;
+                }
             }
-        }
         ],
     });
 

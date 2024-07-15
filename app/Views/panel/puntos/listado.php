@@ -43,6 +43,16 @@
                                 <?php endforeach ?> 
                             </select>
                         </div>
+
+                        <div class="form-group col-lg-3 col-md-4 col-sm-6">
+                            <label class="form-control-label">Tipo</label>
+                            <select class="form-control select2_init input_filtro" 
+                                    id="filtro_tipo_sesion" name="tipo_sesion">
+                                <option value="">Selecciona una opción</option>
+                                <option value="Ordinaria">Ordinaria</option>
+                                <option value="Extraordinaria">Extraordinaria</option>
+                            </select>
+                        </div>
                         
                         <div class="form-group col-lg-3 col-md-4 col-sm-6">
                             <label class="form-control-label">Direcciones</label>

@@ -112,7 +112,7 @@ const setFormHeight = () => {
 
 const countInputsByPanel = (activePanel, activePanelNum, next_btn = 0) => {
 	let contador_inputs = 0;
-	let contador_total = $(activePanel).find('.input_expediente:required').length;
+	let contador_total = contar_totales(activePanel);
 
 	$(activePanel).find('.input_expediente:required').each(function () {
 		if (next_btn == 1) {
@@ -135,31 +135,43 @@ const countInputsByPanel = (activePanel, activePanelNum, next_btn = 0) => {
 	}
 };
 
+const contar_totales = (activePanel) => {
+	return $(activePanel).find('.input_expediente:required').length + $(activePanel).find('.input_expediente.filepond:has(:required)').length;
+}
+
 const validatePanelForm = (activePanel, activePanelNum) => {
 
 	//Contador de inputs llenados
 	let contador_inputs = 0;
-	let contador_total = $(activePanel).find('.input_expediente:required').length;
+	let contador_total = contar_totales(activePanel);	
 	let activeStep = $('.multisteps-form__progress-btn').eq(activePanelNum);
+
+	const parsley_conf = {
+		excluded: '.input_tramite_requisitos, .input_paso, .input_tramite_oficina',
+		errorsContainer: function (ParsleyField) {
+			elemento = ParsleyField;
+
+			// Personaliza el contenedor de errores para campos con la clase 'hijo'
+			if (ParsleyField.$element.hasClass('filepond--browser')) {
+					return ParsleyField.$element.closest('.filepond--root').parent();
+			}
+			// Dejar el comportamiento por defecto para otros campos
+			return ParsleyField.$element.parent();
+		}
+	};
 
 	//Validar form y setear colores
 	if ($(activePanel).find('form').length == 1) { //Si hay un solo formulario se hace una validación simple
-		if (!$(activePanel).find('form').parsley({
-				excluded: '.input_tramite_requisitos, .input_paso, .input_tramite_oficina'
-			}).isValid()) {
+		if (!$(activePanel).find('form').parsley(parsley_conf).isValid()) {
 
-			$(activePanel).find('form').parsley({
-				excluded: '.input_tramite_requisitos, .input_paso, .input_tramite_oficina'
-			}).validate();
+			$(activePanel).find('form').parsley(parsley_conf).validate();
 
 			//Cambiar color error
 			$(activeStep).css('color', '#e60a00');
 			$(activeStep).find('span').css('color', '#e60a00');
 
 		} else {
-			$(activePanel).find('form').parsley({
-				excluded: '.input_tramite_requisitos, .input_paso, .input_tramite_oficina'
-			}).validate();
+			$(activePanel).find('form').parsley(parsley_conf).validate();
 
 			//Cambiar color success
 			$(activeStep).css('color', '#82d616').find('span').css('color', '#82d616')
@@ -169,13 +181,9 @@ const validatePanelForm = (activePanel, activePanelNum) => {
 		let todos_validos = 1; //Setear flag para color
 		$(activePanel).find('form').each(function (index, elemento) { //Si hay varios formularios se iteran
 
-			if (!$(elemento).parsley({
-					excluded: '.input_tramite_requisitos, .input_paso, .input_tramite_oficina'
-				}).isValid()) {
+			if (!$(elemento).parsley(parsley_conf).isValid()) {
 				//Si no es valido lanzar los eventos de colores en el front para los input
-				$(elemento).parsley({
-					excluded: '.input_tramite_requisitos, .input_paso, .input_tramite_oficina'
-				}).validate();
+				$(elemento).parsley(parsley_conf).validate();
 				todos_validos = 0
 			}
 
@@ -284,3 +292,21 @@ window.addEventListener('load', setFormHeight, false);
 
 //SETTING PROPER FORM HEIGHT ONRESIZE
 window.addEventListener('resize', setFormHeight, false);
+
+window.Parsley.on("field:success", function () {
+	let field = this.$element;
+	if(field.hasClass('filepond--browser')) {
+		field.closest('.filepond--root').removeClass("parsley-error").addClass("parsley-success");
+	}else{
+		field.removeClass("parsley-error").addClass("parsley-success");
+	};
+});
+
+window.Parsley.on("field:error", function () {
+	let field = this.$element;
+	if(field.hasClass('filepond--browser')) {
+		field.closest('.filepond--root').removeClass("parsley-success").addClass("parsley-error");
+	}else{
+		field.removeClass("parsley-success").addClass("parsley-error");
+	};
+});

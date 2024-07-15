@@ -143,6 +143,7 @@ class SesionModel extends Model
 		if(!empty($data_filtros["datos_sesion"]) && $data_filtros["datos_sesion"]){
 			$consulta->select("s.nombre_sesion");
 			$consulta->select("s.numero_sesion");
+			$consulta->select("s.tipo");
 			$consulta->join("sesiones as s", 's.id_sesion = p.id_sesion', 'left');
 		}
 
@@ -177,6 +178,10 @@ class SesionModel extends Model
 
 		if(!empty($data_filtros["numero_sesion"])){
 			$consulta->where('s.numero_sesion', $data_filtros["numero_sesion"]);
+		}
+
+		if(!empty($data_filtros["tipo_sesion"])){
+			$consulta->where('s.tipo', $data_filtros["tipo_sesion"]);
 		}
 
 		if(!empty($data_filtros["estatus"])){
@@ -442,79 +447,155 @@ class SesionModel extends Model
 
 	public function post_expediente($data)
 	{
-		$sesiones = $this->db->table("expedientes");
+		try {
+			$this->db->transStart();
 
-		if (isset($data['id_expediente'])) {
-			$id_expediente = $data['id_expediente'];
-			unset($data['id_expediente']);
-		}
+			$sesiones = $this->db->table("expedientes");
 
-		$data_proveedor = [
-			'id_proveedor' => $data['id_proveedor'],
-			'updated_at' => date('Y-m-d H:i:s'),
-			'updated_by' => $this->session->id_usuario
-		];
+			if (isset($data['id_expediente'])) {
+				$id_expediente = $data['id_expediente'];
+				unset($data['id_expediente']);
+			}
 
-		if (isset($data['ruta_opinion_cumplimiento'])) {
-			$data_proveedor["opinion_cumplimiento"] = $data['ruta_opinion_cumplimiento'];
-			unset($data['ruta_opinion_cumplimiento']);
-		}
-
-		if (isset($data['ruta_estado_cuenta'])) {
-			$data_proveedor["estado_cuenta_bancario"] = $data['ruta_estado_cuenta'];
-			unset($data['ruta_estado_cuenta']);
-		}
-
-		if($data_proveedor) {
-			$proveedor = $this->db->table("proveedores");
-			$proveedor->where("id_proveedor", $data_proveedor["id_proveedor"]);
-			$proveedor->set($data_proveedor);
-			$proveedor->update();
-		}
-
-		$id_seccion = $data['id_seccion'];
-		unset($data['id_seccion']);
-
-		$id_carpeta = $data['id_carpeta'];
-		unset($data['id_carpeta']);
-
-		$id_subcarpeta = $data['id_subcarpeta'];
-		unset($data['id_subcarpeta']);
-
-		if (!empty($id_subcarpeta)) {
-			$data['id_punto'] = $id_subcarpeta;
-		} else if (!empty($id_carpeta)) {
-			$data['id_punto'] = $id_carpeta;
-		} else if (!empty($id_seccion)) {
-			$data['id_punto'] = $id_seccion;
-		}
-
-		if (empty($id_expediente)) {
-
-			$data += [
-				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario,
-				"id_estatus" => 1
+			$nombres_expediente = [
+				"ruta_cfdi", "ruta_verificacion", "ruta_contrato", "ruta_recepcion", "ruta_testigo", 
+				"ruta_caratula", "ruta_carta_instruccion",
+			];
+			$nombres_proveedor = [
+				"opinion_cumplimiento",
+				"estado_cuenta_bancario",
 			];
 
-			$bandera = $sesiones->insert($data);
-		} else {
+			if(isset($data["archivos"])){
+				$archivos = $data["archivos"];
+				unset($data["archivos"]);
+			}
 
-			$data += [
-				"updated_at" => date('Y-m-d H:i:s'),
-				"updated_by" => $this->session->id_usuario
-			];
+			foreach (array_merge($nombres_expediente, $nombres_proveedor) as $nombre) {
+				if(isset($data[$nombre])){
+					unset($data[$nombre]);
+				}
+			}
+
+			$id_seccion = $data['id_seccion'];
+			unset($data['id_seccion']);
+
+			$id_carpeta = $data['id_carpeta'];
+			unset($data['id_carpeta']);
+
+			$id_subcarpeta = $data['id_subcarpeta'];
+			unset($data['id_subcarpeta']);
+
+			if (!empty($id_subcarpeta)) {
+				$data['id_punto'] = $id_subcarpeta;
+			} else if (!empty($id_carpeta)) {
+				$data['id_punto'] = $id_carpeta;
+			} else if (!empty($id_seccion)) {
+				$data['id_punto'] = $id_seccion;
+			}
+
+			if (empty($id_expediente)) {
+
+				$data += [
+					"created_at" => date('Y-m-d H:i:s'),
+					"created_by" => $this->session->id_usuario,
+					"id_estatus" => 1
+				];
+
+				if(!$sesiones->insert($data)) throw new \Exception("No se pudo insertar la información del expediente.");
+
+				$id_expediente = $this->db->insertID();
+			} else {
+
+				$data += [
+					"updated_at" => date('Y-m-d H:i:s'),
+					"updated_by" => $this->session->id_usuario
+				];
+
+				$sesiones->where('id_expediente', $id_expediente)->set($data);
+				if(!$sesiones->update()) throw new \Exception("No se pudo actualizar la información del expediente.");
+			}
 
 			$sesiones->where('id_expediente', $id_expediente);
-			$sesiones->set($data);
-			$bandera = $sesiones->update();
-		}
+			$expediente = $sesiones->get()->getRowObject();
+			$datos_expediente = [];
+			foreach ($nombres_expediente as $key) {
+				if(!empty($archivos[$key])){
+					$datos_expediente[$key] = $archivos[$key];
 
-		if ($bandera) {
+					if(!is_null($expediente->$key)){
+						$ruta_archivo = FCPATH . $expediente->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
+			}
+
+			if(!empty($datos_expediente)){
+				$sesiones->where('id_expediente', $id_expediente)->set($datos_expediente);	
+				if(!$sesiones->update()){
+					throw new \Exception('No se pudieron insertar los archivos del proveedor.');
+				} 
+			}
+
+			$proveedores = $this->db->table("proveedores");
+			$proveedores->where("id_proveedor", $data['id_proveedor']);
+			$proveedor = $proveedores->get()->getRowObject();
+			$data_proveedor = [];
+			foreach ($nombres_proveedor as $key) {
+				if(!empty($archivos[$key])){
+					$data_proveedor[$key] = $archivos[$key];
+					if(!is_null($proveedor->{$key})){
+						$ruta_archivo = FCPATH . $proveedor->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
+			}
+
+			if(!empty($data_proveedor)){
+				$data_proveedor += [
+					'id_proveedor' => $data['id_proveedor'],
+					'updated_at' => date('Y-m-d H:i:s'),
+					'updated_by' => $this->session->id_usuario
+				];
+				$proveedores->where("id_proveedor", $data_proveedor["id_proveedor"]);
+				$proveedores->set($data_proveedor);
+				if(!$proveedores->update()) throw new \Exception("No se pudo actualizar la información del proveedor.");
+			}
+
+			$this->db->transCommit();
 			return true;
-		} else {
-			return false;
+		} catch (\Throwable $th) {
+			$this->db->transRollback();
+
+			foreach($nombres_expediente as $key){
+				if(!empty($archivos[$key]) && file_exists($archivos[$key])){
+					unlink($archivos[$key]);
+				}
+			}
+
+			foreach($nombres_proveedor as $key){
+				if(!empty($archivos[$key]) && file_exists($archivos[$key])){
+					unlink($archivos[$key]);
+				}
+			}
+
+			if(ENVIRONMENT == 'development'){
+				return json_encode([
+					"message" => $th->getMessage(),
+					"trace" => $th->getTraceAsString(),
+					"sql" => $this->db->showLastQuery(),
+				]);
+			} else {
+				return false;
+			}
 		}
+		
 	}
 
 	public function post_sesion($data)

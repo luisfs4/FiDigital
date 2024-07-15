@@ -31,9 +31,7 @@ class PuntoModel extends Model
     private function getChildren($padre_id, $data_filtros)
     {
         $this->select("puntos.*, ce.estatus");
-        $this->select("puntos.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
-        FROM expedientes e 
-        WHERE e.id_punto = puntos.id_punto), 0) AS monto_restante", false);
+        $this->select("IFNULL(puntos.presupuesto_autorizado, 0) - IFNULL(puntos.presupuesto_utilizado, 0) AS monto_restante", false);
         // Agrega un campo que indica si un punto tiene hijos
         $this->select("(SELECT COUNT(*) FROM puntos as child WHERE child.padre_id = puntos.id_punto) AS tiene_hijos");
 

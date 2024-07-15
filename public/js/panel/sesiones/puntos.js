@@ -243,6 +243,10 @@ async function gestionar_jerarquia(json_editar = []) {
             });
 
         }, willOpen: async () => {
+
+            $("#id_direccion").val(json_editar.id_direccion);
+            $("#id_programa").val(json_editar.id_programa);
+
             // Inicialización de Select2 o cualquier otro plugin para mejorar los selectores
             $('.select2_swal').select2({
                 placeholder: "Selecciona una opción",
