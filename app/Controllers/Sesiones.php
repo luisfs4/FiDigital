@@ -242,7 +242,13 @@ class Sesiones extends BaseController
 
 	public function post_sesion()
 	{
-		return $this->sendAjaxResponse($this->request->getPost(), "post_sesion");
+		$archivos = [];
+			// Asumiendo que tienes campos de archivo en tu formulario
+		$archivo = $this->request->getFile("acta_comite");
+		if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+			$archivos["acta_comite"] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "sesiones");
+		}
+		return $this->sendAjaxResponse(array_merge($this->request->getPost(), ["archivos" => $archivos]), "post_sesion");
 	}
 
 	public function post_expediente()

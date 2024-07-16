@@ -600,35 +600,86 @@ class SesionModel extends Model
 
 	public function post_sesion($data)
 	{
-		$sesiones = $this->db->table("sesiones");
-		$id_sesion = $data['id_sesion'];
-		unset($data['id_sesion']);
+		try {
+			$this->db->transBegin();
 
-		if (empty($id_sesion)) {
+			$nombres_sesion = ["acta_comite"];
 
-			$data += [
-				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario,
-				"estatus" => "incompleta"
-			];
+			if(isset($data["archivos"])){
+				$archivos = $data["archivos"];
+				unset($data["archivos"]);
+			}
 
-			$bandera = $sesiones->insert($data);
-		} else {
+			foreach ($nombres_sesion as $nombre) {
+				if(isset($data[$nombre])){
+					unset($data[$nombre]);
+				}
+			}
 
-			$data += [
-				"updated_at" => date('Y-m-d H:i:s'),
-				"updated_by" => $this->session->id_usuario
-			];
+			$sesiones = $this->db->table("sesiones");
+			$id_sesion = $data['id_sesion'];
+			unset($data['id_sesion']);
+
+			if (empty($id_sesion)) {
+				$data += [
+					"created_at" => date('Y-m-d H:i:s'),
+					"created_by" => $this->session->id_usuario,
+					"estatus" => "incompleta"
+				];
+
+				if(!$sesiones->insert($data)) throw new \Exception("No se pudo insertar la información de la sesión.");
+				$id_sesion = $this->db->insertID();
+			} else {
+
+				$data += [
+					"updated_at" => date('Y-m-d H:i:s'),
+					"updated_by" => $this->session->id_usuario
+				];
+
+				$sesiones->where('id_sesion', $id_sesion);
+				$sesiones->set($data);
+				if(!$sesiones->update()) throw new \Exception("No se pudo actualizar la información de la sesión.");
+			}
 
 			$sesiones->where('id_sesion', $id_sesion);
-			$sesiones->set($data);
-			$bandera = $sesiones->update();
-		}
+			$sesion = $sesiones->get()->getRowObject();
+			$datos_sesion = [];
 
-		if ($bandera) {
+			foreach ($nombres_sesion as $key) {
+				if(!empty($archivos[$key])){
+					$datos_sesion[$key] = $archivos[$key];
+
+					if(!is_null($sesion->$key)){
+						$ruta_archivo = FCPATH . $sesion->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
+			}
+
+			if(!empty($datos_sesion)){
+				$sesiones->where('id_sesion', $id_sesion)->set($datos_sesion);	
+				if(!$sesiones->update()){
+					throw new \Exception('No se pudieron insertar los archivos de la sesion.');
+				} 
+			}
+
+			$this->db->transCommit();
 			return true;
-		} else {
-			return false;
+		} catch (\Throwable $th) {
+			//throw $th;
+			$this->db->transRollback();
+			if(ENVIRONMENT == 'development'){
+				return json_encode([
+					"message" => $th->getMessage(),
+					"trace" => $th->getTraceAsString(),
+					"sql" => $this->db->showLastQuery(),
+				]);
+			} else {
+				return false;
+			}
 		}
 	}
 
