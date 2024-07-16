@@ -131,10 +131,11 @@ class SesionModel extends Model
 							), 1) AS siguiente_disponible");
 
 		// Subconsultas para obtener los IDs de los niveles
-		$consulta->select("IF(p.padre_id IS NULL, p.id_punto, (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)) AS id_nivel_1");
-		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))) AS id_nivel_2");
-		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)))) AS id_nivel_3");
-		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))))) AS id_nivel_4");
+		$consulta->select("p.id_punto AS id_nivel_1");
+		$consulta->select("p.padre_id AS id_nivel_2");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)) AS id_nivel_3");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))) AS id_nivel_4");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)))) AS id_nivel_5");
 
 		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
 		$consulta->join("cat_direcciones as cd", 'cd.id_direccion = p.id_direccion', 'left');

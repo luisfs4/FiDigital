@@ -397,7 +397,7 @@ const online = () => {
     }
 }
 
-const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
+const cargar_opciones_puntos = async (selector_destino, url, parametros, value=null) => {
     $(selector_destino).empty().append('<option value="">Cargando...</option>');
     try {
         const respuesta = await $.ajax({
@@ -408,11 +408,12 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
 
         if (respuesta && respuesta.length > 0) {
             const opciones = respuesta.map(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado, monto_restante, direccion, programa }) => {
+                console.log(value, id_punto);
                 return `
                     <option value="${id_punto}" monto_inicial="${presupuesto_autorizado}" 
                             monto_restante="${monto_restante}" jerarquia="${jerarquia}" 
                             data-direccion="${direccion}" data-programa="${programa}" 
-                            siguiente_disponible="${siguiente_disponible}">
+                            siguiente_disponible="${siguiente_disponible}" ${ value == id_punto ? 'selected' : ''}>
                         ${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}
                     </option>
                 `;
