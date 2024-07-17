@@ -46,6 +46,23 @@ class SesionModel extends Model
 			$consulta->where('e.id_expediente !=', $data_filtros['not_id_expediente']);
 		}
 
+		if(isset($data_filtros["expedientes_relacionados"])) {
+			$expedientes_relacionados = $this->db->table('expedientes')
+				->select('id_sesion')
+				->select('JSON_ARRAYAGG(
+						JSON_OBJECT(
+							"id_expediente", id_expediente, 
+							"fecha_pago", fecha_pago, 
+							"created_at", created_at, 
+							"monto_pagado", monto_pagado)
+						)
+					AS expedientes_relacionados')
+				->groupBy('id_sesion')
+				->getCompiledSelect();
+			$consulta->join("($expedientes_relacionados) AS er", "er.id_sesion = e.id_sesion");
+			$consulta->select('er.expedientes_relacionados');
+		}
+
 		$expedientes = $consulta->get()->getResultObject();
 
 		foreach ($expedientes as $key => $expediente) {

@@ -137,7 +137,7 @@ class Sesiones extends BaseController
 			]
 		];
 
-		$sesiones = $this->SesionModel->get_expedientes(["id_expediente" => $id_expediente]);
+		$sesiones = $this->SesionModel->get_expedientes(["id_expediente" => $id_expediente, "expedientes_relacionados" => 1]);
 
 		if (!empty($sesiones)) {
 			$data_view["expediente"] = $sesiones[0];

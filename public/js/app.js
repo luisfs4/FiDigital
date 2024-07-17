@@ -408,7 +408,6 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros, value=n
 
         if (respuesta && respuesta.length > 0) {
             const opciones = respuesta.map(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado, monto_restante, direccion, programa }) => {
-                console.log(value, id_punto);
                 return `
                     <option value="${id_punto}" monto_inicial="${presupuesto_autorizado}" 
                             monto_restante="${monto_restante}" jerarquia="${jerarquia}" 
