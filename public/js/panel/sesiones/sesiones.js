@@ -58,6 +58,17 @@ const crear_sesion = async (json_editar = []) => {
                     </select>
                 </div>
             </div>
+
+			<div class="">
+				<div class="form-group div_contenedor">
+					<label for="acta_comite" class="form-label">
+						<i class="fas fa-file-signature"></i>
+						Acta de comite
+					</label>
+					<input id="acta_comite" type="file" 
+							class="form-control input_sesion filepond" data-max-files="1">
+				</div>
+			</div>
         </form>
         `,
         focusConfirm: false,
@@ -71,12 +82,17 @@ const crear_sesion = async (json_editar = []) => {
                 Swal.showValidationMessage(`Por favor llena correctamente los campos`)
             }
 
+			let input = null;
+			const pond = FilePond.find($("#acta_comite")[0]);
+			if(pond) input = pond.getFile();
+
             return {
                 id_sesion: Swal.getPopup().querySelector('.input_sesion[name="id_sesion"]').value.trim(),
                 numero_sesion: Swal.getPopup().querySelector('.input_sesion[name="numero_sesion"]').value.trim(),
                 nombre_sesion: Swal.getPopup().querySelector('.input_sesion[name="nombre_sesion"]').value.trim(),
                 fecha_sesion: Swal.getPopup().querySelector('.input_sesion[name="fecha_sesion"]').value,
                 tipo: Swal.getPopup().querySelector('.input_sesion[name="tipo"]').value,
+				acta_comite: input ? input.file : null,
             }
         },
         willOpen: (e, ee) => {
@@ -96,6 +112,10 @@ const crear_sesion = async (json_editar = []) => {
                         input.value = json_editar[key];
                     }
                 }
+
+				if(typeof json_editar.acta_comite !== "undefined" && json_editar.acta_comite){
+					agregar_icono_pdf("acta_comite", json_editar.acta_comite);
+				}
             }
         },
         didOpen: () => {
@@ -103,6 +123,32 @@ const crear_sesion = async (json_editar = []) => {
             $('.select2_swal').select2({
                 placeholder: "Selecciona una opción",
             });
+
+			// Configura FilePond
+			FilePond.setOptions({
+				labelIdle: 'Arrastra y suelta tu archivo o <span class="filepond--label-action">Examina</span>',
+				// maxFileSize: '3MB',
+				maxFiles: 1,
+				acceptedFileTypes: ['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+				fileValidateTypeDetectType: (source, type) => new Promise((resolve, reject) => {
+					// Usa la función de detección de tipo de archivo para personalizar cómo determinas el tipo de archivo
+					resolve(type);
+				}),
+				labelFileProcessingError: (error) => {
+					// Personaliza el mensaje de error
+					switch (error.code) {
+						case 'file-too-large':
+							return 'Archivo demasiado grande';
+						case 'file-invalid-type':
+							return 'Tipo de archivo no permitido';
+						default:
+							return 'Error al subir archivo';
+					}
+				}
+			});
+
+			// Inicializa FilePond en todos los elementos input de tipo file
+			FilePond.parse(document.body);
         },
         onDismiss: () => {
 
@@ -110,15 +156,19 @@ const crear_sesion = async (json_editar = []) => {
     }).then(async (result) => {
 
         if (result.isConfirmed) { //Validar clic en boton de aceptar
+			data = new FormData();
+			data.append('id_sesion', result.value.id_sesion);
+			data.append('numero_sesion', result.value.numero_sesion);
+			data.append('nombre_sesion', result.value.nombre_sesion);
+			data.append('fecha_sesion', result.value.fecha_sesion);
+			data.append('tipo', result.value.tipo);
+			data.append('acta_comite', result.value.acta_comite);
+
             await $.ajax({
                 url: '/FiDigital/panel/sesiones/post_sesion',
-                data: {
-                    id_sesion: result.value.id_sesion,
-                    numero_sesion: result.value.numero_sesion,
-                    nombre_sesion: result.value.nombre_sesion,
-                    fecha_sesion: result.value.fecha_sesion,
-                    tipo: result.value.tipo,
-                },
+                data: data,
+				processData: false,
+				contentType: false,
                 dataType: 'JSON',
                 type: 'POST',
                 success: function (respuesta, text, xhr) {

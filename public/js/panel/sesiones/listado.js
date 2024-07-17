@@ -73,65 +73,70 @@ $(document).ready(async () => {
             "width": "40%",
             "targets": 0
         },],
-        columns: [{
-            "mData": "nombre_sesion",
-            "mRender": function (data, type, row) {
+        columns: [
+            {//punto
+                "mData": "nombre_sesion",
+                "mRender": function (data, type, row) {
 
-                return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
-                                <div>
-                                    <button class="btn btn-link text-gradient p-0 m-0 text-dark">
-                                        <i class="fa fa-address-card text-lg avatar avatar-sm rounded-circle me-2 text-dark"></i>
-                                    </button>
-                                </div>
-                                <div class="my-auto">
-                                    <h6 class="mb-0 text-sm text-wrap">${row.numero_sesion}. ${data}</h6>
-                                    <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.contador_puntos == '0' ? 'Sin' : row.contador_puntos} puntos asignados</span>
-                                </div>
-                            </div>`;
-            }
-        },
-        {
-            "mData": "fecha_sesion",
-            "mRender": function (data, type, row) {
-                return `<td class="align-middle text-start">
-                                <span class="text-xs w-100 text-start font-weight-bold">${data}</span>
-                            </td>`;
+                    return `<div class="d-flex px-2 detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
+                                    <div>
+                                        <button class="btn btn-link text-gradient p-0 m-0 text-dark">
+                                            <i class="fa fa-address-card text-lg avatar avatar-sm rounded-circle me-2 text-dark"></i>
+                                        </button>
+                                    </div>
+                                    <div class="my-auto">
+                                        <h6 class="mb-0 text-sm text-wrap">${row.numero_sesion}. ${data}</h6>
+                                        <span class="font-weight-bold text-xs text-muted text-wrap"><i class="fas fa-list-ol"></i>  ${row.contador_puntos == '0' ? 'Sin' : row.contador_puntos} puntos asignados</span>
+                                    </div>
+                                </div>`;
+                }
+            },
+            {//sesion
+                "mData": "fecha_sesion",
+                "mRender": function (data, type, row) {
+                    return `
+                        <td class="align-middle text-start">
+                            <span class="text-xs w-100 text-start font-weight-bold">
+                                ${data}
+                            </span>
+                        </td>
+                    `;
 
-            }
-        },
-        {
-            "mData": "tipo",
-            "mRender": function (data, type, row) {
-                return `<td class="align-middle text-start">
-                                <span class="text-xs w-100 text-start font-weight-bold">${data}</span>
-                            </td>`;
+                }
+            },
+            {
+                "mData": "tipo",
+                "mRender": function (data, type, row) {
+                    return `<td class="align-middle text-start">
+                                    <span class="text-xs w-100 text-start font-weight-bold">${data}</span>
+                                </td>`;
 
-            }
-        },
-        {
-            "mData": "ultima_modificacion",
-            "mRender": function (data, type, row) {
-                return `<div class="align-middle cursor-pointer btn_historial_borrador" id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
-                                <span class="fas fa-clock text-xs"></span>
-                                <span class="font-weight-bold text-xs">${data ?? '---'}</span>
-                            </div>`;
-            }
-        },
-        {
-            "mData": "id_sesion",
-            "mRender": function (data, type, row) {
+                }
+            },
+            {
+                "mData": "ultima_modificacion",
+                "mRender": function (data, type, row) {
+                    return `<div class="align-middle cursor-pointer btn_historial_borrador" id_modificacion="${row.id_queja}" nombre="${row.id_queja}">
+                                    <span class="fas fa-clock text-xs"></span>
+                                    <span class="font-weight-bold text-xs">${data ?? '---'}</span>
+                                </div>`;
+                }
+            },
+            {
+                "mData": "id_sesion",
+                "mRender": function (data, type, row) {
 
-                return `<div class="text-center ms-auto">
-                                <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
-                                    <i class="fas fa-list-ol text-white" aria-hidden="true"></i>
+                    return `<div class="text-center ms-auto">
+                                    <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-danger shadow text-white rounded detalle_sesion cursor-pointer" id_sesion="${row.id_sesion}">
+                                        <i class="fas fa-list-ol text-white" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded editar_sesion cursor-pointer" id_sesion="${row.id_sesion}">
+                                        <i class="fas fa-edit text-white" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                                <div class="cursor-pointer px-3 py-2 my-auto mx-1 btn btn-xs bg-gradient-info shadow text-white rounded editar_sesion cursor-pointer" id_sesion="${row.id_sesion}">
-                                    <i class="fas fa-edit text-white" aria-hidden="true"></i>
-                                </div>
-                            </div>
-                            `;
+                                `;
+                }
             }
-        }
         ],
     });
 

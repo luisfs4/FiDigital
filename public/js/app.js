@@ -397,7 +397,7 @@ const online = () => {
     }
 }
 
-const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
+const cargar_opciones_puntos = async (selector_destino, url, parametros, value=null) => {
     $(selector_destino).empty().append('<option value="">Cargando...</option>');
     try {
         const respuesta = await $.ajax({
@@ -407,10 +407,21 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros) => {
         });
 
         if (respuesta && respuesta.length > 0) {
-            $(selector_destino).empty().append('<option value="">Selecciona una opción</option>');
-            respuesta.forEach(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado, monto_restante, direccion, programa }) => {
-                $(selector_destino).append(`<option value="${id_punto}" monto_inicial="${presupuesto_autorizado}" monto_restante="${monto_restante}" jerarquia="${jerarquia}" data-direccion="${direccion}" data-programa="${programa}" siguiente_disponible="${siguiente_disponible}">${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}</option>`);
-            });
+            const opciones = respuesta.map(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado, monto_restante, direccion, programa }) => {
+                return `
+                    <option value="${id_punto}" monto_inicial="${presupuesto_autorizado}" 
+                            monto_restante="${monto_restante}" jerarquia="${jerarquia}" 
+                            data-direccion="${direccion}" data-programa="${programa}" 
+                            siguiente_disponible="${siguiente_disponible}" ${ value == id_punto ? 'selected' : ''}>
+                        ${jerarquia ? jerarquia + ' - ' : ''}${nombre_punto}
+                    </option>
+                `;
+            }).join("");
+
+            $(selector_destino).empty().append(`
+                <option value="">Selecciona una opción</option>
+                ${opciones}
+            `);
         } else {
             $(selector_destino).empty().append('<option value="">No hay opciones disponibles</option>');
         }
@@ -492,15 +503,15 @@ const evento_btn_proveedor = (proveedor_id = null) => {
                         <input type="text" class="form-control" id="nombre_comercial_empresa" placeholder="Nombre Comercial">
                     </div>
                     <!-- Campos exclusivos de archivos para Persona Moral -->
-                    <div class="col-md-6">
+                    <div class="col-md-6 div_contenedor">
                         <label for="acta_constitutiva" class="form-label">Acta Constitutiva <i class="fas fa-file-contract"></i></label>
                         <input type="file" class="filepond" id="acta_constitutiva" name="acta_constitutiva">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 div_contenedor">
                         <label for="boleta_registro" class="form-label">Boleta de Registro <i class="fas fa-clipboard-list"></i></label>
                         <input type="file" class="filepond" id="boleta_registro" name="boleta_registro">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 div_contenedor">
                         <label for="poder_representante_legal" class="form-label">Poder del Representante Legal <i class="fas fa-gavel"></i></label>
                         <input type="file" class="filepond" id="poder_representante_legal" name="poder_representante_legal">
                     </div>
@@ -511,11 +522,11 @@ const evento_btn_proveedor = (proveedor_id = null) => {
             <div id="campos_agente_capacitador" style="display: none;">
                 <hr class="horizontal dark my-3">  
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6 div_contenedor">
                         <label for="solicitud_registro" class="form-label">Solicitud de Registro <i class="fas fa-file-signature"></i></label>
                         <input type="file" class="filepond" id="solicitud_registro" name="solicitud_registro">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 div_contenedor">
                         <label for="curriculum_empresarial" class="form-label">Currículum Empresarial <i class="fas fa-briefcase"></i></label>
                         <input type="file" class="filepond" id="curriculum_empresarial" name="curriculum_empresarial">
                     </div>
@@ -526,27 +537,27 @@ const evento_btn_proveedor = (proveedor_id = null) => {
             
             <div class="row mb-4">
                 <!-- Campos de archivos para comunes -->
-                <div class="col-md-6">
+                <div class="col-md-6 div_contenedor">
                     <label for="identificacion_oficial" class="form-label">Identificación Oficial Vigente <i class="fas fa-id-card"></i></label>
                     <input type="file" class="filepond" id="identificacion_oficial" name="identificacion_oficial">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 div_contenedor">
                     <label for="comprobante_domicilio" class="form-label">Comprobante de Domicilio del Negocio <i class="fas fa-home"></i></label>
                     <input type="file" class="filepond" id="comprobante_domicilio" name="comprobante_domicilio">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 div_contenedor">
                     <label for="constancia_situacion_fiscal" class="form-label">Constancia de Situación Fiscal <i class="fas fa-file-invoice-dollar"></i></label>
                     <input type="file" class="filepond" id="constancia_situacion_fiscal" name="constancia_situacion_fiscal">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 div_contenedor">
                     <label for="opinion_cumplimiento" class="form-label">Opinión de Cumplimiento <i class="fas fa-thumbs-up"></i></label>
                     <input type="file" class="filepond" id="opinion_cumplimiento" name="opinion_cumplimiento">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 div_contenedor">
                     <label for="estado_cuenta_bancario" class="form-label">Estado de Cuenta Bancario <i class="fas fa-university"></i></label>
                     <input type="file" class="filepond" id="estado_cuenta_bancario" name="estado_cuenta_bancario">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 div_contenedor">
                     <label for="documento_datos_contacto" class="form-label">Documento de Datos de Contacto <i class="fas fa-address-book"></i></label>
                     <input type="file" class="filepond" id="documento_datos_contacto" name="documento_datos_contacto">
                 </div>
@@ -605,6 +616,8 @@ const evento_btn_proveedor = (proveedor_id = null) => {
                 agregar_campo_archivo('boleta_registro');
                 agregar_campo_archivo('poder_representante_legal');
             }
+
+            campos_relacionados['es_agente_capacitador'] = $('#es_agente_capacitador').is(':checked') ? '1' : '0';
 
             if ($('#es_agente_capacitador').is(':checked')) {
                 agregar_campo_archivo('solicitud_registro');
@@ -690,6 +703,26 @@ const manejarSeleccionTipoPersona = () => {
     });
 };
 
+const agregar_icono_pdf = (tag_id, url) => {
+    const div_padre = $(`#${tag_id}`).closest('.div_contenedor');
+
+    if (div_padre.length > 0) {
+        let archivo_elemento = div_padre.find(`a.archivo_${tag_id}`);
+        archivo_elemento.remove();
+
+        if(url){
+            archivo_elemento = `
+                <a class="archivo_${tag_id} badge bg-gradient-danger my-1" target="_blank" href="${url ?? ''}">
+                    <i class="fas fa-file-pdf my-0 px-2 py-1"></i> 
+                    Ver Archivo
+                </a>
+            `;
+            div_padre.append(archivo_elemento);
+        }
+    }
+};
+
+
 const cargarDatosProveedor = (proveedor_id) => {
     // Realiza una petición para obtener los datos del proveedor
     $.ajax({
@@ -708,50 +741,61 @@ const cargarDatosProveedor = (proveedor_id) => {
                 $('#correo_fisica').val(proveedor.correo);
                 $('#telefono_fisica').val(proveedor.telefono);
             } else if (proveedor.tipo_persona === 'moral') {
-                $('#nombre_enlace').val(proveedor.nombre_enlace);
-                $('#telefono_enlace').val(proveedor.telefono_enlace);
-                $('#correo_enlace').val(proveedor.correo_enlace);
-                $('#nombre_fiscal_empresa').val(proveedor.nombre_fiscal_empresa);
-                $('#nombre_comercial_empresa').val(proveedor.nombre_comercial_empresa);
+                $('#nombre_enlace').val(proveedor.nombre_enlace ?? proveedor.nombre);
+                $('#telefono_enlace').val(proveedor.telefono_enlace ?? proveedor.telefono);
+                $('#correo_enlace').val(proveedor.correo_enlace ?? proveedor.correo);
+                $('#nombre_fiscal_empresa').val(proveedor.nombre_fiscal);
+                $('#nombre_comercial_empresa').val(proveedor.nombre_comercial);
 
                 // Cargar archivos existentes en FilePond
                 if (proveedor.acta_constitutiva) {
-                    FilePond.find(document.querySelector('#acta_constitutiva')).addFile(proveedor.acta_constitutiva);
+                    agregar_icono_pdf("acta_constitutiva", proveedor.acta_constitutiva);
+                    // FilePond.find(document.querySelector('#acta_constitutiva')).addFile(proveedor.acta_constitutiva);
                 }
                 if (proveedor.boleta_registro) {
-                    FilePond.find(document.querySelector('#boleta_registro')).addFile(proveedor.boleta_registro);
+                    agregar_icono_pdf("boleta_registro", proveedor.boleta_registro);
+                    // FilePond.find(document.querySelector('#boleta_registro')).addFile(proveedor.boleta_registro);
                 }
                 if (proveedor.poder_representante_legal) {
-                    FilePond.find(document.querySelector('#poder_representante_legal')).addFile(proveedor.poder_representante_legal);
+                    agregar_icono_pdf("poder_representante_legal", proveedor.poder_representante_legal);
+                    // FilePond.find(document.querySelector('#poder_representante_legal')).addFile(proveedor.poder_representante_legal);
                 }
             }
             if (proveedor.es_agente_capacitador) {
                 $('#es_agente_capacitador').prop('checked', true).trigger('change');
                 if (proveedor.solicitud_registro) {
-                    FilePond.find(document.querySelector('#solicitud_registro')).addFile(proveedor.solicitud_registro);
+                    agregar_icono_pdf('solicitud_registro', proveedor.solicitud_registro);
+                    // FilePond.find(document.querySelector('#solicitud_registro')).addFile(proveedor.solicitud_registro);
                 }
                 if (proveedor.curriculum_empresarial) {
-                    FilePond.find(document.querySelector('#curriculum_empresarial')).addFile(proveedor.curriculum_empresarial);
+                    agregar_icono_pdf('curriculum_empresarial', proveedor.curriculum_empresarial);
+                    // FilePond.find(document.querySelector('#curriculum_empresarial')).addFile(proveedor.curriculum_empresarial);
                 }
             }
             // Cargar archivos comunes
             if (proveedor.identificacion_oficial) {
-                FilePond.find(document.querySelector('#identificacion_oficial')).addFile(proveedor.identificacion_oficial);
+                agregar_icono_pdf('identificacion_oficial', proveedor.identificacion_oficial);
+                // FilePond.find(document.querySelector('#identificacion_oficial')).addFile(proveedor.identificacion_oficial);
             }
             if (proveedor.comprobante_domicilio) {
-                FilePond.find(document.querySelector('#comprobante_domicilio')).addFile(proveedor.comprobante_domicilio);
+                agregar_icono_pdf('comprobante_domicilio', proveedor.comprobante_domicilio);
+                // FilePond.find(document.querySelector('#comprobante_domicilio')).addFile(proveedor.comprobante_domicilio);
             }
             if (proveedor.constancia_situacion_fiscal) {
-                FilePond.find(document.querySelector('#constancia_situacion_fiscal')).addFile(proveedor.constancia_situacion_fiscal);
+                agregar_icono_pdf('constancia_situacion_fiscal', proveedor.constancia_situacion_fiscal);
+                // FilePond.find(document.querySelector('#constancia_situacion_fiscal')).addFile(proveedor.constancia_situacion_fiscal);
             }
             if (proveedor.opinion_cumplimiento) {
-                FilePond.find(document.querySelector('#opinion_cumplimiento')).addFile(proveedor.opinion_cumplimiento);
+                agregar_icono_pdf("opinion_cumplimiento", proveedor.opinion_cumplimiento);
+                // FilePond.find(document.querySelector('#opinion_cumplimiento')).addFile(proveedor.opinion_cumplimiento);
             }
             if (proveedor.estado_cuenta_bancario) {
-                FilePond.find(document.querySelector('#estado_cuenta_bancario')).addFile(proveedor.estado_cuenta_bancario);
+                agregar_icono_pdf("estado_cuenta_bancario", proveedor.estado_cuenta_bancario);
+                // FilePond.find(document.querySelector('#estado_cuenta_bancario')).addFile(proveedor.estado_cuenta_bancario);
             }
             if (proveedor.documento_datos_contacto) {
-                FilePond.find(document.querySelector('#documento_datos_contacto')).addFile(proveedor.documento_datos_contacto);
+                agregar_icono_pdf("documento_datos_contacto", proveedor.documento_datos_contacto);
+                // FilePond.find(document.querySelector('#documento_datos_contacto')).addFile(proveedor.documento_datos_contacto);
             }
         },
         error: function (error) {

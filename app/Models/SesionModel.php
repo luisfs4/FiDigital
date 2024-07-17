@@ -46,6 +46,23 @@ class SesionModel extends Model
 			$consulta->where('e.id_expediente !=', $data_filtros['not_id_expediente']);
 		}
 
+		if(isset($data_filtros["expedientes_relacionados"])) {
+			$expedientes_relacionados = $this->db->table('expedientes')
+				->select('id_sesion')
+				->select('JSON_ARRAYAGG(
+						JSON_OBJECT(
+							"id_expediente", id_expediente, 
+							"fecha_pago", fecha_pago, 
+							"created_at", created_at, 
+							"monto_pagado", monto_pagado)
+						)
+					AS expedientes_relacionados')
+				->groupBy('id_sesion')
+				->getCompiledSelect();
+			$consulta->join("($expedientes_relacionados) AS er", "er.id_sesion = e.id_sesion");
+			$consulta->select('er.expedientes_relacionados');
+		}
+
 		$expedientes = $consulta->get()->getResultObject();
 
 		foreach ($expedientes as $key => $expediente) {
@@ -112,10 +129,10 @@ class SesionModel extends Model
 		$consulta = $this->db->table("puntos as p");
 		$consulta->select("p.*");
 		$consulta->select("CAST(IFNULL(p.presupuesto_autorizado,0) AS DECIMAL(10,2)) as presupuesto_autorizado", false);
-		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_autorizado) 
+		$consulta->select("CAST(p.presupuesto_autorizado - IFNULL((SELECT SUM(e.monto_pagado) 
 			FROM expedientes e 
 			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS monto_restante", false);
-		$consulta->select("CAST(IFNULL((SELECT SUM(e.monto_autorizado) 
+		$consulta->select("CAST(IFNULL((SELECT SUM(e.monto_pagado) 
 			FROM expedientes e 
 			WHERE e.id_punto = p.id_punto), 0) AS DECIMAL(10, 2)) AS pagado", false);
 		$consulta->select("cd.direccion");
@@ -131,10 +148,11 @@ class SesionModel extends Model
 							), 1) AS siguiente_disponible");
 
 		// Subconsultas para obtener los IDs de los niveles
-		$consulta->select("IF(p.padre_id IS NULL, p.id_punto, (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)) AS id_nivel_1");
-		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))) AS id_nivel_2");
-		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)))) AS id_nivel_3");
-		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))))) AS id_nivel_4");
+		$consulta->select("p.id_punto AS id_nivel_1");
+		$consulta->select("p.padre_id AS id_nivel_2");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)) AS id_nivel_3");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id))) AS id_nivel_4");
+		$consulta->select("IF(p.padre_id IS NULL, NULL, (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = (SELECT padre_id FROM puntos WHERE id_punto = p.padre_id)))) AS id_nivel_5");
 
 		$consulta->join("expedientes as e", 'e.id_expediente = p.id_expediente', 'left');
 		$consulta->join("cat_direcciones as cd", 'cd.id_direccion = p.id_direccion', 'left');
@@ -143,6 +161,7 @@ class SesionModel extends Model
 		if(!empty($data_filtros["datos_sesion"]) && $data_filtros["datos_sesion"]){
 			$consulta->select("s.nombre_sesion");
 			$consulta->select("s.numero_sesion");
+			$consulta->select("s.tipo");
 			$consulta->join("sesiones as s", 's.id_sesion = p.id_sesion', 'left');
 		}
 
@@ -177,6 +196,10 @@ class SesionModel extends Model
 
 		if(!empty($data_filtros["numero_sesion"])){
 			$consulta->where('s.numero_sesion', $data_filtros["numero_sesion"]);
+		}
+
+		if(!empty($data_filtros["tipo_sesion"])){
+			$consulta->where('s.tipo', $data_filtros["tipo_sesion"]);
 		}
 
 		if(!empty($data_filtros["estatus"])){
@@ -267,6 +290,10 @@ class SesionModel extends Model
 			->join("cat_estatus ce", "p.id_estatus = ce.id_estatus", "inner")
 			->join($subconsultaSQL, "p.id_proveedor = exp.id_proveedor", "left"); // Unir con la subconsulta
 
+		if(!empty($data_filtros["activo"])){
+			$consulta->where('p.activo', $data_filtros["activo"]);
+		}
+
 		// Aplicar filtros de búsqueda si existen
 		if (!empty($data_filtros['id_proveedor'])) {
 			$consulta->where('p.id_proveedor', $data_filtros['id_proveedor']);
@@ -303,11 +330,48 @@ class SesionModel extends Model
 		$consulta->set($data_update);
 		return $consulta->update();
 	}
+
+	public function cambiar_estatus_proveedor($data){
+		try {
+			if(empty($data["id_proveedor"]) || !isset($data["activo"])){ 
+				throw new \Exception("Faltan datos para la actualización del estatus del proveedor.");
+			}
+
+			$proveedor = $this->db->table("proveedores");
+			$proveedor->where("id_proveedor", $data["id_proveedor"]);
+			$proveedor->set("activo", $data["activo"] == "0" ? false : true);
+
+			if(!$proveedor->update()){
+				throw new \Exception("No se pudo actualizar el estatus del proveedor.");
+			}
+
+			$estatus = $data["activo"] == "0" ? "archivo" : "desarchivo";
+			return json_encode([
+				"success" => true,
+				"mensaje" => "El proveedor se $estatus correctamente."
+			]);
+
+		} catch (\Throwable $th) {
+			return match (ENVIRONMENT){
+				'development'=> json_encode([
+					"success"	=> false,
+					"mensaje"	=> $th->getMessage(),
+					"trace" 	=> $th->getTraceAsString(),
+					"sql" 		=> $this->db->showLastQuery(),
+				]),
+				default => json_encode([
+					"success" => false,
+					"mensaje" => "Error al cambiar el estatus."
+				])
+			};
+		}
+	}
+
 	public function post_proveedor($data)
 	{
 		$proveedores = $this->db->table("proveedores");
 
-		$id_proveedor = isset($data['id_proveedor']) ? $data['id_proveedor'] : null;
+		$id_proveedor = $data['id_proveedor'] ?? null;
 
 		$datos = [
 			'tipo_persona' => $data['tipo_persona'],
@@ -316,14 +380,16 @@ class SesionModel extends Model
 			'telefono' => $data['telefono'],
 			'nombre_fiscal' => $data['tipo_persona'] === 'moral' ? $data['nombre_fiscal'] : null,
 			'nombre_comercial' => $data['tipo_persona'] === 'moral' ? $data['nombre_comercial'] : null,
-			'created_by' => $this->session->id_usuario,
-			'created_at' => date('Y-m-d H:i:s'),
+			'es_agente_capacitador' => $data['es_agente_capacitador'] ?? false,
 		];
 
 		try {
 			$this->db->transStart(); // Inicia la transacción
 
 			if (empty($id_proveedor)) {
+				$datos['created_by'] = $this->session->id_usuario;
+				$datos['created_at'] = date('Y-m-d H:i:s');
+				
 				$id_proveedor = $proveedores->insert($datos, true);
 				if ($id_proveedor === false) {
 					throw new \Exception('No se pudieron insertar los datos básicos del proveedor.');
@@ -352,18 +418,29 @@ class SesionModel extends Model
 				'documento_datos_contacto'
 			];
 
-			$rutaBase = WRITEPATH . 'documentos/proveedores/' . $id_proveedor;
-			if (!is_dir($rutaBase)) {
-				mkdir($rutaBase, 0777, true);
+			$proveedores->where('id_proveedor', $id_proveedor);
+			$proveedor = $proveedores->get()->getRowObject();
+			$datos_archivos = [];
+
+			foreach ($campos_archivos as $key) {
+				if(!empty($data["archivos"][$key])){
+					$datos_archivos[$key] = $data["archivos"][$key];
+
+					if(!is_null($proveedor->$key)){
+						$ruta_archivo = FCPATH . $proveedor->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
 			}
 
-			foreach ($campos_archivos as $campo) {
-				if (isset($data[$campo]) && is_object($data[$campo]) && $data[$campo]->isValid() && !$data[$campo]->hasMoved()) {
-					$nuevoNombre = $data[$campo]->getRandomName();
-					$data[$campo]->move($rutaBase, $nuevoNombre);
-					// Actualizar la base de datos con la ruta del archivo
-					$proveedores->update($id_proveedor, [$campo => 'documentos/proveedores/' . $id_proveedor . '/' . $nuevoNombre]);
-				}
+			if(!empty($datos_archivos)){
+				$proveedores->where('id_proveedor', $id_proveedor)->set($datos_archivos);	
+				if(!$proveedores->update()){
+					throw new \Exception('No se pudieron insertar los archivos del proveedor.');
+				} 
 			}
 
 			$this->db->transComplete(); // Completa la transacción
@@ -375,118 +452,317 @@ class SesionModel extends Model
 			return $id_proveedor; // Retorna el ID del proveedor o puedes ajustar esto según tu necesidad
 		} catch (\Exception $e) {
 			$this->db->transRollback(); // Revertir todos los cambios si algo falla
+
+			foreach($campos_archivos as $key){
+				if(!empty($data["archivos"][$key]) && file_exists($data["archivos"][$key])){
+					unlink($data["archivos"][$key]);
+				}
+			}
+
 			return redirect()->back()->withInput()->with('error', 'Hubo un problema al guardar la información: ' . $e->getMessage());
 		}
 	}
 
-	public function post_expediente($data)
-	{
-		$sesiones = $this->db->table("expedientes");
+	private function nuevo_estatus_punto($id_punto){
+		$estatus = "Creado";
 
-		if (isset($data['id_expediente'])) {
-			$id_expediente = $data['id_expediente'];
-			unset($data['id_expediente']);
-		}
-
-		$data_proveedor = [
-			'id_proveedor' => $data['id_proveedor'],
-			'updated_at' => date('Y-m-d H:i:s'),
-			'updated_by' => $this->session->id_usuario
+		$cat_estatus = [
+			"1" => "Procesado",
+			"2" => "Pagado",
+			"3" => "Completado",
 		];
 
-		if (isset($data['ruta_opinion_cumplimiento'])) {
-			$data_proveedor["opinion_cumplimiento"] = $data['ruta_opinion_cumplimiento'];
-			unset($data['ruta_opinion_cumplimiento']);
-		}
+		$expedientes = $this->db->table("expedientes");
+		$expedientes->select("id_punto");
+		$expedientes->select("MIN(id_estatus) AS menor_estatus");
+		$expedientes->where("id_punto", $id_punto);
+		$expedientes->groupBy("id_punto");
+		$result = $expedientes->get()->getRowObject();
 
-		if (isset($data['ruta_estado_cuenta'])) {
-			$data_proveedor["estado_cuenta_bancario"] = $data['ruta_estado_cuenta'];
-			unset($data['ruta_estado_cuenta']);
-		}
+		if($result){ $estatus = $cat_estatus[$result->menor_estatus]; }
+		return $estatus;
+	}
 
-		if($data_proveedor) {
-			$proveedor = $this->db->table("proveedores");
-			$proveedor->where("id_proveedor", $data_proveedor["id_proveedor"]);
-			$proveedor->set($data_proveedor);
-			$proveedor->update();
-		}
+	private function nuevo_estatus_expediente($id_expediente): ?int {
+    $expediente = $this->db->table("expedientes")
+                           ->where("id_expediente", $id_expediente)
+                           ->get()
+                           ->getRowObject();
+    if (!$expediente) return null;
 
-		$id_seccion = $data['id_seccion'];
-		unset($data['id_seccion']);
+    if (!$this->verificar_datos_pago($expediente)) return 1;
 
-		$id_carpeta = $data['id_carpeta'];
-		unset($data['id_carpeta']);
+    $nombre_archivos = ["cfdi", "verificacion", "contrato", "recepcion", "testigo", "caratula"];
 
-		$id_subcarpeta = $data['id_subcarpeta'];
-		unset($data['id_subcarpeta']);
+    foreach ($nombre_archivos as $nombre) {
+        if ($this->archivo_incompleto($expediente, $nombre)) {
+					return 2;
+				}
+    }
 
-		if (!empty($id_subcarpeta)) {
-			$data['id_punto'] = $id_subcarpeta;
-		} else if (!empty($id_carpeta)) {
-			$data['id_punto'] = $id_carpeta;
-		} else if (!empty($id_seccion)) {
-			$data['id_punto'] = $id_seccion;
-		}
+    return 3;
+}
 
-		if (empty($id_expediente)) {
+private function verificar_datos_pago($expediente): bool {
+    return !is_null($expediente->monto_pagado) && 
+           !is_null($expediente->fecha_pago) && 
+           ($expediente->na_carta_instruccion === "1" || !empty($expediente->ruta_carta_instruccion));
+}
 
-			$data += [
-				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario,
-				"id_estatus" => 1
+private function archivo_incompleto($expediente, string $nombre): bool {
+    return $expediente->{"na_$nombre"} !== "1" && empty($expediente->{"ruta_$nombre"});
+}
+
+	public function post_expediente($data)
+	{
+		try {
+			$this->db->transStart();
+
+			$sesiones = $this->db->table("expedientes");
+
+			if (isset($data['id_expediente'])) {
+				$id_expediente = $data['id_expediente'];
+				unset($data['id_expediente']);
+			}
+
+			$nombres_expediente = [
+				"ruta_cfdi", "ruta_verificacion", "ruta_contrato", "ruta_recepcion", "ruta_testigo", 
+				"ruta_caratula", "ruta_carta_instruccion",
+			];
+			$nombres_proveedor = [
+				"opinion_cumplimiento",
+				"estado_cuenta_bancario",
 			];
 
-			$bandera = $sesiones->insert($data);
-		} else {
+			if(isset($data["archivos"])){
+				$archivos = $data["archivos"];
+				unset($data["archivos"]);
+			}
 
-			$data += [
-				"updated_at" => date('Y-m-d H:i:s'),
-				"updated_by" => $this->session->id_usuario
-			];
+			foreach (array_merge($nombres_expediente, $nombres_proveedor) as $nombre) {
+				if(isset($data[$nombre])){
+					unset($data[$nombre]);
+				}
+			}
+
+			$id_seccion = $data['id_seccion'];
+			unset($data['id_seccion']);
+
+			$id_carpeta = $data['id_carpeta'];
+			unset($data['id_carpeta']);
+
+			$id_subcarpeta = $data['id_subcarpeta'];
+			unset($data['id_subcarpeta']);
+
+			if (!empty($id_subcarpeta)) {
+				$data['id_punto'] = $id_subcarpeta;
+			} else if (!empty($id_carpeta)) {
+				$data['id_punto'] = $id_carpeta;
+			} else if (!empty($id_seccion)) {
+				$data['id_punto'] = $id_seccion;
+			}
+
+			if (empty($id_expediente)) {
+
+				$data += [
+					"created_at" => date('Y-m-d H:i:s'),
+					"created_by" => $this->session->id_usuario,
+					"id_estatus" => 1
+				];
+
+				if(!$sesiones->insert($data)) throw new \Exception("No se pudo insertar la información del expediente.");
+
+				$id_expediente = $this->db->insertID();
+			} else {
+
+				$data += [
+					"updated_at" => date('Y-m-d H:i:s'),
+					"updated_by" => $this->session->id_usuario
+				];
+
+				$sesiones->where('id_expediente', $id_expediente)->set($data);
+				if(!$sesiones->update()) throw new \Exception("No se pudo actualizar la información del expediente.");
+			}
 
 			$sesiones->where('id_expediente', $id_expediente);
-			$sesiones->set($data);
-			$bandera = $sesiones->update();
-		}
+			$expediente = $sesiones->get()->getRowObject();
+			$datos_expediente = [];
+			foreach ($nombres_expediente as $key) {
+				if(!empty($archivos[$key])){
+					$datos_expediente[$key] = $archivos[$key];
 
-		if ($bandera) {
+					if(!is_null($expediente->$key)){
+						$ruta_archivo = FCPATH . $expediente->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
+			}
+
+			if(!empty($datos_expediente)){
+				$sesiones->where('id_expediente', $id_expediente)->set($datos_expediente);	
+				if(!$sesiones->update()){
+					throw new \Exception('No se pudieron insertar los archivos del proveedor.');
+				} 
+			}
+
+			$id_estatus = $this->nuevo_estatus_expediente($id_expediente);
+			$sesiones->where("id_expediente", $id_expediente);
+			$sesiones->set("id_estatus", $id_estatus);
+			if(!$sesiones->update()){
+				throw new \Exception("No se pudo actualizar el estatus del expediente.");
+			}
+
+			$estatus_punto = $this->nuevo_estatus_punto($expediente->id_punto);
+			$puntos = $this->db->table("puntos");
+			$puntos->where("id_puunto", $expediente->id_punto);
+			$puntos->set("estatus", $estatus_punto);
+			if(!$puntos->update()){
+				throw new \Exception("No se pudo actualizar el estatus del punto.");
+			}
+
+			$proveedores = $this->db->table("proveedores");
+			$proveedores->where("id_proveedor", $data['id_proveedor']);
+			$proveedor = $proveedores->get()->getRowObject();
+			$data_proveedor = [];
+			foreach ($nombres_proveedor as $key) {
+				if(!empty($archivos[$key])){
+					$data_proveedor[$key] = $archivos[$key];
+					if(!is_null($proveedor->{$key})){
+						$ruta_archivo = FCPATH . $proveedor->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
+			}
+
+			if(!empty($data_proveedor)){
+				$data_proveedor += [
+					'id_proveedor' => $data['id_proveedor'],
+					'updated_at' => date('Y-m-d H:i:s'),
+					'updated_by' => $this->session->id_usuario
+				];
+				$proveedores->where("id_proveedor", $data_proveedor["id_proveedor"]);
+				$proveedores->set($data_proveedor);
+				if(!$proveedores->update()) throw new \Exception("No se pudo actualizar la información del proveedor.");
+			}
+
+			$this->db->transCommit();
 			return true;
-		} else {
-			return false;
+		} catch (\Throwable $th) {
+			$this->db->transRollback();
+
+			foreach($nombres_expediente as $key){
+				if(!empty($archivos[$key]) && file_exists($archivos[$key])){
+					unlink($archivos[$key]);
+				}
+			}
+
+			foreach($nombres_proveedor as $key){
+				if(!empty($archivos[$key]) && file_exists($archivos[$key])){
+					unlink($archivos[$key]);
+				}
+			}
+
+			if(ENVIRONMENT == 'development'){
+				return json_encode([
+					"message" => $th->getMessage(),
+					"trace" => $th->getTraceAsString(),
+					"sql" => $this->db->showLastQuery(),
+				]);
+			} else {
+				return false;
+			}
 		}
+		
 	}
 
 	public function post_sesion($data)
 	{
-		$sesiones = $this->db->table("sesiones");
-		$id_sesion = $data['id_sesion'];
-		unset($data['id_sesion']);
+		try {
+			$this->db->transBegin();
 
-		if (empty($id_sesion)) {
+			$nombres_sesion = ["acta_comite"];
 
-			$data += [
-				"created_at" => date('Y-m-d H:i:s'),
-				"created_by" => $this->session->id_usuario,
-				"estatus" => "incompleta"
-			];
+			if(isset($data["archivos"])){
+				$archivos = $data["archivos"];
+				unset($data["archivos"]);
+			}
 
-			$bandera = $sesiones->insert($data);
-		} else {
+			foreach ($nombres_sesion as $nombre) {
+				if(isset($data[$nombre])){
+					unset($data[$nombre]);
+				}
+			}
 
-			$data += [
-				"updated_at" => date('Y-m-d H:i:s'),
-				"updated_by" => $this->session->id_usuario
-			];
+			$sesiones = $this->db->table("sesiones");
+			$id_sesion = $data['id_sesion'];
+			unset($data['id_sesion']);
+
+			if (empty($id_sesion)) {
+				$data += [
+					"created_at" => date('Y-m-d H:i:s'),
+					"created_by" => $this->session->id_usuario,
+					"estatus" => "incompleta"
+				];
+
+				if(!$sesiones->insert($data)) throw new \Exception("No se pudo insertar la información de la sesión.");
+				$id_sesion = $this->db->insertID();
+			} else {
+
+				$data += [
+					"updated_at" => date('Y-m-d H:i:s'),
+					"updated_by" => $this->session->id_usuario
+				];
+
+				$sesiones->where('id_sesion', $id_sesion);
+				$sesiones->set($data);
+				if(!$sesiones->update()) throw new \Exception("No se pudo actualizar la información de la sesión.");
+			}
 
 			$sesiones->where('id_sesion', $id_sesion);
-			$sesiones->set($data);
-			$bandera = $sesiones->update();
-		}
+			$sesion = $sesiones->get()->getRowObject();
+			$datos_sesion = [];
 
-		if ($bandera) {
+			foreach ($nombres_sesion as $key) {
+				if(!empty($archivos[$key])){
+					$datos_sesion[$key] = $archivos[$key];
+
+					if(!is_null($sesion->$key)){
+						$ruta_archivo = FCPATH . $sesion->$key;
+
+						if(file_exists($ruta_archivo)){
+							unlink($ruta_archivo);
+						}
+					}
+				}
+			}
+
+			if(!empty($datos_sesion)){
+				$sesiones->where('id_sesion', $id_sesion)->set($datos_sesion);	
+				if(!$sesiones->update()){
+					throw new \Exception('No se pudieron insertar los archivos de la sesion.');
+				} 
+			}
+
+			$this->db->transCommit();
 			return true;
-		} else {
-			return false;
+		} catch (\Throwable $th) {
+			//throw $th;
+			$this->db->transRollback();
+			if(ENVIRONMENT == 'development'){
+				return json_encode([
+					"message" => $th->getMessage(),
+					"trace" => $th->getTraceAsString(),
+					"sql" => $this->db->showLastQuery(),
+				]);
+			} else {
+				return false;
+			}
 		}
 	}
 

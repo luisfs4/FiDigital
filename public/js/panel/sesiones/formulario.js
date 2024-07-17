@@ -142,10 +142,18 @@ const crear_expediente = () => {
             }
 
             if ($(this).hasClass('filepond')) {
-                expediente_form.append($(this).children('input').attr('name'), $(this).children('input').val() != null ? $(this).children('input')[0].files[0] : 0);
+                const pond = FilePond.find(this);
+
+                if(pond && typeof pond.element.dataset.disabled == "undefined"){
+                    const name  = this.id;
+                    const input = pond.getFile();
+                    if(input){ expediente_form.append(name, input.file); }
+                }
             } else if ($(this).prop('type') == 'file') {
                 console.log($(this).attr('name'), $(this), $(this).val() != null ? $(this)[0].files[0] : 0);
                 expediente_form.append($(this).attr('name'), $(this).val() != null ? $(this)[0].files[0] : 0);
+            } else if($(this).prop("type") == "checkbox"){
+                expediente_form.append($(this).attr('name'), $(this).prop('checked') ? 1 : 0);
             } else {
                 console.log($(this).attr('name'), $(this), valor);
                 expediente_form.append($(input).attr('name'), valor);
@@ -204,38 +212,38 @@ const crear_expediente = () => {
 
 $(document).ready(async () => {
 
-    $(document).on("FilePond:addfile", async (e) => {
-        const pond = FilePond.find(e.target);
+    // $(document).on("FilePond:addfile", async (e) => {
+    //     const pond = FilePond.find(e.target);
 
-        if(pond){
-            const input = e.target.id;
-            const target = `.contenedor_ver_${input}`;
-            let guardar_pdf = new FormData(); // Inicializar form data
-            guardar_pdf.append('documento', pond.getFile().file);
+    //     if(pond){
+    //         const input = e.target.id;
+    //         const target = `.contenedor_ver_${input}`;
+    //         let guardar_pdf = new FormData(); // Inicializar form data
+    //         guardar_pdf.append('documento', pond.getFile().file);
 
-            await $.ajax({
-                url: '/FiDigital/panel/sesiones/guardar_documento',
-                data: guardar_pdf,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (respuesta) {
-                    respuesta = "/FiDigital/" + respuesta
-                    $(`[name="${input}"`).val(respuesta).trigger('change');
-                },
-                error: (err, texto) => {
-                    //error_ajax(JSON.parse(err.responseText)['message']);
-                }
-            });
+    //         await $.ajax({
+    //             url: '/FiDigital/panel/sesiones/guardar_documento',
+    //             data: guardar_pdf,
+    //             processData: false,
+    //             contentType: false,
+    //             type: 'POST',
+    //             success: function (respuesta) {
+    //                 respuesta = "/FiDigital/" + respuesta
+    //                 $(`[name="${input}"`).val(respuesta).trigger('change');
+    //             },
+    //             error: (err, texto) => {
+    //                 //error_ajax(JSON.parse(err.responseText)['message']);
+    //             }
+    //         });
 
-            if ($(input).val()) {
-                $(target).addClass('d-flex').show(200);
-                $(target).children('a').attr('href', "/" + $(input).val());
-            } else {
-                $(target).removeClass('d-flex').hide(200);
-            }
-        }
-    });
+    //         if ($(input).val()) {
+    //             $(target).addClass('d-flex').show(200);
+    //             $(target).children('a').attr('href', "/" + $(input).val());
+    //         } else {
+    //             $(target).removeClass('d-flex').hide(200);
+    //         }
+    //     }
+    // });
 
     let options_sesion = '';
 
@@ -267,3 +275,26 @@ $(document).ready(async () => {
     })
 
 })
+
+$(document).on("click", ".deshabilitar_inputs", (ev)=>{
+    const tag = $(ev.currentTarget);
+    const props = tag.is(':checked') ? tag.data("on") : tag.data("off");
+    const target = $(tag.data('target'));
+    const conf = props.split(" ").reduce((acc, elem)=>{ acc[elem] = true; return acc;},{});
+
+    if(target.length){
+        filepond = FilePond.find(target[0]);
+
+        if(filepond){
+            filepond.setOptions({ disabled: false, required: false, ...conf});
+        }else{
+            target.setOptions({ disabled: false, required: false, ...conf});
+        }
+    }
+});
+
+$(document).on("change", "#id_proveedor", (ev)=>{
+    const tag = $(ev.currentTarget).find(":selected");
+    agregar_icono_pdf("opinion_cumplimiento", tag.data("opinion_cumplimiento"));
+    agregar_icono_pdf("estado_cuenta_bancario", tag.data("estado_cuenta_bancario"));
+});

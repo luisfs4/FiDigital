@@ -6,6 +6,14 @@ const obtener_nivel = (jerarquia, nivel) => {
     return partes.slice(0, nivel).join(".");
 }
 
+const jerarquia_niveles = (json_editar) => {
+    return ['id_nivel_4', 'id_nivel_3', 'id_nivel_2', 'id_nivel_1']
+        .map(n => json_editar[n])
+        .filter(n => n !== null && n !== undefined)
+        .concat([null, null, null, null])
+        .slice(0, 4);
+}
+
 // Función para cargar opciones a un select específico
 async function cargar_opciones_select(selector, url, tipo, datos = {}) {
     const respuesta = await realizar_peticion_ajax(url, tipo, datos);
@@ -243,12 +251,9 @@ async function gestionar_jerarquia(json_editar = []) {
             });
 
         }, willOpen: async () => {
-            // Inicialización de Select2 o cualquier otro plugin para mejorar los selectores
-            $('.select2_swal').select2({
-                placeholder: "Selecciona una opción",
-                allowClear: true,
-                width: '100%',
-            });
+
+            $("#id_direccion").val(json_editar.id_direccion);
+            $("#id_programa").val(json_editar.id_programa);
 
             $('[name="id_sesion"]').on('change', (e) => {
                 const id_sesion = $(e.currentTarget).val();
@@ -286,13 +291,32 @@ async function gestionar_jerarquia(json_editar = []) {
 
             // Configuración inicial en caso de edición
             if (id_punto_editar) {
+                ([id_punto, id_seccion, id_carpeta, id_subcarpeta] = jerarquia_niveles(json_editar));
 
-                $('[name="id_sesion"]').val(json_editar.id_sesion).trigger('change');
+                if(json_editar.id_sesion){
+                    $('[name="id_sesion"]').val(json_editar.id_sesion);
+                    cargar_opciones_puntos('[name="id_punto"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: json_editar.id_sesion, excluir: id_punto_editar ?? null }, id_punto);
+                }else{
+                    $('[name="id_punto"]').empty().append('<option value="">Selecciona una opción</option>');
+                }
 
-                $('[name="id_punto"]').val(json_editar.id_nivel_1)
-                $('[name="id_seccion"]').val(json_editar.id_seccion).trigger('change');
-                $('[name="id_carpeta"]').val(json_editar.id_nivel_3).trigger('change');
-                $('[name="id_subcarpeta"]').val(json_editar.id_nivel_4).trigger('change');
+                if(id_punto){
+                    cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_punto }, id_seccion);
+                }else{
+                    $('[name="id_seccion"]').empty().append('<option value="">Selecciona una opción</option>');
+                }
+
+                if(id_seccion){
+                    cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_seccion }, id_carpeta);
+                }else{
+                    $('[name="id_carpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+                }
+
+                if(id_carpeta){
+                    cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_carpeta }, id_subcarpeta);
+                }else{
+                    $('[name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
+                }
 
                 //No dinamicos
                 $('[name="jerarquia"]').val(json_editar.jerarquia);
@@ -300,6 +324,13 @@ async function gestionar_jerarquia(json_editar = []) {
                 $('[name="observaciones"]').val(json_editar.observaciones);
                 $('[name="presupuesto_autorizado"]').val(json_editar.presupuesto_autorizado);
             }
+
+            // Inicialización de Select2 o cualquier otro plugin para mejorar los selectores
+            $('.select2_swal').select2({
+                placeholder: "Selecciona una opción",
+                allowClear: true,
+                width: '100%',
+            });
         },
     }).then((result) => {
         if (result.isConfirmed && result.value) {

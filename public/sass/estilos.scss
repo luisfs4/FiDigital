@@ -780,6 +780,7 @@ li {
 
 
 /* Parsley validations */
+div.parsley-error,
 input.parsley-success,
 select.parsley-success,
 textarea.parsley-success,
@@ -796,6 +797,7 @@ textarea.parsley-success,
     }
 }
 
+div.parsley-error,
 input.parsley-error,
 select.parsley-error,
 textarea.parsley-error,

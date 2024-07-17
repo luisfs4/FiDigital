@@ -1,5 +1,13 @@
 let botonnn;
 
+const formatear_fecha = (fecha_original) => {
+    const fecha = new Date(fecha_original);
+    const horas = fecha.getHours();
+    const periodo = horas >= 12 ? 'PM' : 'AM';
+    const horas_12 = horas % 12 || 12;
+    return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')} ${String(horas_12).padStart(2, '0')}:${String(fecha.getMinutes()).padStart(2, '0')} ${periodo}`;
+};
+
 const generar_html_punto = (punto) => {
 
     return `
@@ -27,11 +35,48 @@ const generar_html_punto = (punto) => {
 
 }
 
+const generar_html_expediente = (expediente) => {
+
+    return `
+        <li class="list-group-item border-0 p-0 my-2">
+            <div class="row">
+                <div class="col-lg-12 d-flex justify-content-between pe-0">
+                    <div class="">
+                        <i class="fas fa-archive me-2" aria-hidden="true"></i>
+                        <span>
+                            Expediente ${expediente.id_expediente}
+                        </span>
+                        <br>
+                        <i class="far fa-calendar-alt me-2"></i>
+                        <span>
+                            ${formatear_fecha(expediente.created_at)}
+                        </span>
+                        <br>
+                        <i class="fas fa-receipt me-2"></i>
+                        <span>
+                            Pagado: ${expediente.monto_pagado ?? 0}
+                        </span>
+                    </div>
+                    <div class="d-flex jsutify-content-end align-items-center">
+                        <a class="btn px-3 py-2 bg-gradient-secondary" 
+                            href="/FiDigital/panel/sesiones/expedientes/${expediente.id_expediente}/detalle">
+                            <i class="fas fa-link"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </li>
+    `;
+
+}
+
 const card_expediente = async (id_expediente) => {
     let expediente = await $.ajax({
         url: "/FiDigital/panel/sesiones/expedientes/get_by_ajax",
         data: {
-            id_expediente
+            id_expediente,
+            expedientes_relacionados: 1
         },
         dataType: "JSON",
         type: "POST",
@@ -59,7 +104,9 @@ const card_expediente = async (id_expediente) => {
     $card_expediente.empty();
 
     const puntos = JSON.parse(expediente.puntos);
+    const relacionados = JSON.parse(expediente.expedientes_relacionados);
     const html_puntos = puntos ? puntos.map((element) => generar_html_punto(element)).join("") : "";
+    const html_relacionados = relacionados ? relacionados.map(generar_html_expediente).join("") : "";
 
     const li_puntos = puntos ?
         `<li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
@@ -81,6 +128,28 @@ const card_expediente = async (id_expediente) => {
           </div>
       </li>` :
         "";
+
+    const li_relacionados = relacionados ? `
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
+
+            <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_realcion_expediente" aria-expanded="false" aria-controls="collapse_realcion_expediente">
+                Expedientes relacionados
+                <div class="collapse-close badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
+                    <i class="fa fa-plus text-xs" aria-hidden="true"></i>
+                </div>
+                <div class="collapse-open badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
+                    <i class="fa fa-minus text-xs" aria-hidden="true"></i>
+                </div>
+            </button>
+
+            <div class="collapse p-3 w-100" id="collapse_realcion_expediente">
+                <div class="card card-body">
+                    <ul class="list-group border-0">
+                        ${html_relacionados ?? 'Sin expedientes relacionados'}
+                    </ul>
+                </div>
+            </div>
+        </li>` : "";
 
     const card_body = `
       <div class="card-header pb-0 text-left">
@@ -128,7 +197,7 @@ const card_expediente = async (id_expediente) => {
                         <i class="fas fa-hand-holding-usd text-xs me-1" aria-hidden="true"></i> Monto total pagado
                     </p>
                     <p>
-                        ${expediente.monto_pagado ? formatoMoneda(expediente.monto_pagado) ? 'No disponible'}
+                        ${expediente.monto_pagado ? formatoMoneda(expediente.monto_pagado) : 'No disponible'}
                     </p>
                 </div>
                 <div class="col-lg-6">
@@ -166,24 +235,7 @@ const card_expediente = async (id_expediente) => {
                     </div>
                 </li>
                
-                <li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
-
-                    <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_expendiente_pagos_expediente" aria-expanded="false" aria-controls="collapse_expendiente_pagos_expediente">
-                        Expedientes relacionados
-                        <div class="collapse-close badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
-                            <i class="fa fa-plus text-xs" aria-hidden="true"></i>
-                        </div>
-                        <div class="collapse-open badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
-                            <i class="fa fa-minus text-xs" aria-hidden="true"></i>
-                        </div>
-                    </button>
-
-                    <div class="collapse p-3 w-100" id="collapse_expendiente_pagos_expediente">
-                        <div class="card card-body">
-                            ${html_relacionados ?? 'Sin expedientes relacionadoss'}
-                        </div>
-                    </div>
-                </li>
+                ${li_relacionados}
                 
             </ul>
 

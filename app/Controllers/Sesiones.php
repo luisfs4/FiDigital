@@ -105,7 +105,7 @@ class Sesiones extends BaseController
 			"ruta" => "Listado de sesiones",
 			"direcciones" => $this->get_direcciones([]),
 			"programas" => $this->get_programas([]),
-			"proveedores" => $this->get_proveedores([]),
+			"proveedores" => $this->get_proveedores(["activo" => 1]),
 			"sesiones" => $this->get_sesiones([]),
 			"puntos" => $this->get_puntos([]),
 			"scripts" => [
@@ -137,7 +137,7 @@ class Sesiones extends BaseController
 			]
 		];
 
-		$sesiones = $this->SesionModel->get_expedientes(["id_expediente" => $id_expediente]);
+		$sesiones = $this->SesionModel->get_expedientes(["id_expediente" => $id_expediente, "expedientes_relacionados" => 1]);
 
 		if (!empty($sesiones)) {
 			$data_view["expediente"] = $sesiones[0];
@@ -206,6 +206,10 @@ class Sesiones extends BaseController
 		return $this->sendAjaxResponse($this->request->getPost(), "get_seguimiento");
 	}
 
+	public function cambiar_estatus_proveedor(){
+		return $this->sendAjaxResponse($this->request->getPost(), "cambiar_estatus_proveedor");
+	}
+
 	public function post_proveedor()
 	{
 		$archivos = []; // Para almacenar información de archivos
@@ -216,14 +220,7 @@ class Sesiones extends BaseController
 		foreach ($nombresArchivos as $nombreArchivo) {
 			$archivo = $this->request->getFile($nombreArchivo);
 			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
-				// Aquí podrías mover el archivo y guardar la ruta en $archivos
-				$nuevoNombre = $archivo->getRandomName();
-				// Asegúrate de tener definida la ruta base y que tenga los permisos adecuados
-				$rutaBase = FCPATH . "documentos/proveedores/";
-				$archivo->move($rutaBase, $nuevoNombre);
-
-				// Guardar la ruta del archivo para pasarla al modelo
-				$archivos[$nombreArchivo] = $rutaBase . $nuevoNombre;
+				$archivos[$nombreArchivo] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores");
 			}
 		}
 
@@ -245,12 +242,45 @@ class Sesiones extends BaseController
 
 	public function post_sesion()
 	{
-		return $this->sendAjaxResponse($this->request->getPost(), "post_sesion");
+		$archivos = [];
+			// Asumiendo que tienes campos de archivo en tu formulario
+		$archivo = $this->request->getFile("acta_comite");
+		if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+			$archivos["acta_comite"] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "sesiones");
+		}
+		return $this->sendAjaxResponse(array_merge($this->request->getPost(), ["archivos" => $archivos]), "post_sesion");
 	}
 
 	public function post_expediente()
 	{
-		return $this->sendAjaxResponse($this->request->getPost(), "post_expediente");
+		// return json_encode($this->request->getPost());
+
+		$archivos = []; // Para almacenar información de archivos
+
+		// Asumiendo que tienes campos de archivo en tu formulario
+		$nombres_expediente = [
+			"ruta_cfdi", "ruta_verificacion", "ruta_contrato", "ruta_recepcion", "ruta_testigo", 
+			"ruta_caratula", "ruta_carta_instruccion",
+		];
+		foreach ($nombres_expediente as $nombre) {
+			$archivo = $this->request->getFile($nombre);
+			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "expedientes");
+			}
+		}
+
+		$nombres_proveedor = [
+			"opinion_cumplimiento",
+			"estado_cuenta_bancario",
+		];
+		foreach ($nombres_proveedor as $nombre) {
+			$archivo = $this->request->getFile($nombre);
+			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
+				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores");
+			}
+		}
+
+		return $this->sendAjaxResponse(array_merge($this->request->getPost(), ["archivos" => $archivos]), "post_expediente");
 	}
 
 	public function post_punto()

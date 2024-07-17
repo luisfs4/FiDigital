@@ -169,7 +169,7 @@
 												<label for="monto_pagado" class="form-label">Monto pagado *</label>
 												<input type="number" id="monto_pagado"
 													class="form-control input_expediente" placeholder="0"
-													name="monto_pagado" min="0" max="999999999" step="0.01" required>
+													name="monto_pagado" min="0" max="999999999" step="0.01">
 											</div>
 										</div>
 
@@ -177,15 +177,15 @@
 											<div class="form-group">
 												<label for="monto_restante" class="form-label">Presupuesto restante</label>
 												<input type="number" id="monto_restante" class="form-control" 
-														placeholder="0" min="0" max="999999999" disabled>
+														placeholder="0" min="0" max="999999999" step="0.01" disabled>
 											</div>
 										</div>
 
 										<div class="col-xxl-2 col-lg-4 col-sm-12">
 											<div class="form-group">
-												<label for="" class="form-label">Fecha de pago</label>
+												<label for="" class="form-label">Fecha de carta</label>
 												<input type="date" class="form-control input_expediente"
-													name="fecha_pago" required>
+													name="fecha_pago">
 											</div>
 										</div>
 
@@ -242,77 +242,132 @@
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_cfdi" class="form-label">CFDI</label>
-												<input type="hidden" class="input_expediente" name="ruta_cfdi">
+												<div class="d-flex justify-content-between flex-wrap">
+													<label for="ruta_cfdi" class="form-label">CFDI</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_cfdi" name="na_cfdi" 
+																data-on="disabled" data-off="" data-target="#ruta_cfdi">
+														<label class="form-check-label" for="na_cfdi">
+															NA
+														</label>
+													</div>
+												</div>
 												<input id="ruta_cfdi" type="file" 
-														class="form-control input_expediente_ruta filepond"
-														data-max-file-size="5MB" data-max-files="1">
+														class="form-control input_expediente filepond"
+														data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_verificacion" class="form-label">Verificación</label>
-												<input type="hidden" class="input_expediente" name="ruta_verificacion">
+												<div class="d-flex justify-content-between flex-wrap">
+													<label for="ruta_verificacion" class="form-label">Verificación</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_verificacion" 
+																name="na_verificacion" data-on="disabled" data-off="" 
+																data-target="#ruta_verificacion">
+														<label class="form-check-label" for="na_verificacion">
+															NA
+														</label>
+													</div>
+												</div>
 												<input id="ruta_verificacion" type="file"
-														class="form-control input_expediente_ruta filepond" 
-														data-max-file-size="5MB" data-max-files="1">
+														class="form-control input_expediente filepond" 
+														data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label for="ruta_edo_cuenta" class="form-label">Estado de cuenta</label>
-												<input type="hidden" class="input_expediente" name="ruta_edo_cuenta">
-												<input id="ruta_edo_cuenta" type="file"
-													class="form-control input_expediente_ruta filepond"
-													data-max-file-size="5MB" data-max-files="1">
-											</div>
-										</div>
-
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
-												<label class="form-label" for="ruta_opinion_cumplimiento">Opinion de cumplimiento</label>
-												<input type="hidden" class="input_expediente" name="ruta_opinion_cumplimiento">
-												<input id="ruta_opinion_cumplimiento" type="file" class="form-control input_expediente_ruta filepond"
-														data-max-file-size="5MB" data-max-files="1">
-											</div>
-										</div>
-
-										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
-												<label class="form-label">Contrato</label>
-												<input type="hidden" class="input_expediente" name="ruta_contrato">
-												<input type="file" id="ruta_contrato" class="form-control input_expediente_ruta filepond"
-													data-max-file-size="5MB" data-max-files="1"
+												<div class="d-flex justify-content-between flex-wrap">
+													<label class="form-label">Contrato</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_contrato" name="na_contrato" 
+																data-on="disabled" data-off="required" 
+																data-target="#ruta_contrato">
+														<label class="form-check-label" for="na_contrato">
+															NA
+														</label>
+													</div>
+												</div>
+												<input type="file" id="ruta_contrato" class="form-control input_expediente filepond"
+													data-max-files="1" data-parsley-errors-container="#ruta_contrato"
 													required>
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Recepción</label>
-												<input type="hidden" class="input_expediente" name="ruta_recepcion">
-												<input type="file" id="ruta_recepcion" class="form-control input_expediente_ruta filepond"
-													data-max-file-size="5MB" data-max-files="1">
+												<div class="d-flex justify-content-between flex-wrap">
+													<label class="form-label" for="ruta_recepcion">Recepción</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_recepcion" name="na_recepcion" 
+																data-on="disabled" data-off="" data-target="#ruta_recepcion">
+														<label class="form-check-label" for="na_recepcion">
+															NA
+														</label>
+													</div>
+												</div>
+												<input type="file" id="ruta_recepcion" class="form-control input_expediente filepond"
+													data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Testigo</label>
-												<input type="hidden" class="input_expediente" name="ruta_testigo">
-												<input type="file" id="ruta_testigo" class="form-control input_expediente_ruta filepond"
-													data-max-file-size="5MB" data-max-files="1">
+												<div class="d-flex justify-content-between flex-wrap">
+													<label class="form-label" for="ruta_testigo">Testigo</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_testigo" name="na_testigo" 
+																data-on="disabled" data-off="" data-target="#ruta_testigo">
+														<label class="form-check-label" for="na_testigo">
+															NA
+														</label>
+													</div>
+												</div>
+												<input type="file" id="ruta_testigo" class="form-control input_expediente filepond"
+													data-max-files="1">
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
 											<div class="form-group">
-												<label class="form-label">Caratula</label>
-												<input type="hidden" class="input_expediente" name="ruta_caratula">
-												<input type="file" id="ruta_caratula"  class="form-control input_expediente_ruta filepond"
-													data-max-file-size="5MB" data-max-files="1">
+												<div class="d-flex justify-content-between flex-wrap">
+													<label class="form-label" for="ruta_caratula">Caratula</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_caratula" name="na_caratula" 
+																data-on="disabled" data-off="" data-target="#ruta_caratula">
+														<label class="form-check-label" for="na_caratula">
+															NA
+														</label>
+													</div>
+												</div>
+												<input type="file" id="ruta_caratula"  class="form-control input_expediente filepond"
+													data-max-files="1">
+											</div>
+										</div>
+
+										<div class="col-xxl-4 col-lg-6 col-sm-12">
+											<div class="form-group">
+												<div class="d-flex justify-content-between flex-wrap">
+													<label class="form-label" for="ruta_carta_instruccion">Carta de instrucción</label>
+													<div class="form-check">
+														<input class="form-check-input input_expediente deshabilitar_inputs" 
+																type="checkbox" value="1" id="na_carta_instruccion" name="na_carta_instruccion" 
+																data-on="disabled" data-off="" data-target="#ruta_carta_instruccion">
+														<label class="form-check-label" for="na_carta_instruccion">
+															NA
+														</label>
+													</div>
+												</div>
+												<input type="file" id="ruta_carta_instruccion"  class="form-control input_expediente filepond"
+													data-max-files="1">
 											</div>
 										</div>
 
@@ -348,31 +403,31 @@
 												<select name="id_proveedor" id="id_proveedor"
 													class="form-control input_expediente" required>
 													<option value="">Selecciona una opción</option>
-													<?php
-													foreach ($proveedores as $key => $value) {
-														echo '<option value="' . $value->id_proveedor . '">' . $value->nombre . '</option>';
-													}
-													?>
+													<?php foreach($proveedores as $key => $value): ?>
+														<option value="<?=$value->id_proveedor?>" 
+															data-opinion_cumplimiento="<?= $value->opinion_cumplimiento ?? '' ?>"
+															data-estado_cuenta_bancario="<?= $value->estado_cuenta_bancario ?? '' ?>">
+															<?=$value->nombre?>
+														</option>
+													<?php endforeach ?>
 												</select>
 											</div>
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
+											<div class="form-group div_contenedor">
 												<label class="form-label">Opinión de cumplimiento</label>
-												<input type="hidden" class="input_expediente" name="ruta_opinion_cumplimiento">
-												<input type="file" class="form-control input_expediente_ruta filepond"
-													id="ruta_opinion_cumplimiento" data-max-file-size="5MB" data-max-files="1">
+												<input type="file" class="form-control input_expediente filepond"
+													id="opinion_cumplimiento" data-max-files="1">
 											</div>
 
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
+											<div class="form-group div_contenedor">
 												<label class="form-label">Estado de Cuenta</label>
-												<input type="hidden" class="input_expediente" name="ruta_estado_cuenta">
-												<input type="file" class="form-control input_expediente_ruta filepond"
-													id="ruta_estado_cuenta" data-max-file-size="5MB" data-max-files="1">
+												<input type="file" class="form-control input_expediente filepond"
+													id="estado_cuenta_bancario" data-max-files="1">
 											</div>
 
 										</div>
@@ -399,15 +454,12 @@
 
 <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
 <!-- Plugin: File Validate Type -->
-<script
-	src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
 <!-- Plugin: File Validate Size -->
-<script
-	src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.min.js"></script>
 <!-- Plugin: Image Preview (opcional si deseas previsualizaciones de imágenes) -->
 <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
-<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css"
-	rel="stylesheet">
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css" rel="stylesheet">
 
 <script>
 	let monto_autorizado_punto = 0;
@@ -423,7 +475,7 @@
 		// Configura FilePond
 		FilePond.setOptions({
 			labelIdle: 'Arrastra y suelta tu archivo o <span class="filepond--label-action">Examina</span>',
-			maxFileSize: '3MB',
+			// maxFileSize: '3MB',
 			maxFiles: 1,
 			acceptedFileTypes: ['image/*', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
 			fileValidateTypeDetectType: (source, type) => new Promise((resolve, reject) => {
