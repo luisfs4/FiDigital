@@ -708,18 +708,16 @@ const agregar_icono_pdf = (tag_id, url) => {
 
     if (div_padre.length > 0) {
         let archivo_elemento = div_padre.find(`a.archivo_${tag_id}`);
+        archivo_elemento.remove();
 
-        if (archivo_elemento.length === 0) {
+        if(url){
             archivo_elemento = `
-                <a class="archivo_${tag_id} badge bg-gradient-danger" target="_blank" href="${url ?? ''}">
+                <a class="archivo_${tag_id} badge bg-gradient-danger my-1" target="_blank" href="${url ?? ''}">
                     <i class="fas fa-file-pdf my-0 px-2 py-1"></i> 
                     Ver Archivo
                 </a>
             `;
             div_padre.append(archivo_elemento);
-        } else {
-            // Si el elemento ya existe, actualizamos su href
-            archivo_elemento.attr('href', url ?? '#');
         }
     }
 };

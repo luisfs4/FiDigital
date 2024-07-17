@@ -169,7 +169,7 @@
 												<label for="monto_pagado" class="form-label">Monto pagado *</label>
 												<input type="number" id="monto_pagado"
 													class="form-control input_expediente" placeholder="0"
-													name="monto_pagado" min="0" max="999999999" step="0.01" required>
+													name="monto_pagado" min="0" max="999999999" step="0.01">
 											</div>
 										</div>
 
@@ -185,7 +185,7 @@
 											<div class="form-group">
 												<label for="" class="form-label">Fecha de carta</label>
 												<input type="date" class="form-control input_expediente"
-													name="fecha_pago" required>
+													name="fecha_pago">
 											</div>
 										</div>
 
@@ -404,7 +404,9 @@
 													class="form-control input_expediente" required>
 													<option value="">Selecciona una opción</option>
 													<?php foreach($proveedores as $key => $value): ?>
-														<option value="<?=$value->id_proveedor?>">
+														<option value="<?=$value->id_proveedor?>" 
+															data-opinion_cumplimiento="<?= $value->opinion_cumplimiento ?? '' ?>"
+															data-estado_cuenta_bancario="<?= $value->estado_cuenta_bancario ?? '' ?>">
 															<?=$value->nombre?>
 														</option>
 													<?php endforeach ?>
@@ -413,7 +415,7 @@
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
+											<div class="form-group div_contenedor">
 												<label class="form-label">Opinión de cumplimiento</label>
 												<input type="file" class="form-control input_expediente filepond"
 													id="opinion_cumplimiento" data-max-files="1">
@@ -422,7 +424,7 @@
 										</div>
 
 										<div class="col-xxl-4 col-lg-6 col-sm-12">
-											<div class="form-group">
+											<div class="form-group div_contenedor">
 												<label class="form-label">Estado de Cuenta</label>
 												<input type="file" class="form-control input_expediente filepond"
 													id="estado_cuenta_bancario" data-max-files="1">

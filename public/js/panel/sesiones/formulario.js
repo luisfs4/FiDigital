@@ -292,3 +292,9 @@ $(document).on("click", ".deshabilitar_inputs", (ev)=>{
         }
     }
 });
+
+$(document).on("change", "#id_proveedor", (ev)=>{
+    const tag = $(ev.currentTarget).find(":selected");
+    agregar_icono_pdf("opinion_cumplimiento", tag.data("opinion_cumplimiento"));
+    agregar_icono_pdf("estado_cuenta_bancario", tag.data("estado_cuenta_bancario"));
+});

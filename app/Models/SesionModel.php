@@ -463,6 +463,56 @@ class SesionModel extends Model
 		}
 	}
 
+	private function nuevo_estatus_punto($id_punto){
+		$estatus = "Creado";
+
+		$cat_estatus = [
+			"1" => "Procesado",
+			"2" => "Pagado",
+			"3" => "Completado",
+		];
+
+		$expedientes = $this->db->table("expedientes");
+		$expedientes->select("id_punto");
+		$expedientes->select("MIN(id_estatus) AS menor_estatus");
+		$expedientes->where("id_punto", $id_punto);
+		$expedientes->groupBy("id_punto");
+		$result = $expedientes->get()->getRowObject();
+
+		if($result){ $estatus = $cat_estatus[$result->menor_estatus]; }
+		return $estatus;
+	}
+
+	private function nuevo_estatus_expediente($id_expediente): ?int {
+    $expediente = $this->db->table("expedientes")
+                           ->where("id_expediente", $id_expediente)
+                           ->get()
+                           ->getRowObject();
+    if (!$expediente) return null;
+
+    if (!$this->verificar_datos_pago($expediente)) return 1;
+
+    $nombre_archivos = ["cfdi", "verificacion", "contrato", "recepcion", "testigo", "caratula"];
+
+    foreach ($nombre_archivos as $nombre) {
+        if ($this->archivo_incompleto($expediente, $nombre)) {
+					return 2;
+				}
+    }
+
+    return 3;
+}
+
+private function verificar_datos_pago($expediente): bool {
+    return !is_null($expediente->monto_pagado) && 
+           !is_null($expediente->fecha_pago) && 
+           ($expediente->na_carta_instruccion === "1" || !empty($expediente->ruta_carta_instruccion));
+}
+
+private function archivo_incompleto($expediente, string $nombre): bool {
+    return $expediente->{"na_$nombre"} !== "1" && empty($expediente->{"ruta_$nombre"});
+}
+
 	public function post_expediente($data)
 	{
 		try {
@@ -556,6 +606,21 @@ class SesionModel extends Model
 				if(!$sesiones->update()){
 					throw new \Exception('No se pudieron insertar los archivos del proveedor.');
 				} 
+			}
+
+			$id_estatus = $this->nuevo_estatus_expediente($id_expediente);
+			$sesiones->where("id_expediente", $id_expediente);
+			$sesiones->set("id_estatus", $id_estatus);
+			if(!$sesiones->update()){
+				throw new \Exception("No se pudo actualizar el estatus del expediente.");
+			}
+
+			$estatus_punto = $this->nuevo_estatus_punto($expediente->id_punto);
+			$puntos = $this->db->table("puntos");
+			$puntos->where("id_puunto", $expediente->id_punto);
+			$puntos->set("estatus", $estatus_punto);
+			if(!$puntos->update()){
+				throw new \Exception("No se pudo actualizar el estatus del punto.");
 			}
 
 			$proveedores = $this->db->table("proveedores");
