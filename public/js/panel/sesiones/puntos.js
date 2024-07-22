@@ -146,7 +146,7 @@ async function gestionar_jerarquia(json_editar = []) {
                     </label>
                     <select required class="input_punto form-select" id="id_direccion" name="id_direccion">
                         <option value="">Selecciona una opción</option>
-                        ${ direcciones.map(d => `<option value="${d.id_direccion}">${d.direccion}</option>`).join("\n") }
+                        ${direcciones.map(d => `<option value="${d.id_direccion}">${d.direccion}</option>`).join("\n")}
                     </select>
                 </div>
             </div>
@@ -158,7 +158,7 @@ async function gestionar_jerarquia(json_editar = []) {
                     </label>
                     <select class="input_punto form-select" id="id_programa" name="id_programa">
                         <option value="">Selecciona una opción</option>
-                        ${ programas.map(p => `<option value="${p.id_programa}">${p.programa}</option>`).join("\n") }
+                        ${programas.map(p => `<option value="${p.id_programa}">${p.programa}</option>`).join("\n")}
                     </select>
                 </div>
             </div>
@@ -230,11 +230,11 @@ async function gestionar_jerarquia(json_editar = []) {
                 id_sesion: id_sesion,
                 jerarquia: jerarquia,
                 presupuesto_autorizado: presupuesto_autorizado,
-                nombre_punto: $('.input_punto[name="nombre_punto"]').val(),
+                nombre_punto: $('.input_punto[name="nombre_punto"]').val().trim(),
                 padre_id,
                 observaciones: $('.input_punto[name="observaciones"]').val().trim(),
-                id_programa: $('.input_punto[name="id_programa"]').val().trim(),
-                id_direccion: $('.input_punto[name="id_direccion"]').val().trim(),
+                id_programa: $('.input_punto[name="id_programa"]').val(),
+                id_direccion: $('.input_punto[name="id_direccion"]').val(),
             }
 
             if (id_punto_editar) {
@@ -293,28 +293,28 @@ async function gestionar_jerarquia(json_editar = []) {
             if (id_punto_editar) {
                 ([id_punto, id_seccion, id_carpeta, id_subcarpeta] = jerarquia_niveles(json_editar));
 
-                if(json_editar.id_sesion){
+                if (json_editar.id_sesion) {
                     $('[name="id_sesion"]').val(json_editar.id_sesion);
                     cargar_opciones_puntos('[name="id_punto"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { id_sesion: json_editar.id_sesion, excluir: id_punto_editar ?? null }, id_punto);
-                }else{
+                } else {
                     $('[name="id_punto"]').empty().append('<option value="">Selecciona una opción</option>');
                 }
 
-                if(id_punto){
+                if (id_punto) {
                     cargar_opciones_puntos('[name="id_seccion"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_punto }, id_seccion);
-                }else{
+                } else {
                     $('[name="id_seccion"]').empty().append('<option value="">Selecciona una opción</option>');
                 }
 
-                if(id_seccion){
+                if (id_seccion) {
                     cargar_opciones_puntos('[name="id_carpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_seccion }, id_carpeta);
-                }else{
+                } else {
                     $('[name="id_carpeta"]').empty().append('<option value="">Selecciona una opción</option>');
                 }
 
-                if(id_carpeta){
+                if (id_carpeta) {
                     cargar_opciones_puntos('[name="id_subcarpeta"]', '/FiDigital/panel/sesiones/puntos/get_by_ajax', { padre_id: id_carpeta }, id_subcarpeta);
-                }else{
+                } else {
                     $('[name="id_subcarpeta"]').empty().append('<option value="">Selecciona una opción</option>');
                 }
 
@@ -624,11 +624,11 @@ $(() => {
         gestionar_jerarquia();
     })
 
-    $(document).on("change", "#id_direccion", (ev)=>{
+    $(document).on("change", "#id_direccion", (ev) => {
         console.log(ev);
         const id_direccion = $(ev.currentTarget).val();
         const opciones = programas.filter(p => p.id_direccion == id_direccion)
-                .map(p => `<option value="${p.id_programa}">${p.programa}</option>`);
+            .map(p => `<option value="${p.id_programa}">${p.programa}</option>`);
 
         $("#id_programa").html(`<option value="">Selecciona una opción</option>`).append(opciones);
     });
