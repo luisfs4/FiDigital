@@ -233,8 +233,8 @@ async function gestionar_jerarquia(json_editar = []) {
                 nombre_punto: $('.input_punto[name="nombre_punto"]').val(),
                 padre_id,
                 observaciones: $('.input_punto[name="observaciones"]').val().trim(),
-                id_programa: $('.input_punto[name="id_programa"]').val().trim(),
-                id_direccion: $('.input_punto[name="id_direccion"]').val().trim(),
+                id_programa: $('.input_punto[name="id_programa"]').val(),
+                id_direccion: $('.input_punto[name="id_direccion"]').val(),
             }
 
             if (id_punto_editar) {
