@@ -214,15 +214,15 @@ async function gestionar_jerarquia(json_editar = []) {
             let id_subcarpeta = $('.input_punto[name="id_subcarpeta"]').val().trim()
             let presupuesto_autorizado = $('.input_punto[name="presupuesto_autorizado"]').val().trim()
 
-            if (id_seccion) {
+            if (id_seccion && id_seccion !== id_punto_editar) {
                 padre_id = id_seccion;
             }
 
-            if (id_carpeta) {
+            if (id_carpeta && id_carpeta !== id_punto_editar) {
                 padre_id = id_carpeta;
             }
 
-            if (id_subcarpeta) {
+            if (id_subcarpeta && id_subcarpeta !== id_punto_editar) {
                 padre_id = id_subcarpeta;
             }
 
