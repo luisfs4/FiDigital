@@ -63,8 +63,6 @@ class Sesiones extends BaseController
 				["src" => base_url("public/js/panel/sesiones/puntos.js?v=" . time())]
 			],
 			
-			"programas" 	=> $this->get_programas([]),
-			"direcciones" => $this->get_direcciones([]),
 		];
 		// Imprimir vista
 		$this->renderView(["panel/sesiones/listado"], $data_view);
@@ -311,6 +309,14 @@ class Sesiones extends BaseController
 	public function get_programas($data_filtros)
 	{
 		return $this->sendResponse($data_filtros, "get_programas");
+	}
+
+	public function cat_programas(){
+		return $this->sendAjaxResponse($this->request->getGet(), "get_programas");
+	}
+
+	public function cat_direcciones(){
+		return $this->sendAjaxResponse($this->request->getGet(), "get_direcciones");
 	}
 
 	public function get_numero_sesiones($data_filtros)

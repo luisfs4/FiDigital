@@ -276,6 +276,10 @@ class SesionModel extends Model
 			$consulta->where('id_direccion', $data_filtros['id_direccion']);
 		}
 
+		if(isset($data_filtros["activo"])){
+			$consulta->where('cd.activo', $data_filtros["activo"]);
+		}
+
 		return $consulta->get()->getResultObject();
 	}
 
@@ -290,7 +294,7 @@ class SesionModel extends Model
 			->join("cat_estatus ce", "p.id_estatus = ce.id_estatus", "inner")
 			->join($subconsultaSQL, "p.id_proveedor = exp.id_proveedor", "left"); // Unir con la subconsulta
 
-		if(!empty($data_filtros["activo"])){
+		if(isset($data_filtros["activo"])){
 			$consulta->where('p.activo', $data_filtros["activo"]);
 		}
 
@@ -311,6 +315,14 @@ class SesionModel extends Model
 		//Búsqueda
 		if (!empty($data_filtros['id_programa'])) {
 			$consulta->where('id_programa', $data_filtros['id_programa']);
+		}
+
+		if(!empty($data_filtros["id_direccion"])){
+			$consulta->where('cp.id_direccion', $data_filtros["id_direccion"]);
+		}
+
+		if(isset($data_filtros["activo"])){
+			$consulta->where('cp.activo', $data_filtros["activo"]);
 		}
 
 		return $consulta->get()->getResultObject();
