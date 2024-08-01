@@ -63,6 +63,7 @@ async function gestionar_jerarquia(json_editar = []) {
     let texto_success = id_punto_editar ? 'El punto se guardó con éxito' : 'El punto se añadió con éxito';
 
     let opciones_sesion = await cargar_opciones('/FiDigital/panel/sesiones/get_by_ajax');
+    const direcciones = await $.get('/FiDigital/panel/cat_direcciones', {activo: 1});
 
     Swal.fire({
         title: titulo,
@@ -158,7 +159,6 @@ async function gestionar_jerarquia(json_editar = []) {
                     </label>
                     <select class="input_punto form-select" id="id_programa" name="id_programa">
                         <option value="">Selecciona una opción</option>
-                        ${programas.map(p => `<option value="${p.id_programa}">${p.programa}</option>`).join("\n")}
                     </select>
                 </div>
             </div>
@@ -624,11 +624,15 @@ $(() => {
         gestionar_jerarquia();
     })
 
-    $(document).on("change", "#id_direccion", (ev) => {
+    $(document).on("change", "#id_direccion", async (ev)=>{
         console.log(ev);
         const id_direccion = $(ev.currentTarget).val();
-        const opciones = programas.filter(p => p.id_direccion == id_direccion)
-            .map(p => `<option value="${p.id_programa}">${p.programa}</option>`);
+
+        const programas = await $.get("/FiDigital/panel/cat_programas", {activo: 1, id_direccion: id_direccion});
+
+        const opciones = programas.map(p => 
+            `<option value="${p.id_programa}">${p.programa}</option>`
+        );
 
         $("#id_programa").html(`<option value="">Selecciona una opción</option>`).append(opciones);
     });

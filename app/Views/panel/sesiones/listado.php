@@ -259,8 +259,4 @@
         });
 
     });
-
-    
-	const programas     = <?= json_encode($programas    ?? []) ?>;
-	const direcciones   = <?= json_encode($direcciones  ?? []) ?>;
 </script>

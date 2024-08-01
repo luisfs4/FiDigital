@@ -152,6 +152,9 @@ $routes->group('panel', ['filter' => 'Session_exist'], static function ($routes)
 		$routes->post('post_disable_by_ajax', 'Usuario::post_disable_by_ajax');
 		$routes->post('post_enable_by_ajax', 'Usuario::post_enable_by_ajax');
 	});
+
+	$routes->get("cat_programas", 	"Sesiones::cat_programas");
+	$routes->get("cat_direcciones", "Sesiones::cat_direcciones");
 });
 
 //Usuarios
