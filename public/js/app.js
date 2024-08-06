@@ -761,7 +761,7 @@ const cargarDatosProveedor = (proveedor_id) => {
                     // FilePond.find(document.querySelector('#poder_representante_legal')).addFile(proveedor.poder_representante_legal);
                 }
             }
-            if (proveedor.es_agente_capacitador) {
+            if (String(proveedor.es_agente_capacitador) !== "0") {
                 $('#es_agente_capacitador').prop('checked', true).trigger('change');
                 if (proveedor.solicitud_registro) {
                     agregar_icono_pdf('solicitud_registro', proveedor.solicitud_registro);

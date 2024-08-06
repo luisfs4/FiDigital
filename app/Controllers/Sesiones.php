@@ -218,7 +218,7 @@ class Sesiones extends BaseController
 		foreach ($nombresArchivos as $nombreArchivo) {
 			$archivo = $this->request->getFile($nombreArchivo);
 			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
-				$archivos[$nombreArchivo] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores");
+				$archivos[$nombreArchivo] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores", $nombreArchivo);
 			}
 		}
 
@@ -263,7 +263,7 @@ class Sesiones extends BaseController
 		foreach ($nombres_expediente as $nombre) {
 			$archivo = $this->request->getFile($nombre);
 			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
-				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "expedientes");
+				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "expedientes", $nombre);
 			}
 		}
 
@@ -274,7 +274,7 @@ class Sesiones extends BaseController
 		foreach ($nombres_proveedor as $nombre) {
 			$archivo = $this->request->getFile($nombre);
 			if (isset($archivo) && $archivo->isValid() && !$archivo->hasMoved()) {
-				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores");
+				$archivos[$nombre] = "/FiDigital/" . subir_archivo(date("Ymd"), $archivo, "proveedores", $nombre);
 			}
 		}
 

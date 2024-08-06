@@ -14,7 +14,7 @@ function replace_accents($str)
  * @param string $carpeta nombre de la carpeta donde se va a guardar
  * @param $file archivo que se va subir
  */
-function subir_archivo($key, $file, $carpeta)
+function subir_archivo($key, $file, $carpeta, $nombre = null)
 {
     helper('security');
 
@@ -22,7 +22,7 @@ function subir_archivo($key, $file, $carpeta)
     //var_dump($file);exit();
     if ($file != null) {
         if (file_exists($file)) { //Si suben pdf
-            $filename = date("Ymdhis") . "." . $file->getExtension();
+            $filename = ($nombre ? strval($nombre)."_" : "") . date("Ymdhis") . "." . $file->getExtension();
             $filename =  sanitize_filename($filename);
             $carpeta = "public/documentos/$carpeta/$key/";
 
