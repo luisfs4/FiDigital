@@ -108,7 +108,7 @@
 											<div class="form-group">
 												<label class="form-control-label">Sesión:</label>
 												<select name="id_sesion"
-													class="input_punto form-control input-lg p-2 select_sesion input_sesion input_expediente"
+													class="input_punto form-control input-lg p-2 select_sesion input_sesion input_expediente select2_init"
 													required>
 													<option value="">Selecciona una opción</option>
 												</select>
@@ -119,7 +119,7 @@
 												<label class="form-control-label"><i class="far fa-calendar-alt"></i>
 													Punto:</label>
 												<select name="id_punto"
-													class="input_punto select_punto id_punto form-control input-lg p-2 input_expediente"
+													class="input_punto select_punto id_punto form-control input-lg p-2 input_expediente select2_init"
 													required>
 												</select>
 											</div>
@@ -401,7 +401,7 @@
 											<div class="form-group">
 												<label for="id_proveedor" class="form-label">Proveedor</label>
 												<select name="id_proveedor" id="id_proveedor"
-													class="form-control input_expediente" required>
+													class="form-control input_expediente select2_init" required>
 													<option value="">Selecciona una opción</option>
 													<?php foreach($proveedores as $key => $value): ?>
 														<option value="<?=$value->id_proveedor?>" 

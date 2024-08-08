@@ -404,6 +404,8 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros, value=n
             url,
             type: 'POST',
             data: parametros,
+            beforeSend: () => { $('.multisteps-form__panel.js-active').addClass("is-loading") },
+            complete: () => { $('.multisteps-form__panel.js-active').removeClass("is-loading") }
         });
 
         if (respuesta && respuesta.length > 0) {

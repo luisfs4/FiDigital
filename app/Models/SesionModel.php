@@ -629,7 +629,7 @@ private function archivo_incompleto($expediente, string $nombre): bool {
 
 			$estatus_punto = $this->nuevo_estatus_punto($expediente->id_punto);
 			$puntos = $this->db->table("puntos");
-			$puntos->where("id_puunto", $expediente->id_punto);
+			$puntos->where("id_punto", $expediente->id_punto);
 			$puntos->set("estatus", $estatus_punto);
 			if(!$puntos->update()){
 				throw new \Exception("No se pudo actualizar el estatus del punto.");
@@ -680,15 +680,14 @@ private function archivo_incompleto($expediente, string $nombre): bool {
 				}
 			}
 
-			if(ENVIRONMENT == 'development'){
-				return json_encode([
+			match(ENVIRONMENT) {
+				'development' => json_encode([
 					"message" => $th->getMessage(),
 					"trace" => $th->getTraceAsString(),
 					"sql" => $this->db->showLastQuery(),
-				]);
-			} else {
-				return false;
-			}
+				]),
+				default => false
+			};
 		}
 		
 	}
