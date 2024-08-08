@@ -258,7 +258,8 @@ $(document).ready(async () => {
                     options_sesion += `<option numero_sesion="${sesion.numero_sesion}" value="${sesion.id_sesion}">${sesion.numero_sesion}.- ${sesion.nombre_sesion}</option>`;
                 });
 
-                $('.input_sesion').append(options_sesion).trigger("change");
+                $('.input_sesion').append(options_sesion);
+                // $('.input_sesion').trigger("change");
             }
         }
     }); // Fin ajax
