@@ -71,6 +71,107 @@ const generar_html_expediente = (expediente) => {
 
 }
 
+const render_li_archivos = (expediente) => {
+    const archivos_expediente = {
+        "ruta_cfdi": "CFDI",
+        "ruta_verificacion": "Verificación",
+        "ruta_edo_cuenta": "Estado de cuenta",
+        "ruta_opinion_cumplimiento": "Opinión de cumplimiento",
+        "ruta_contrato": "Contrato",
+        "ruta_recepcion": "Recepción",
+        "ruta_testigo": "Testigo",
+        "ruta_carta_instruccion": "Carta de instrucción",
+        "ruta_caratula": "Carátula",
+    };
+    const lista_archivos_expediente = Object.keys(archivos_expediente)
+        .filter((archivo) => expediente[archivo])
+        .map(archivo => `
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-12 d-flex align-items-center pe-0 gap-2">
+                        <a class="btn px-3 py-2 my-0 bg-gradient-primary" 
+                                href="${expediente[archivo]}">
+                            <i class="fas fa-file-alt m-auto" aria-hidden="true"></i>
+                        </a>
+                        <span class="my-auto">
+                            ${archivos_expediente[archivo]}
+                        </span>
+                    </div>
+                </div>
+            </li>
+        `) || ['<li class="list-group-item">Sin archivos relacionados</li>'];
+
+    const archivos_proveedor = {
+        "acta_constitutiva": "Acta constitutiva",
+        "boleta_registro": "Boleta de registro",
+        "poder_representante_legal": "Poder representante legal",
+        "solicitud_registro": "Solicitud de registro",
+        "curriculum_empresarial": "Curriculum empresarial",
+        "identificacion_oficial": "Identificacion oficial",
+        "comprobante_domicilio": "Comprobante de domicilio",
+        "constancia_situacion_fiscal": "Constancia de situacion fiscal",
+        "opinion_cumplimiento": "Opinion de cumplimiento",
+        "estado_cuenta_bancario": "Estado de cuenta bancario",
+        "documento_datos_contacto": "Documento de datos de contacto",
+    }
+    const lista_archivos_proveedor = Object.keys(archivos_proveedor)
+        .filter((archivo) => expediente[archivo])
+        .map(archivo => `
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-12 d-flex align-items-center pe-0 gap-2">
+                        <a class="btn px-3 py-2 my-0 bg-gradient-primary" 
+                                href="${expediente[archivo]}">
+                            <i class="fas fa-file-alt m-auto" aria-hidden="true"></i>
+                        </a>
+                        <span class="my-auto">
+                            ${archivos_proveedor[archivo]}
+                        </span>
+                    </div>
+                </div>
+            </li>
+        `) || ['<li class="list-group-item">Sin archivos relacionados</li>'];
+
+    return `
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
+            <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#collapse_archivos" aria-expanded="false" 
+                    aria-controls="collapse_archivos">
+                Archivos
+                <div class="collapse-close badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
+                    <i class="fa fa-plus text-xs" aria-hidden="true"></i>
+                </div>
+                <div class="collapse-open badge badge-primary badge-pill pt-1 position-absolute end-0 me-3">
+                    <i class="fa fa-minus text-xs" aria-hidden="true"></i>
+                </div>
+            </button>
+
+            <div class="collapse p-3 w-100" id="collapse_archivos">
+                <h4 class="text-center">Archivos del expediente</h4>
+                <ul class="list-group list-group-flush border-0 gap-2 mb-3">
+                    ${lista_archivos_expediente.join("")}
+                </ul>
+
+                <h4 class="text-center">Archivos del proveedor</h4>
+                <ul class="list-group list-group-flush border-0 gap-2">
+                    ${lista_archivos_proveedor.join("")}
+                </ul>
+            </div>
+        </li>
+    `;
+}
+
+const render_li_datos_generales = (expediente) => {
+    return `
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-column accordion p-0">
+            <button class="collapsed accordion-button" type="button" data-bs-toggle="collapse"
+                <ul class="list-group list-group-flush border-0 gap-2">
+                    ${lista_archivos}
+                </ul>
+            </div>
+        </li>`
+}
+
 const card_expediente = async (id_expediente) => {
     let expediente = await $.ajax({
         url: "/FiDigital/panel/sesiones/expedientes/get_by_ajax",
@@ -150,6 +251,8 @@ const card_expediente = async (id_expediente) => {
                 </div>
             </div>
         </li>` : "";
+
+    const li_archivos = render_li_archivos(expediente);
 
     const card_body = `
       <div class="card-header pb-0 text-left">
@@ -237,6 +340,7 @@ const card_expediente = async (id_expediente) => {
                
                 ${li_relacionados}
                 
+                ${li_archivos}
             </ul>
 
         </div>

@@ -29,9 +29,10 @@ class SesionModel extends Model
 			->select('e.*')
 			->select('CONCAT_WS(" ", u.nombres, u.ape_paterno,  u.ape_materno) as usuario')
 			->join('usuarios as u', 'u.id_usuario = e.created_by', 'left')
-			->join('cat_direcciones as cd', 'cd.id_direccion = e.id_direccion', 'left')
+			->join('puntos', 'puntos.id_expediente = e.id_expediente', 'left')
 			->join('proveedores as p', 'p.id_proveedor = e.id_proveedor', 'left')
-			->join('cat_programas as pg', 'pg.id_programa = e.id_programa', 'left')
+			->join('cat_direcciones as cd', 'cd.id_direccion = puntos.id_direccion', 'left')
+			->join('cat_programas as pg', 'pg.id_programa = puntos.id_programa', 'left')
 			->join('cat_estatus as ce', 'ce.id_estatus = e.id_estatus', 'left');
 
 		if (isset($data_filtros['id_expediente'])) {
