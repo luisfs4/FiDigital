@@ -409,6 +409,17 @@ const cargar_opciones_puntos = async (selector_destino, url, parametros, value=n
         });
 
         if (respuesta && respuesta.length > 0) {
+            function parsear_jerarquia(jerarquia) {
+                return jerarquia.split('.').map(n => parseInt(n || 0));
+            }
+
+            respuesta.sort((a, b) => {
+                const niveles_a = parsear_jerarquia(a.jerarquia);
+                const niveles_b = parsear_jerarquia(b.jerarquia);
+        
+                return niveles_a.reduce((resultado, nivelA, index) => resultado || (nivelA - (niveles_b[index] || 0)), 0);
+            });
+
             const opciones = respuesta.map(({ id_punto, jerarquia, siguiente_disponible, nombre_punto, presupuesto_autorizado, monto_restante, direccion, programa }) => {
                 return `
                     <option value="${id_punto}" monto_inicial="${presupuesto_autorizado}" 

@@ -407,7 +407,7 @@
 														<option value="<?=$value->id_proveedor?>" 
 															data-opinion_cumplimiento="<?= $value->opinion_cumplimiento ?? '' ?>"
 															data-estado_cuenta_bancario="<?= $value->estado_cuenta_bancario ?? '' ?>">
-															<?=$value->nombre?>
+															<?= $value->nombre_fiscal ?? $value->nombre_comercial ?? $value->nombre ?>
 														</option>
 													<?php endforeach ?>
 												</select>
